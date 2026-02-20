@@ -1,0 +1,19 @@
+/* Custom Staggered Animation Delay */
+.delay-100 { animation-delay: 100ms; }
+.delay-200 { animation-delay: 200ms; }
+.delay-300 { animation-delay: 300ms; }
+
+/* Interactive Hover Effects */
+.menu-card { perspective: 1000px; }
+
+/* Efek tekan tombol */
+.menu-card:active .menu-circle-btn { transform: scale(0.95); }
+
+/* Icon Rotation on Hover */
+.menu-card:hover .menu-icon i { transform: scale(1.1); }
+.menu-icon i { transition: transform 0.3s ease; }
+
+/* Smooth Theme Transition */
+body, div, h1, h2, h3, p, span, button, a {
+    transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+}
