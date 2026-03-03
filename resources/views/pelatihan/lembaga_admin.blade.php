@@ -49,16 +49,16 @@
         <div class="flex-1 flex flex-col h-screen overflow-hidden bg-slate-50 relative w-full">
             
             <!-- MOBILE HEADER -->
-            <div class="md:hidden bg-white border-b border-slate-200 px-4 py-3 flex justify-between items-center z-20">
-                <div class="flex items-center gap-2">
-                    <div class="w-8 h-8 rounded-lg bg-blue-600 flex items-center justify-center text-white">
-                        <i class="fas fa-chalkboard-teacher"></i>
-                    </div>
-                    <span class="font-bold text-slate-800">SI-PELATIHAN</span>
+            <div class="lg:hidden bg-white border-b border-slate-200 px-4 py-3 flex items-center justify-between sticky top-0 z-30 shadow-sm">
+                <div class="flex items-center gap-3">
+                    <button onclick="toggleSidebar()" class="p-2 text-slate-600 hover:text-blue-600 hover:bg-slate-100 rounded-lg transition-colors">
+                        <i class="fas fa-bars text-xl"></i>
+                    </button>
+                    <span class="font-bold text-slate-800 text-sm tracking-wide">SI-MUTU <span class="text-blue-600">DKKN</span></span>
                 </div>
-                <button onclick="toggleSidebar()" class="text-slate-500 hover:text-blue-600 p-2 rounded-lg hover:bg-slate-100">
-                    <i class="fas fa-bars text-xl"></i>
-                </button>
+                <div class="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 text-xs font-bold border border-blue-200">
+                    {{ substr(Auth::user()->name ?? 'U', 0, 1) }}
+                </div>
             </div>
 
             <!-- HEADER DESKTOP -->
@@ -127,9 +127,6 @@
                                     <td class="px-6 py-5">
                                         <div class="flex flex-col">
                                             <span class="text-slate-700 text-xs font-medium">{{ $u->email }}</span>
-                                            <span class="text-[10px] text-slate-400 mt-0.5">
-                                                {{ $u->phone ?? '-' }}
-                                            </span>
                                         </div>
                                     </td>
 
@@ -170,6 +167,10 @@
                     </div>
                 </div>
 
+                <div class="mt-8 text-center text-xs text-slate-400">
+                    &copy; 2026 Sistem Informasi Jaminan Mutu Ketenaganukliran
+                </div>
+                
             </main>
         </div>
     </div>

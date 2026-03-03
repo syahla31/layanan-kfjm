@@ -25,21 +25,31 @@
     </script>
     <style>
         .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
         .modal-backdrop-blur { backdrop-filter: blur(4px); background-color: rgba(15, 23, 42, 0.6); }
         .card-stat-hover:hover { transform: translateY(-4px); transition: all 0.3s ease; }
         .banner-gradient { background: linear-gradient(135deg, #0f172a 0%, #0f766e 50%, #1e1b4b 100%); }
+        
+        /* Overlay Responsif */
+        .glass-overlay {
+            background: rgba(15, 23, 42, 0.6);
+            backdrop-filter: blur(4px);
+        }
     </style>
 </head>
-<body class="bg-[#f8fafc] text-slate-800 antialiased selection:bg-teal-100 selection:text-teal-900">
+<body class="bg-slate-50 text-slate-800 antialiased selection:bg-teal-100 selection:text-teal-900">
 
     @php
         use App\Models\Submission;
         use Illuminate\Support\Facades\Auth;
 
         // Fetch data ringkasan untuk user yang login dengan kategori 'uji'
-        $allSubmissions = Submission::where('user_id', Auth::id())
-                            ->where('category', 'uji')
-                            ->get();
+        $allSubmissions = collect(); // Default empty collection untuk safety view
+        try {
+            $allSubmissions = Submission::where('user_id', Auth::id())
+                                ->where('category', 'uji')
+                                ->get();
+        } catch(\Exception $e) {}
         
         // 1. Laporan Tahunan
         $lapkinSubmissions = $allSubmissions->filter(fn($s) => str_contains(strtolower($s->type), 'laporan'));
@@ -69,19 +79,52 @@
         ];
     @endphp
 
-    <div class="flex h-screen overflow-hidden">
-        <!-- SIDEBAR -->
-        @include('components.uji-sidebar')
+    <div class="flex h-screen overflow-hidden bg-slate-50">
+        
+        <!-- === MOBILE OVERLAY === -->
+        <div id="sidebarOverlay" onclick="toggleSidebar()" class="fixed inset-0 z-40 hidden lg:hidden glass-overlay transition-opacity duration-300 opacity-0"></div>
 
+        <!-- === SIDEBAR WRAPPER (Responsive) === -->
+        <aside id="sidebar" class="fixed inset-y-0 left-0 z-50 w-64 bg-white shadow-2xl lg:shadow-none transform -translate-x-full transition-transform duration-300 ease-in-out lg:translate-x-0 lg:static lg:inset-auto flex flex-col h-full border-r border-slate-200">
+            @include('components.uji-sidebar')
+        </aside>
+
+        <!-- MAIN CONTENT -->
         <div class="flex-1 flex flex-col h-screen overflow-hidden relative">
             
-            <!-- HEADER -->
-            @include('components.uji-header', [
-                'title' => 'Dashboard Utama',
-                'subtitle' => 'Ringkasan data real-time Lembaga Uji Anda'
-            ])
+            <!-- === HEADER MOBILE === -->
+            <div class="lg:hidden bg-white/90 backdrop-blur-md border-b border-slate-200 px-4 py-3 flex items-center justify-between z-20 sticky top-0 shadow-sm">
+                <div class="flex items-center gap-3">
+                    <!-- Tombol Hamburger -->
+                    <button onclick="toggleSidebar()" class="p-2 -ml-2 text-slate-500 hover:text-primary hover:bg-slate-100 rounded-lg transition-colors focus:outline-none">
+                        <i class="fas fa-bars text-xl"></i>
+                    </button>
+                    
+                    <!-- Logo/Brand -->
+                    <div class="flex items-center gap-2">
+                        <div class="w-8 h-8 rounded-lg bg-primary flex items-center justify-center text-white shadow-sm">
+                            <i class="fas fa-flask text-sm"></i>
+                        </div>
+                        <span class="font-bold text-slate-800 text-sm tracking-wide">SI-LAB UJI</span>
+                    </div>
+                </div>
 
-            <main class="flex-1 overflow-y-auto p-4 md:p-6 lg:p-8 space-y-6 md:space-y-8 no-scrollbar">
+                <!-- Profile Icon Kanan -->
+                <div class="w-8 h-8 rounded-full bg-teal-100 flex items-center justify-center text-primary text-xs font-bold border border-teal-200">
+                    {{ substr(Auth::user()->name ?? 'U', 0, 1) }}
+                </div>
+            </div>
+
+            <!-- === HEADER DESKTOP === -->
+            <div class="hidden lg:block sticky top-0 z-10 bg-white/80 backdrop-blur-md border-b border-slate-200">
+                @include('components.uji-header', [
+                    'title' => 'Dashboard Utama',
+                    'subtitle' => 'Ringkasan data real-time Lembaga Uji Anda'
+                ])
+            </div>
+
+            <!-- SCROLLABLE CONTENT -->
+            <main class="flex-1 overflow-y-auto p-4 md:p-6 lg:p-8 space-y-6 md:space-y-8 no-scrollbar scroll-smooth">
                 
                 <!-- WELCOME BANNER (FIXED STRUCTURE) -->
                 <div class="banner-gradient rounded-[2rem] p-6 md:p-10 text-white relative overflow-hidden shadow-xl animate-fade-in">
@@ -234,16 +277,40 @@
 
                 </div>
 
-                <!-- FOOTER -->
-                <div class="pt-8 pb-4 text-center opacity-30">
-                    <p class="text-[9px] font-black uppercase tracking-[0.4em]">&copy; 2026 SI-MUTU DKKN | BAPETEN</p>
+                <div class="mt-8 text-center text-xs text-slate-400">
+                    &copy; 2026 Sistem Informasi Jaminan Mutu Ketenaganukliran
                 </div>
-
+                
             </main>
         </div>
     </div>
 
     <script>
+        // === LOGIKA SIDEBAR RESPONSIVE ===
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('sidebarOverlay');
+            
+            if (sidebar.classList.contains('-translate-x-full')) {
+                // Buka Sidebar
+                sidebar.classList.remove('-translate-x-full');
+                overlay.classList.remove('hidden');
+                setTimeout(() => {
+                    overlay.classList.remove('opacity-0');
+                    overlay.classList.add('opacity-100');
+                }, 10);
+            } else {
+                // Tutup Sidebar
+                sidebar.classList.add('-translate-x-full');
+                overlay.classList.remove('opacity-100');
+                overlay.classList.add('opacity-0');
+                setTimeout(() => {
+                    overlay.classList.add('hidden');
+                }, 300);
+            }
+        }
+
+        // Script chart
         document.addEventListener('DOMContentLoaded', function () {
             var options = {
                 series: [{
@@ -284,11 +351,6 @@
             var chart = new ApexCharts(document.querySelector("#performanceChart"), options);
             chart.render();
         });
-
-        function toggleSidebar() {
-            const sidebar = document.getElementById('sidebar');
-            sidebar.classList.toggle('-translate-x-full');
-        }
 
         function closeNotification(id) {
             const modal = document.getElementById(id);

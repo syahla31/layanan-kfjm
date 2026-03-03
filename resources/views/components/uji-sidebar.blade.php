@@ -50,6 +50,14 @@
                 <span class="font-medium text-sm text-left">Manajemen Verifikasi</span>
             </a>
 
+            <div class="my-4 border-t border-teal-800/50 mx-3"></div>
+            <div class="px-3 mb-2 text-xs font-bold text-teal-400 uppercase tracking-widest">Master Data</div>
+
+            <a href="{{ route('lembaga.adminUji') }}" class="flex items-center gap-3 py-3 px-4 rounded-xl transition-all duration-200 group {{ request()->routeIs('lembaga.admin') ? 'bg-teal-800 text-white shadow-md' : 'text-teal-200 hover:text-white hover:bg-teal-800/50' }}">
+                <i class="fas fa-users w-5 text-center"></i>
+                <span class="font-medium text-sm">Data Lembaga</span>
+            </a>
+
         @else
             <!-- === MENU KHUSUS USER (LEMBAGA) === -->
             

@@ -9,6 +9,7 @@ use App\Http\Controllers\SurvailenController;
 use App\Http\Controllers\VerifikasiController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\SubmissionController;
+use App\Http\Controllers\SinarxSubmissionController;
 
 /*
 |--------------------------------------------------------------------------
@@ -18,11 +19,11 @@ use App\Http\Controllers\SubmissionController;
 
 // 1. HALAMAN PUBLIK / DEPAN
 Route::get('/', function () {
-    return view('welcome'); 
+    return view('welcome');
 })->name('portal');
 
-Route::get('/sertifikasi', function () { 
-    return view('sertifikasi.index'); 
+Route::get('/sertifikasi', function () {
+    return view('sertifikasi.index');
 })->name('sertifikasi.index');
 
 // 2. RUTE LOGIN & REGISTER (TAMPILAN BERDASARKAN KATEGORI)
@@ -46,7 +47,7 @@ Route::get('/sinarx/register', [CustomRegisterController::class, 'showRegisterSi
 // 3. RUTE TERPROTEKSI (SETELAH LOGIN)
 // =========================================================================
 Route::middleware(['auth', 'verified'])->group(function () {
-    
+
     // Redirect Default berdasarkan kategori user
     Route::get('/dashboard', function () {
         $user = auth()->user();
@@ -55,11 +56,19 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     // --- A. INTERNAL / SUPER ADMIN ---
     Route::prefix('internal')->group(function () {
-        Route::get('/dashboard', function () { return view('internal.dashboard'); });
-        Route::get('/users', function () { return view('internal.users'); });
-        Route::get('/settings', function () { return view('internal.settings'); });
-        Route::get('/logs', function () { return view('internal.activity_log'); });
-        
+        Route::get('/dashboard', function () {
+            return view('internal.dashboard');
+        });
+        Route::get('/users', function () {
+            return view('internal.users');
+        });
+        Route::get('/settings', function () {
+            return view('internal.settings');
+        });
+        Route::get('/logs', function () {
+            return view('internal.activity_log');
+        });
+
         // Aksi Persetujuan User Baru
         Route::post('/approve/{id}', [DashboardController::class, 'approveUser'])->name('internal.approve');
         Route::post('/internal/reject/{id}', [DashboardController::class, 'rejectUser'])->name('internal.reject');
@@ -68,12 +77,16 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // --- B. MODUL PELATIHAN ---
     Route::prefix('pelatihan')->group(function () {
         // Dashboard (Summary / Admin Dashboard)
-        Route::get('/dashboard', function () { 
-            if (auth()->user()->role == 'admin') { return view('pelatihan.dashboard_admin'); }
+        Route::get('/dashboard', function () {
+            if (auth()->user()->role == 'admin') {
+                return view('pelatihan.dashboard_admin');
+            }
             return view('pelatihan.dashboard');
         })->name('pelatihan.dashboard');
 
-        Route::get('/kak', function () { return view('pelatihan.kak'); });
+        Route::get('/kak', function () {
+            return view('pelatihan.kak');
+        });
 
         // Laporan Kinerja (LAPKIN)
         Route::get('/lapkin', [LapkinController::class, 'index'])->name('lapkin.index');
@@ -89,9 +102,13 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::post('/verifikasi/store', [VerifikasiController::class, 'store'])->name('verifikasi.store');
 
         // Master Data & Riwayat
-        Route::get('/lembaga', function () { return view('pelatihan.lembaga_admin'); })->name('lembaga.admin');
-        Route::get('/history', function () { 
-            if (auth()->user()->role == 'admin') { return view('pelatihan.history'); }
+        Route::get('/lembaga', function () {
+            return view('pelatihan.lembaga_admin');
+        })->name('lembaga.admin');
+        Route::get('/history', function () {
+            if (auth()->user()->role == 'admin') {
+                return view('pelatihan.history');
+            }
             return redirect('/pelatihan/dashboard');
         });
     });
@@ -99,15 +116,17 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // --- C. MODUL LEMBAGA UJI ---
     Route::prefix('uji')->group(function () {
         // 1. Dashboard Utama (Summary / Ringkasan)
-        Route::get('/dashboard', function () { 
-            if (auth()->user()->role == 'admin') { return view('uji.dashboard_admin'); }
-            return view('uji.dashboard'); 
+        Route::get('/dashboard', function () {
+            if (auth()->user()->role == 'admin') {
+                return view('uji.dashboard_admin');
+            }
+            return view('uji.dashboard');
         })->name('uji.dashboard');
 
         // 2. Laporan Tahunan (Tabel & Input Dokumen)
         Route::get('/laporan', function () {
             // Halaman ini berisi tabel Laporan Tahunan yang sebelumnya ada di dashboard
-            return view('uji.laporan'); 
+            return view('uji.laporan');
         })->name('uji.laporan');
 
         // 3. Survailen Uji
@@ -123,30 +142,54 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::post('/verifikasiAdmin/store', [VerifikasiController::class, 'storeAdmin'])->name('uji.verifikasi_admin.store');
 
         // Master Data & Riwayat
-        Route::get('/lembaga', function () { return view('uji.lembaga_admin'); })->name('lembaga.adminUji');
-        Route::get('/history', function () { 
-            if (auth()->user()->role == 'admin') { return view('uji.history'); }
+        Route::get('/lembaga', function () {
+            return view('uji.lembaga_admin');
+        })->name('lembaga.adminUji');
+        
+        Route::get('/history', function () {
+            if (auth()->user()->role == 'admin') {
+                return view('uji.history');
+            }
             return redirect('/uji/dashboard');
         });
     });
 
     // --- D. MODUL SINAR-X ---
     Route::prefix('sinarx')->group(function () {
-        Route::get('/dashboard', function () { 
-            if (auth()->user()->role == 'admin') { return view('sinarx.dashboard_admin'); }
-            return view('sinarx.dashboard'); 
+        Route::get('/dashboard', function () {
+            if (auth()->user()->role == 'admin') {
+                return view('sinarx.dashboard_admin');
+            }
+            return view('sinarx.dashboard');
         })->name('sinarx.dashboard');
+
+        // =======================================================
+        // TAMBAHKAN RUTE-RUTE INI UNTUK MENANGANI FORM SINAR-X
+        // =======================================================
+
+        // Aksi User (Rumah Sakit / Klinik)
+        Route::post('/submission', [SinarxSubmissionController::class, 'store'])->name('sinarx.submission.store');
+        Route::put('/submission/{id}', [SinarxSubmissionController::class, 'update'])->name('sinarx.submission.update');
+        Route::delete('/submission/{id}', [SinarxSubmissionController::class, 'destroy'])->name('sinarx.submission.destroy');
+
+        // Aksi Admin (Setuju / Tolak Amandemen)
+        Route::post('/submission/approve/{id}', [SinarxSubmissionController::class, 'approve'])->name('sinarx.submission.approve');
+        Route::post('/submission/reject/{id}', [SinarxSubmissionController::class, 'reject'])->name('sinarx.submission.reject');
+
+        Route::get('/lembaga', function () {
+            return view('sinarx.lembaga');
+        })->name('lembaga.adminSinarx');
     });
 
     // --- E. GLOBAL SUBMISSION ACTIONS (CRUD UNTUK SEMUA MODUL) ---
     Route::post('/submission/store', [SubmissionController::class, 'store'])->name('submission.store');
     Route::put('/submission/update/{id}', [SubmissionController::class, 'update'])->name('submission.update');
     Route::delete('/submission/delete/{id}', [SubmissionController::class, 'destroy'])->name('submission.destroy');
-    
+
     // Alur Verifikasi Admin (Approve/Reject)
     Route::post('/submission/approve/{id}', [SubmissionController::class, 'approve'])->name('submission.approve');
     Route::post('/submission/reject/{id}', [SubmissionController::class, 'reject'])->name('submission.reject');
-    
+
     // Store khusus Survailen
     Route::post('/submission/survailen/store', [SurvailenController::class, 'store'])->name('survailen.store');
 });
@@ -158,9 +201,9 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
-// 5. AUTHENTICATION OVERRIDE
-Route::post('/register', [CustomRegisterController::class, 'register'])->middleware('guest')->name('register'); 
-Route::post('/login', [CustomLoginController::class, 'login'])->name('login');    
-Route::post('/logout', [CustomLoginController::class, 'logout'])->middleware('auth')->name('logout');
+require __DIR__ . '/auth.php';
 
-require __DIR__.'/auth.php';
+// 5. AUTHENTICATION OVERRIDE
+Route::post('/register', [CustomRegisterController::class, 'register'])->middleware('guest')->name('register');
+Route::post('/login', [CustomLoginController::class, 'login'])->name('login');
+Route::post('/logout', [CustomLoginController::class, 'logout'])->middleware('auth')->name('logout');

@@ -81,24 +81,28 @@
         <!-- SIDEBAR -->
         <div id="sidebarOverlay" onclick="toggleSidebar()" class="fixed inset-0 z-40 hidden lg:hidden modal-backdrop-blur transition-opacity duration-300"></div>
         <aside id="sidebar" class="fixed inset-y-0 left-0 z-50 w-64 bg-white transform -translate-x-full transition-transform duration-300 ease-in-out lg:translate-x-0 lg:static lg:inset-auto flex flex-col h-full border-r border-slate-200">
-            @include('components.uji-sidebar')
+            @include('components.pelatihan-sidebar')
         </aside>
 
         <div class="flex-1 flex flex-col h-screen overflow-hidden relative w-full text-left">
             
             <!-- HEADER -->
             <div class="hidden lg:block text-left">
-                @include('components.uji-header', [
+                @include('components.pelatihan-header', [
                     'title' => 'Status Mutu & Survailen',
                     'subtitle' => 'Tindak lanjut hasil audit dan pengawasan teknis'
                 ])
             </div>
 
             <!-- MOBILE HEADER -->
-            <div class="lg:hidden bg-white border-b border-slate-200 px-4 py-3 flex items-center justify-between sticky top-0 z-30 shadow-sm text-left">
-                <button onclick="toggleSidebar()" class="p-2 text-slate-600 rounded-lg transition-colors"><i class="fas fa-bars text-xl"></i></button>
-                <span class="font-bold text-slate-800 text-sm tracking-tight uppercase">SI-MUTU UJI</span>
-                <div class="w-8 h-8 rounded-full bg-teal-100 flex items-center justify-center text-teal-600 text-xs font-bold border border-teal-200 uppercase">
+            <div class="lg:hidden bg-white border-b border-slate-200 px-4 py-3 flex items-center justify-between sticky top-0 z-30 shadow-sm">
+                <div class="flex items-center gap-3">
+                    <button onclick="toggleSidebar()" class="p-2 text-slate-600 hover:text-amber-600 hover:bg-slate-100 rounded-lg transition-colors">
+                        <i class="fas fa-bars text-xl"></i>
+                    </button>
+                    <span class="font-bold text-slate-800 text-sm tracking-wide">SI-MUTU <span class="text-amber-600">DKKN</span></span>
+                </div>
+                <div class="w-8 h-8 rounded-full bg-amber-100 flex items-center justify-center text-amber-600 text-xs font-bold border border-amber-200">
                     {{ substr(Auth::user()->name ?? 'U', 0, 1) }}
                 </div>
             </div>
@@ -261,7 +265,10 @@
                     </div>
                 </div>
 
-                <div class="text-center py-6 opacity-30 text-xs font-bold uppercase tracking-[0.2em]">SI-MUTU DKKN | BAPETEN</div>
+                <div class="mt-8 text-center text-xs text-slate-400">
+                    &copy; 2026 Sistem Informasi Jaminan Mutu Ketenaganukliran
+                </div>
+                
             </main>
         </div>
     </div>

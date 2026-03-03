@@ -1,28 +1,31 @@
 <aside class="w-64 h-full bg-blue-900 text-white flex-shrink-0 flex flex-col transition-all duration-300 shadow-xl relative z-20">
     
     <!-- Header Sidebar -->
-    <div class="h-20 flex items-center justify-between px-6 border-b border-blue-800">
+    <div class="pt-8 pb-5 px-5 flex items-center justify-between border-b border-blue-800/30 mb-1">
         <div class="flex items-center gap-3">
-            <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-400 to-blue-600 flex items-center justify-center text-white shadow-lg shadow-blue-900/20">
+            <!-- Ukuran ikon tetap ringkas -->
+            <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-400 to-blue-600 flex items-center justify-center text-white shadow-xl shadow-blue-950/40 transform transition-transform hover:scale-105 shrink-0">
                 <i class="fas fa-chalkboard-teacher text-lg"></i>
             </div>
-            <div>
-                <h1 class="font-bold text-lg tracking-wide leading-tight">SI-PELATIHAN</h1>
-                <p class="text-[10px] uppercase font-bold text-blue-300 tracking-wider">
+            
+            <div class="space-y-0">
+                <h1 class="font-extrabold text-lg tracking-tight leading-none text-white whitespace-nowrap">
+                    SI-PELATIHAN
+                </h1>
+                <p class="text-[9px] uppercase font-black text-blue-400 tracking-[0.1em] opacity-80 mt-1">
                     {{ Auth::user()->role == 'admin' ? 'Admin Unit' : 'Lembaga' }}
                 </p>
             </div>
         </div>
 
-        <!-- Tombol Close (Hanya Tampil di Mobile) -->
-        <!-- Memanggil fungsi toggleSidebar() yang ada di layout utama -->
-        <button onclick="toggleSidebar()" class="md:hidden text-blue-300 hover:text-white transition-colors p-1">
-            <i class="fas fa-times text-xl"></i>
+        <!-- Tombol Close (Mobile) -->
+        <button onclick="toggleSidebar()" class="lg:hidden w-8 h-8 rounded-lg bg-blue-800/40 text-blue-200 hover:text-white hover:bg-blue-700/50 transition-all flex items-center justify-center shrink-0 ml-2">
+            <i class="fas fa-times text-sm"></i>
         </button>
     </div>
 
     <!-- Menu Navigasi -->
-    <nav class="flex-1 overflow-y-auto py-6 px-3 space-y-1 scrollbar-thin scrollbar-thumb-blue-800 scrollbar-track-transparent">
+    <nav class="flex-1 overflow-y-auto py-3 px-3 space-y-1 scrollbar-thin scrollbar-thumb-blue-800 scrollbar-track-transparent">
         
         @if(Auth::user()->role == 'admin')
             <!-- === MENU KHUSUS ADMIN === -->

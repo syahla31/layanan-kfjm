@@ -44,13 +44,15 @@ class SubmissionController extends Controller
 
     public function update(Request $request, $id)
     {
+        // Cari data milik user yang sedang login
         $submission = Submission::where('user_id', Auth::id())->findOrFail($id);
 
-        $request->validate([
-            'file_upload' => 'nullable|mimes:pdf|max:10240',
-        ]);
-
+        // 1. LOGIKA UPLOAD REVISI (Jika ada file yang diupload)
         if ($request->hasFile('file_upload')) {
+            $request->validate([
+                'file_upload' => 'required|mimes:pdf|max:10240',
+            ]);
+
             $file = $request->file('file_upload');
             $path = $file->store('documents', 'public');
             $nextVersion = $submission->files()->max('version') + 1;
@@ -60,20 +62,29 @@ class SubmissionController extends Controller
                 'file_path' => $path,
                 'file_name' => $file->getClientOriginalName(),
                 'version' => $nextVersion,
-                'user_note' => 'Revisi ke-' . ($nextVersion - 1)
+                'user_note' => $request->user_note ?? 'Revisi ke-' . ($nextVersion - 1)
             ]);
 
-            $submission->file_path = $path;
-            $submission->status = 'pending';
-            $submission->admin_note = null;
-            $submission->admin_file = null; 
-            $submission->save();
+            $submission->forceFill([
+                'file_path' => $path,
+                'status' => 'pending',
+                'admin_note' => null,
+                'admin_file' => null,
+                'title' => $request->title ?? $submission->title
+            ])->save();
 
             return back()->with('success', 'Dokumen revisi berhasil diupload.');
         }
         
-        $submission->update(['title' => $request->title]);
-        return back()->with('success', 'Judul diperbarui.');
+        // 2. LOGIKA KONFIRMASI TINDAK LANJUT
+        // OTOMATIS JADI SELESAI: Kita ubah status langsung ke 'approved'
+        // agar di tampilan Blade terbaca sebagai "Selesai".
+        $submission->forceFill([
+            'title' => $request->title ?? $submission->title,
+            'status' => 'approved', 
+        ])->save();
+
+        return back()->with('success', 'Tindak lanjut berhasil dikonfirmasi. Status sekarang: Selesai.');
     }
 
     public function destroy($id)
@@ -105,24 +116,18 @@ class SubmissionController extends Controller
         $submission->status = $status;
         $submission->admin_note = $request->admin_note;
 
-        // Ambil File Versi Terakhir dari Riwayat
         $latestFile = $submission->files()->orderBy('version', 'desc')->first();
 
-        // Proses Upload File Admin
         if ($request->hasFile('admin_file')) {
             $path = $request->file('admin_file')->store('responses', 'public');
-            
-            // 1. Simpan di Induk (Agar tombol utama berubah)
             $submission->admin_file = $path;
 
-            // 2. Simpan di Riwayat Versi Terakhir (Agar muncul di modal history)
             if ($latestFile) {
                 $latestFile->admin_file = $path;
-                $latestFile->admin_note = $request->admin_note; // Simpan juga catatannya
+                $latestFile->admin_note = $request->admin_note;
                 $latestFile->save();
             }
         } else {
-            // Jika Admin cuma kasih catatan tanpa file, simpan catatannya di riwayat juga
             if ($latestFile) {
                 $latestFile->admin_note = $request->admin_note;
                 $latestFile->save();

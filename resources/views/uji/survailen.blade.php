@@ -80,16 +80,25 @@
 
         <div class="flex-1 flex flex-col h-screen overflow-hidden relative">
             
-            <!-- === MOBILE HEADER BAR === -->
-            <div class="lg:hidden bg-white border-b border-slate-200 px-4 py-3 flex items-center justify-between sticky top-0 z-30 shadow-sm">
+            <div class="md:hidden bg-white border-b border-slate-200 px-4 py-3 flex items-center justify-between z-20 sticky top-0 shadow-sm">
                 <div class="flex items-center gap-3">
-                    <button onclick="toggleSidebar()" class="p-2 text-slate-600 hover:text-amber-600 hover:bg-slate-100 rounded-lg transition-colors">
+                    <!-- Tombol Hamburger di Kiri -->
+                    <button onclick="toggleSidebar()" class="p-2 text-slate-500 hover:text-teal-600 hover:bg-slate-100 rounded-lg transition-colors">
                         <i class="fas fa-bars text-xl"></i>
                     </button>
-                    <span class="font-bold text-slate-800 text-sm tracking-wide">SI-MUTU <span class="text-amber-600">DKKN</span></span>
+                    
+                    <!-- Logo/Brand -->
+                    <div class="flex items-center gap-2">
+                        <div class="w-8 h-8 rounded-lg bg-teal-600 flex items-center justify-center text-white shadow-sm">
+                            <i class="fas fa-flask text-sm"></i>
+                        </div>
+                        <span class="font-bold text-slate-800 text-sm tracking-wide">SI-LAB UJI</span>
+                    </div>
                 </div>
-                <div class="w-8 h-8 rounded-full bg-amber-100 flex items-center justify-center text-amber-600 text-xs font-bold border border-amber-200">
-                    {{ substr(Auth::user()->name ?? 'U', 0, 1) }}
+
+                <!-- Profile Icon Kanan -->
+                <div class="w-8 h-8 rounded-full bg-teal-100 flex items-center justify-center text-teal-600 text-xs font-bold border border-teal-200">
+                    {{ substr(Auth::user()->name ?? 'L', 0, 1) }}
                 </div>
             </div>
 
@@ -99,12 +108,6 @@
                     'title' => 'Status Mutu & Survailen',
                     'subtitle' => 'Tindak lanjut hasil audit dan pengawasan'
                 ])
-            </div>
-            
-            <!-- Header Mobile Title -->
-            <div class="lg:hidden px-4 pt-4 pb-2">
-                <h1 class="text-xl font-bold text-slate-800">Status Mutu & Survailen</h1>
-                <p class="text-xs text-slate-500">Tindak lanjut hasil audit</p>
             </div>
 
             <!-- MAIN CONTENT -->
