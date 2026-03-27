@@ -18,6 +18,25 @@
         .modal-scroll::-webkit-scrollbar-track { background: #f1f5f9; }
         .modal-scroll::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
         .modal-scroll::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+
+        /* Timer Progress Bar Animation */
+        @keyframes timerProgress {
+            from { width: 100%; }
+            to { width: 0%; }
+        }
+        .timer-bar { animation: timerProgress 5s linear forwards; }
+
+        /* Modal Backdrop Blur */
+        .modal-backdrop-blur {
+            background-color: rgba(15, 23, 42, 0.4);
+            backdrop-filter: blur(8px);
+        }
+
+        @keyframes popIn {
+            0% { opacity: 0; transform: scale(0.9) translateY(20px); }
+            100% { opacity: 1; transform: scale(1) translateY(0); }
+        }
+        .animate-pop-in { animation: popIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) forwards; }
     </style>
 </head>
 <body class="bg-slate-50 text-slate-800 antialiased selection:bg-purple-100 selection:text-purple-900">
@@ -223,10 +242,11 @@
     </div>
 </div>
 
-<!-- SUCCESS MODAL -->
+<!-- SUCCESS MODAL DENGAN TIMER -->
 @if (session('success'))
 <div id="successModal" class="fixed inset-0 z-[100] flex items-center justify-center modal-backdrop-blur transition-opacity duration-300">
-    <div class="bg-white rounded-2xl shadow-2xl p-8 max-w-sm w-full mx-4 text-center animate-pop-in relative border border-slate-100">
+    <div class="absolute inset-0" onclick="closeSuccessModal()"></div>
+    <div class="bg-white rounded-2xl shadow-2xl p-8 max-w-sm w-full mx-4 text-center animate-pop-in relative border border-slate-100 overflow-hidden">
         <div class="absolute top-0 left-0 w-full h-1.5 bg-gradient-to-r from-emerald-500 to-teal-600"></div>
         <div class="w-20 h-20 bg-emerald-50 rounded-full flex items-center justify-center mx-auto mb-4 shadow-inner">
             <i class="fas fa-check text-4xl text-emerald-600"></i>
@@ -234,6 +254,9 @@
         <h3 class="text-xl font-bold text-slate-800 mb-2 tracking-tight">Berhasil!</h3>
         <p class="text-slate-500 mb-6 text-sm font-medium leading-relaxed">{{ session('success') }}</p>
         <button onclick="closeSuccessModal()" class="w-full bg-slate-900 text-white font-bold py-3 rounded-xl hover:bg-black transition-all active:scale-95 shadow-lg uppercase text-xs tracking-widest">Tutup</button>
+        
+        <!-- Timer Progress Bar -->
+        <div class="absolute bottom-0 left-0 h-1.5 bg-emerald-500 timer-bar"></div>
     </div>
 </div>
 @endif
@@ -320,18 +343,25 @@
         const modal = document.getElementById('successModal');
         if(modal) {
             modal.style.opacity = '0';
-            setTimeout(() => { modal.classList.add('hidden'); modal.classList.remove('flex'); }, 300);
+            modal.style.transition = 'opacity 0.3s ease';
+            setTimeout(() => { 
+                modal.classList.add('hidden'); 
+                modal.classList.remove('flex');
+                modal.remove(); // Hapus dari DOM
+            }, 300);
         }
     }
 
+    // Jalankan timer saat halaman dimuat jika ada modal sukses
     window.onload = () => {
         const successModal = document.getElementById('successModal');
         if(successModal) {
-            setTimeout(() => closeSuccessModal(), 6000);
+            setTimeout(() => {
+                closeSuccessModal();
+            }, 5000); // 5 detik sesuai durasi animasi bar
         }
     }
 </script>
-
 
 </body>
 </html>

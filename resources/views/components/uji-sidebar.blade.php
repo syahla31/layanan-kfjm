@@ -38,6 +38,14 @@
                 <span class="font-medium text-sm text-left">Riwayat Disetujui</span>
             </a>
 
+            <!-- MENU PENETAPAN ADMIN -->
+            <div class="px-3 mb-2 text-xs font-bold text-teal-400 uppercase tracking-widest mt-4 text-left">Penetapan</div>
+
+            <a href="{{ route('uji.ktun_admin') }}" class="flex items-center gap-3 py-3 px-4 rounded-xl transition-all duration-200 group {{ request()->routeIs('uji.ktun_admin') ? 'bg-teal-800 text-white shadow-md' : 'text-teal-200 hover:text-white hover:bg-teal-800/50' }}">
+                <i class="fas fa-paper-plane w-5 text-center {{ request()->routeIs('uji.ktun_admin') ? 'text-teal-300' : 'group-hover:text-teal-300' }}"></i>
+                <span class="font-medium text-sm text-left">Kirim KTUN</span>
+            </a>
+
             <div class="px-3 mb-2 text-xs font-bold text-teal-400 uppercase tracking-widest mt-4 text-left">Audit & Status Mutu</div>
 
             <a href="{{ route('survailen.uji.admin') }}" class="flex items-center gap-3 py-3 px-4 rounded-xl transition-all duration-200 group {{ request()->routeIs('survailen.uji.admin') ? 'bg-teal-800 text-white shadow-md' : 'text-teal-200 hover:text-white hover:bg-teal-800/50' }}">
@@ -53,7 +61,7 @@
             <div class="my-4 border-t border-teal-800/50 mx-3"></div>
             <div class="px-3 mb-2 text-xs font-bold text-teal-400 uppercase tracking-widest">Master Data</div>
 
-            <a href="{{ route('lembaga.adminUji') }}" class="flex items-center gap-3 py-3 px-4 rounded-xl transition-all duration-200 group {{ request()->routeIs('lembaga.admin') ? 'bg-teal-800 text-white shadow-md' : 'text-teal-200 hover:text-white hover:bg-teal-800/50' }}">
+            <a href="{{ route('lembaga.adminUji') }}" class="flex items-center gap-3 py-3 px-4 rounded-xl transition-all duration-200 group {{ request()->routeIs('lembaga.adminUji') ? 'bg-teal-800 text-white shadow-md' : 'text-teal-200 hover:text-white hover:bg-teal-800/50' }}">
                 <i class="fas fa-users w-5 text-center"></i>
                 <span class="font-medium text-sm">Data Lembaga</span>
             </a>
@@ -69,6 +77,14 @@
                 <span class="font-medium text-sm text-left">Dashboard Utama</span>
             </a>
 
+            <!-- MENU PENETAPAN USER -->
+            <div class="px-3 mb-2 text-xs font-bold text-teal-400 uppercase tracking-widest mt-4 text-left">Penetapan</div>
+
+            <a href="{{ route('uji.ktun') }}" class="flex items-center gap-3 py-3 px-4 rounded-xl transition-all duration-200 group {{ request()->routeIs('uji.ktun') ? 'bg-teal-800 text-white shadow-md' : 'text-teal-200 hover:text-white hover:bg-teal-800/50' }}">
+                <i class="fas fa-gift w-5 text-center {{ request()->routeIs('uji.ktun') ? 'text-teal-300' : 'group-hover:text-teal-300' }}"></i>
+                <span class="font-medium text-sm text-left">Dokumen KTUN</span>
+            </a>
+
             <div class="px-3 mb-2 text-xs font-bold text-teal-400 uppercase tracking-widest mt-4 text-left">Pelaporan</div>
             
             <!-- Halaman Manajemen Laporan Tahunan -->
@@ -79,7 +95,7 @@
 
             <div class="px-3 mb-2 text-xs font-bold text-teal-400 uppercase tracking-widest mt-4 text-left">Status Mutu</div>
             
-            <!-- Survailen User dengan Ikon yang benar -->
+            <!-- Survailen User -->
             <a href="{{ url('/uji/survailen') }}" class="flex items-center gap-3 py-3 px-4 rounded-xl transition-all duration-200 group {{ request()->is('uji/survailen*') ? 'bg-teal-800 text-white shadow-md' : 'text-teal-200 hover:text-white hover:bg-teal-800/50' }}">
                 <i class="fas fa-search-location w-5 text-center group-hover:text-teal-300 transition-colors"></i>
                 <span class="font-medium text-sm text-left">Survailen</span>

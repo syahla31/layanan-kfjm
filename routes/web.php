@@ -1,23 +1,31 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\Auth\CustomLoginController;
 use App\Http\Controllers\Auth\CustomRegisterController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\LapkinController;
 use App\Http\Controllers\SurvailenController;
 use App\Http\Controllers\VerifikasiController;
-use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\SubmissionController;
+use App\Http\Controllers\KtunDeliveryController;
 use App\Http\Controllers\SinarxSubmissionController;
 
 /*
 |--------------------------------------------------------------------------
 | Web Routes - SI-MUTU Pro
 |--------------------------------------------------------------------------
+|
+| Di sini adalah tempat pendaftaran rute web untuk aplikasi SI-MUTU.
+| Rute dikelompokkan berdasarkan kategori layanan (Pelatihan, Uji, Sinar-X)
+| dan peran pengguna (Admin/Internal vs User/Lembaga).
+|
 */
 
-// 1. HALAMAN PUBLIK / DEPAN
+// =========================================================================
+// 1. HALAMAN PUBLIK / PORTAL DEPAN
+// =========================================================================
 Route::get('/', function () {
     return view('welcome');
 })->name('portal');
@@ -26,35 +34,41 @@ Route::get('/sertifikasi', function () {
     return view('sertifikasi.index');
 })->name('sertifikasi.index');
 
-// 2. RUTE LOGIN & REGISTER (TAMPILAN BERDASARKAN KATEGORI)
-// Admin Pusat
+
+// =========================================================================
+// 2. RUTE OTENTIKASI (LOGIN & REGISTER)
+// =========================================================================
+
+// --- Portal Login Admin Pusat ---
 Route::get('/admin/login', [CustomLoginController::class, 'loginInternal'])->name('login.internal');
 
-// Modul Pelatihan
+// --- Modul Pelatihan ---
 Route::get('/pelatihan/login', [CustomLoginController::class, 'loginPelatihan'])->name('login.pelatihan');
 Route::get('/pelatihan/register', [CustomRegisterController::class, 'showRegisterPelatihan'])->name('register.pelatihan');
 
-// Modul Lembaga Uji
+// --- Modul Lembaga Uji ---
 Route::get('/uji/login', [CustomLoginController::class, 'loginUji'])->name('login.uji');
 Route::get('/uji/register', [CustomRegisterController::class, 'showRegisterUji'])->name('register.uji');
 
-// Modul Sinar-X
+// --- Modul Sinar-X ---
 Route::get('/sinarx/login', [CustomLoginController::class, 'loginSinarX'])->name('login.sinarx');
 Route::get('/sinarx/register', [CustomRegisterController::class, 'showRegisterSinarX'])->name('register.sinarx');
 
 
 // =========================================================================
-// 3. RUTE TERPROTEKSI (SETELAH LOGIN)
+// 3. RUTE TERPROTEKSI (MEMERLUKAN LOGIN & VERIFIKASI)
 // =========================================================================
 Route::middleware(['auth', 'verified'])->group(function () {
 
-    // Redirect Default berdasarkan kategori user
+    // --- Redirect Otomatis Berdasarkan Kategori Setelah Login ---
     Route::get('/dashboard', function () {
         $user = auth()->user();
         return redirect($user->category . '/dashboard');
     })->name('dashboard');
 
-    // --- A. INTERNAL / SUPER ADMIN ---
+    // ---------------------------------------------------------------------
+    // A. KATEGORI: INTERNAL (SUPER ADMIN / ADMIN PUSAT)
+    // ---------------------------------------------------------------------
     Route::prefix('internal')->group(function () {
         Route::get('/dashboard', function () {
             return view('internal.dashboard');
@@ -69,110 +83,112 @@ Route::middleware(['auth', 'verified'])->group(function () {
             return view('internal.activity_log');
         });
 
-        // Aksi Persetujuan User Baru
+        // Aksi Manajemen User (Approval & Export)
+        Route::get('/export-users', [DashboardController::class, 'exportUsers'])->name('internal.users.export');
         Route::post('/approve/{id}', [DashboardController::class, 'approveUser'])->name('internal.approve');
-        Route::post('/internal/reject/{id}', [DashboardController::class, 'rejectUser'])->name('internal.reject');
+        Route::post('/reject/{id}', [DashboardController::class, 'rejectUser'])->name('internal.reject');
     });
 
-    // --- B. MODUL PELATIHAN ---
+    // ---------------------------------------------------------------------
+    // B. KATEGORI: PELATIHAN
+    // ---------------------------------------------------------------------
     Route::prefix('pelatihan')->group(function () {
-        // Dashboard (Summary / Admin Dashboard)
+        // Dashboard
         Route::get('/dashboard', function () {
-            if (auth()->user()->role == 'admin') {
-                return view('pelatihan.dashboard_admin');
-            }
-            return view('pelatihan.dashboard');
+            return auth()->user()->role == 'admin'
+                ? view('pelatihan.dashboard_admin')
+                : view('pelatihan.dashboard');
         })->name('pelatihan.dashboard');
 
+        // Dokumen KAK
         Route::get('/kak', function () {
             return view('pelatihan.kak');
-        });
+        })->name('pelatihan.kak');
 
         // Laporan Kinerja (LAPKIN)
         Route::get('/lapkin', [LapkinController::class, 'index'])->name('lapkin.index');
-        Route::post('/lapkin', [LapkinController::class, 'store'])->name('lapkin.store');
+        Route::post('/lapkin/store', [LapkinController::class, 'store'])->name('lapkin.store');
 
-        // Survailen Pelatihan
+        // Survailen Pelatihan (Alur Baru: User Upload 8 File)
+        // Survailen Pelatihan (Desk Evaluation)
         Route::get('/survailen', [SurvailenController::class, 'index'])->name('survailen.index');
         Route::get('/survailen/manage', [SurvailenController::class, 'adminIndex'])->name('survailen.admin');
+        Route::post('/survailen/evaluate/{id}', [SurvailenController::class, 'evaluate'])->name('survailen.evaluate');
 
         // Verifikasi Pelatihan
         Route::get('/verifikasi', [VerifikasiController::class, 'index'])->name('verifikasi.index');
         Route::get('/verifikasi/manage', [VerifikasiController::class, 'adminIndex'])->name('verifikasi.admin');
         Route::post('/verifikasi/store', [VerifikasiController::class, 'store'])->name('verifikasi.store');
 
-        // Master Data & Riwayat
+        // Master Data Pelatihan
         Route::get('/lembaga', function () {
             return view('pelatihan.lembaga_admin');
         })->name('lembaga.admin');
         Route::get('/history', function () {
-            if (auth()->user()->role == 'admin') {
-                return view('pelatihan.history');
-            }
-            return redirect('/pelatihan/dashboard');
-        });
+            return auth()->user()->role == 'admin' ? view('pelatihan.history') : redirect()->route('pelatihan.dashboard');
+        })->name('pelatihan.history');
+
+        // Pengiriman KTUN Pelatihan
+        Route::get('/ktun-admin', [KtunDeliveryController::class, 'indexAdmin'])->name('pelatihan.ktun_admin');
+        Route::get('/dokumen-ktun', [KtunDeliveryController::class, 'indexUser'])->name('pelatihan.ktun');
     });
 
-    // --- C. MODUL LEMBAGA UJI ---
+    // ---------------------------------------------------------------------
+    // C. KATEGORI: LEMBAGA UJI
+    // ---------------------------------------------------------------------
     Route::prefix('uji')->group(function () {
-        // 1. Dashboard Utama (Summary / Ringkasan)
+        // Dashboard
         Route::get('/dashboard', function () {
-            if (auth()->user()->role == 'admin') {
-                return view('uji.dashboard_admin');
-            }
-            return view('uji.dashboard');
+            return auth()->user()->role == 'admin'
+                ? view('uji.dashboard_admin')
+                : view('uji.dashboard');
         })->name('uji.dashboard');
 
-        // 2. Laporan Tahunan (Tabel & Input Dokumen)
+        // Laporan Tahunan
         Route::get('/laporan', function () {
-            // Halaman ini berisi tabel Laporan Tahunan yang sebelumnya ada di dashboard
             return view('uji.laporan');
         })->name('uji.laporan');
 
-        // 3. Survailen Uji
-        Route::get('/survailen', [SurvailenController::class, 'indexUji'])->name('survailen.uji.index');
-        Route::get('/survailen/manage', [SurvailenController::class, 'adminIndexUji'])->name('survailen.uji.admin');
+        // Survailen Uji (Alur Baru: Tabel Khusus)
+        Route::get('/survailen', [SurvailenController::class, 'index'])->name('survailen.uji.index');
+        Route::get('/survailen/manage', [SurvailenController::class, 'adminIndex'])->name('survailen.uji.admin');
 
-        // 4. Verifikasi Penunjukan Uji (User Side)
+        // Verifikasi Penunjukan (User & Admin)
         Route::get('/verifikasi', [VerifikasiController::class, 'ujiIndex'])->name('uji.verifikasi');
         Route::get('/verifikasi/respon/{id}', [VerifikasiController::class, 'ujiRespon'])->name('uji.verifikasi.respon');
-
-        // 5. Verifikasi Penunjukan Uji (Admin Side)
         Route::get('/verifikasiAdmin', [VerifikasiController::class, 'adminUjiIndex'])->name('uji.verifikasi_admin');
         Route::post('/verifikasiAdmin/store', [VerifikasiController::class, 'storeAdmin'])->name('uji.verifikasi_admin.store');
 
-        // Master Data & Riwayat
+        // Master Data Uji
         Route::get('/lembaga', function () {
             return view('uji.lembaga_admin');
         })->name('lembaga.adminUji');
-        
         Route::get('/history', function () {
-            if (auth()->user()->role == 'admin') {
-                return view('uji.history');
-            }
-            return redirect('/uji/dashboard');
-        });
+            return auth()->user()->role == 'admin' ? view('uji.history') : redirect()->route('uji.dashboard');
+        })->name('uji.history');
+
+        // Pengiriman KTUN Uji
+        Route::get('/ktun-admin', [KtunDeliveryController::class, 'indexAdmin'])->name('uji.ktun_admin');
+        Route::get('/dokumen-ktun', [KtunDeliveryController::class, 'indexUser'])->name('uji.ktun');
     });
 
-    // --- D. MODUL SINAR-X ---
+    // ---------------------------------------------------------------------
+    // D. KATEGORI: SINAR-X
+    // ---------------------------------------------------------------------
     Route::prefix('sinarx')->group(function () {
         Route::get('/dashboard', function () {
-            if (auth()->user()->role == 'admin') {
-                return view('sinarx.dashboard_admin');
-            }
-            return view('sinarx.dashboard');
+            return auth()->user()->role == 'admin'
+                ? view('sinarx.dashboard_admin')
+                : view('sinarx.dashboard');
         })->name('sinarx.dashboard');
 
-        // =======================================================
-        // TAMBAHKAN RUTE-RUTE INI UNTUK MENANGANI FORM SINAR-X
-        // =======================================================
-
-        // Aksi User (Rumah Sakit / Klinik)
+        // Fitur Amandemen Sinar-X (User Actions)
+        Route::get('/submission', [SinarxSubmissionController::class, 'index'])->name('sinarx.submission.index');
         Route::post('/submission', [SinarxSubmissionController::class, 'store'])->name('sinarx.submission.store');
         Route::put('/submission/{id}', [SinarxSubmissionController::class, 'update'])->name('sinarx.submission.update');
         Route::delete('/submission/{id}', [SinarxSubmissionController::class, 'destroy'])->name('sinarx.submission.destroy');
 
-        // Aksi Admin (Setuju / Tolak Amandemen)
+        // Validasi Amandemen (Admin Actions)
         Route::post('/submission/approve/{id}', [SinarxSubmissionController::class, 'approve'])->name('sinarx.submission.approve');
         Route::post('/submission/reject/{id}', [SinarxSubmissionController::class, 'reject'])->name('sinarx.submission.reject');
 
@@ -181,29 +197,55 @@ Route::middleware(['auth', 'verified'])->group(function () {
         })->name('lembaga.adminSinarx');
     });
 
+    // ---------------------------------------------------------------------
+    // E. AKSI GLOBAL: KTUN DELIVERY & SURVAILEN (TABEL KHUSUS)
+    // ---------------------------------------------------------------------
+
+    // Logika KTUN (3 File & Unlock via Survey)
+    Route::post('/ktun/send', [KtunDeliveryController::class, 'store'])->name('ktun.store');
+    Route::post('/ktun/survey/unlock/{id}', [KtunDeliveryController::class, 'submitSurvey'])->name('ktun.survey');
+    Route::delete('/ktun/delete/{id}', [KtunDeliveryController::class, 'destroy'])->name('ktun.destroy');
+
+    // Tahap 1: Simpan Self Assessment (User)
+    Route::post('/survailen/store-self', [SurvailenController::class, 'storeSelfAssessment'])->name('survailen.store.self');
+
+    // Tahap 2: Unggah 8 Dokumen (User)
+    Route::post('/survailen/store-docs/{id}', [SurvailenController::class, 'storeDocuments'])->name('survailen.store.docs');
+
+    // Tahap 3: Evaluasi/Verifikasi Asesor (Admin)
+    Route::post('/survailen/evaluate-process/{id}', [SurvailenController::class, 'evaluate'])->name('survailen.evaluate');
+
+    // Hapus Pengajuan
+    Route::delete('/survailen/remove-data/{id}', [SurvailenController::class, 'destroy'])->name('survailen.destroy');
+
+    // ---------------------------------------------------------------------
+    // F. AKSI GLOBAL: SUBMISSION CRUD (UNTUK LAPKIN, VERIFIKASI, DLL)
+    // ---------------------------------------------------------------------
     // --- E. GLOBAL SUBMISSION ACTIONS (CRUD UNTUK SEMUA MODUL) ---
     Route::post('/submission/store', [SubmissionController::class, 'store'])->name('submission.store');
     Route::put('/submission/update/{id}', [SubmissionController::class, 'update'])->name('submission.update');
     Route::delete('/submission/delete/{id}', [SubmissionController::class, 'destroy'])->name('submission.destroy');
-
-    // Alur Verifikasi Admin (Approve/Reject)
     Route::post('/submission/approve/{id}', [SubmissionController::class, 'approve'])->name('submission.approve');
     Route::post('/submission/reject/{id}', [SubmissionController::class, 'reject'])->name('submission.reject');
-
-    // Store khusus Survailen
-    Route::post('/submission/survailen/store', [SurvailenController::class, 'store'])->name('survailen.store');
 });
 
-// 4. PROFILE ROUTES
+
+// =========================================================================
+// 4. RUTE PROFIL PENGGUNA
+// =========================================================================
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
-    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
-    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+    Route::patch('/profile/update', [ProfileController::class, 'update'])->name('profile.update');
+    Route::delete('/profile/destroy', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
+
+// =========================================================================
+// 5. AUTHENTICATION CORE & OVERRIDE
+// =========================================================================
 require __DIR__ . '/auth.php';
 
-// 5. AUTHENTICATION OVERRIDE
+// Override default Laravel Breeze Auth untuk mendukung Multi-Portal
 Route::post('/register', [CustomRegisterController::class, 'register'])->middleware('guest')->name('register');
 Route::post('/login', [CustomLoginController::class, 'login'])->name('login');
 Route::post('/logout', [CustomLoginController::class, 'logout'])->middleware('auth')->name('logout');

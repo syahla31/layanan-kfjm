@@ -283,12 +283,30 @@
                         </div>
                     </div>
 
-                    <div class="bg-white p-8 rounded-[2rem] border border-slate-200 shadow-sm space-y-4">
+                    <div class="bg-white p-6 md:p-8 rounded-[2rem] border border-slate-200 shadow-sm space-y-4">
                         <div class="flex items-center gap-2 mb-2">
                             <span class="w-1.5 h-4 bg-orange-500 rounded-full"></span>
                             <h4 class="text-[10px] font-black text-orange-600 uppercase tracking-widest">Detail Tabel Amandemen</h4>
                         </div>
-                        <div class="overflow-hidden border border-slate-200 rounded-2xl">
+
+                        <!-- MOBILE: Card stacked -->
+                        <div class="md:hidden space-y-3">
+                            <div class="bg-slate-50 rounded-2xl p-4 border border-slate-100">
+                                <span class="text-[9px] font-black text-slate-400 uppercase tracking-widest block mb-1.5">Bagian Perbaikan</span>
+                                <p class="font-bold text-slate-800 text-sm" id="detailBagian">-</p>
+                            </div>
+                            <div class="bg-rose-50/60 rounded-2xl p-4 border border-rose-100">
+                                <span class="text-[9px] font-black text-rose-400 uppercase tracking-widest block mb-1.5">Ketidaksesuaian</span>
+                                <p class="italic text-slate-600 text-sm whitespace-pre-wrap leading-relaxed" id="detailSalah">-</p>
+                            </div>
+                            <div class="bg-emerald-50/60 rounded-2xl p-4 border border-emerald-100">
+                                <span class="text-[9px] font-black text-emerald-500 uppercase tracking-widest block mb-1.5">Data Sesuai</span>
+                                <p class="font-bold text-emerald-700 text-sm whitespace-pre-wrap leading-relaxed" id="detailBenar">-</p>
+                            </div>
+                        </div>
+
+                        <!-- DESKTOP: Table -->
+                        <div class="hidden md:block overflow-hidden border border-slate-200 rounded-2xl">
                             <table class="w-full text-xs text-left">
                                 <thead class="bg-slate-50 border-b border-slate-200 text-slate-400 uppercase font-bold text-[9px]">
                                     <tr>
@@ -299,9 +317,9 @@
                                 </thead>
                                 <tbody class="divide-y divide-slate-100 text-slate-700">
                                     <tr>
-                                        <td class="px-4 py-4 font-bold text-center" id="detailBagian">-</td>
-                                        <td class="px-4 py-4 italic whitespace-pre-wrap text-left" id="detailSalah">-</td>
-                                        <td class="px-4 py-4 font-bold text-emerald-600 whitespace-pre-wrap text-left" id="detailBenar">-</td>
+                                        <td class="px-4 py-4 font-bold text-center" id="detailBagianDesktop">-</td>
+                                        <td class="px-4 py-4 italic whitespace-pre-wrap text-left" id="detailSalahDesktop">-</td>
+                                        <td class="px-4 py-4 font-bold text-emerald-600 whitespace-pre-wrap text-left" id="detailBenarDesktop">-</td>
                                     </tr>
                                 </tbody>
                             </table>
@@ -325,20 +343,20 @@
                 </div>
             </div>
 
-            <div class="px-10 py-8 border-t border-slate-100 bg-white/95 backdrop-blur-xl shrink-0">
-                <div id="defaultActions" class="flex flex-col sm:flex-row gap-4">
-                    <button type="button" onclick="openConfirmApprove()" class="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-4 rounded-2xl shadow-xl transition-all active:scale-95 flex items-center justify-center gap-3">
-                        <i class="fas fa-check-circle text-lg"></i> <span>Verifikasi & Setujui</span>
+            <div class="px-5 py-4 md:px-10 md:py-6 border-t border-slate-100 bg-white/95 backdrop-blur-xl shrink-0">
+                <div id="defaultActions" class="flex flex-col sm:flex-row gap-3">
+                    <button type="button" onclick="openConfirmApprove()" class="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2.5 md:py-4 text-sm rounded-2xl shadow-xl transition-all active:scale-95 flex items-center justify-center gap-2">
+                        <i class="fas fa-check-circle"></i> <span>Verifikasi & Setujui</span>
                     </button>
-                    <button type="button" onclick="showRevisionField()" class="flex-1 bg-slate-100 hover:bg-rose-50 hover:text-rose-600 text-slate-500 font-bold py-4 rounded-2xl transition-all active:scale-95 flex items-center justify-center gap-3 border border-transparent">
-                        <i class="fas fa-edit text-lg"></i> <span>Minta Revisi</span>
+                    <button type="button" onclick="showRevisionField()" class="flex-1 bg-slate-100 hover:bg-rose-50 hover:text-rose-600 text-slate-500 font-bold py-2.5 md:py-4 text-sm rounded-2xl transition-all active:scale-95 flex items-center justify-center gap-2 border border-transparent">
+                        <i class="fas fa-edit"></i> <span>Minta Revisi</span>
                     </button>
                 </div>
-                <div id="revisionActions" class="hidden flex flex-col sm:flex-row gap-4">
-                    <button type="button" onclick="document.getElementById('rejectForm').submit()" class="flex-[2] bg-rose-600 hover:bg-rose-700 text-white font-bold py-4 rounded-2xl shadow-lg transition-all active:scale-95 flex items-center justify-center gap-3">
+                <div id="revisionActions" class="hidden flex flex-col sm:flex-row gap-3">
+                    <button type="button" onclick="document.getElementById('rejectForm').submit()" class="flex-[2] bg-rose-600 hover:bg-rose-700 text-white font-bold py-2.5 md:py-4 text-sm rounded-2xl shadow-lg transition-all active:scale-95 flex items-center justify-center gap-2">
                         <i class="fas fa-paper-plane"></i> <span>Kirim Catatan Revisi</span>
                     </button>
-                    <button type="button" onclick="cancelRevision()" class="flex-1 bg-white text-slate-400 font-bold py-4 rounded-2xl transition-all hover:bg-slate-50 border border-slate-200">
+                    <button type="button" onclick="cancelRevision()" class="flex-1 bg-white text-slate-400 font-bold py-2.5 md:py-4 text-sm rounded-2xl transition-all hover:bg-slate-50 border border-slate-200">
                         Batal
                     </button>
                 </div>
@@ -501,10 +519,15 @@
             document.getElementById('reviewSertif').innerText = currentActiveData.sertif;
             document.getElementById('reviewNomorSurat').innerText = currentActiveData.nomorsurat;
             
+            // Mobile cards
             document.getElementById('detailBagian').innerText = currentActiveData.bagian;
             document.getElementById('detailSalah').innerText = currentActiveData.salah;
             document.getElementById('detailBenar').innerText = currentActiveData.benar;
-            
+            // Desktop table
+            document.getElementById('detailBagianDesktop').innerText = currentActiveData.bagian;
+            document.getElementById('detailSalahDesktop').innerText = currentActiveData.salah;
+            document.getElementById('detailBenarDesktop').innerText = currentActiveData.benar;
+                        
             const iframe = document.getElementById('pdfPreviewFrame');
             const fallback = document.getElementById('pdfFallback');
 

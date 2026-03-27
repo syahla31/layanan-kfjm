@@ -111,12 +111,6 @@
                 ])
             </div>
             
-            <!-- Header Mobile Title (Opsional jika include header terlalu besar buat HP) -->
-            <div class="lg:hidden px-4 pt-4 pb-2">
-                <h1 class="text-xl font-bold text-slate-800">Dashboard KAK</h1>
-                <p class="text-xs text-slate-500">Kelola pengajuan Kerangka Acuan Kerja</p>
-            </div>
-
             <!-- MAIN CONTENT -->
             <main class="flex-1 overflow-x-hidden overflow-y-auto p-4 md:p-8 relative">
 
@@ -438,54 +432,97 @@
         </div>
     </div>
 
-    <!-- MODAL FORMULIR (INPUT) -->
+    <!-- === MODAL FORMULIR === -->
     <div id="submissionModal" class="fixed inset-0 z-50 hidden" aria-labelledby="modal-title" role="dialog" aria-modal="true">
         <div class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm transition-opacity" onclick="closeModal()"></div>
         <div class="fixed inset-0 z-10 overflow-y-auto">
-            <div class="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
-                <div class="relative transform overflow-hidden rounded-2xl bg-white text-left shadow-2xl transition-all sm:my-8 sm:w-full sm:max-w-lg border border-slate-100 animate-pop-in">
+            <div class="flex min-h-full items-center justify-center p-4 text-center sm:p-0">
+                <div class="relative transform overflow-hidden rounded-2xl bg-white text-left shadow-2xl transition-all w-full sm:max-w-md border border-slate-100 animate-pop-in">
+                    
+                    <!-- Modal Header -->
                     <div class="bg-gradient-to-r from-indigo-600 to-indigo-700 px-6 py-4 flex justify-between items-center">
-                        <h3 class="text-lg font-bold text-white flex items-center gap-2" id="modalTitle">Upload KAK</h3>
-                        <button onclick="closeModal()" class="text-indigo-100 hover:text-white transition-colors bg-indigo-800/20 hover:bg-indigo-800/40 rounded-lg p-1"><i class="fas fa-times text-lg"></i></button>
+                        <h3 class="text-base font-bold text-white flex items-center gap-2" id="modalTitle">
+                            <i class="fas fa-file-upload text-sm"></i> Upload KAK
+                        </h3>
+                        <button onclick="closeModal()" class="text-indigo-200 hover:text-white bg-white/10 hover:bg-white/20 rounded-lg p-1.5 transition-colors">
+                            <i class="fas fa-times text-sm"></i>
+                        </button>
                     </div>
+
                     <form id="submissionForm" method="POST" enctype="multipart/form-data" action="{{ route('submission.store') }}">
                         @csrf
-                        <div id="methodField"></div> 
+                        <div id="methodField"></div>
                         <input type="hidden" name="type" value="KAK">
-                        <div class="px-6 py-6 space-y-5">
-                            <div class="bg-indigo-50 border border-indigo-100 rounded-lg p-3 flex items-start gap-3">
-                                <i class="fas fa-info-circle text-indigo-500 mt-0.5"></i>
+                        
+                        <div class="px-6 py-5 space-y-4">
+                            <!-- Info Box -->
+                            <div class="bg-indigo-50 border border-indigo-100 rounded-xl p-3 flex items-center gap-3">
+                                <div class="w-8 h-8 bg-indigo-100 rounded-lg flex items-center justify-center text-indigo-600 flex-shrink-0">
+                                    <i class="fas fa-clipboard-check text-sm"></i>
+                                </div>
                                 <div>
-                                    <p class="text-xs font-bold text-indigo-800">Jenis Dokumen</p>
-                                    <p class="text-xs text-indigo-600">Kerangka Acuan Kerja (KAK)</p>
+                                    <p class="text-[10px] font-bold text-indigo-400 uppercase tracking-widest">Jenis Dokumen</p>
+                                    <p class="text-sm font-bold text-indigo-900">Kerangka Acuan Kerja (KAK)</p>
                                 </div>
                             </div>
-                            <div class="space-y-1">
-                                <label class="block text-xs font-bold text-slate-500 uppercase tracking-wide">Judul Kegiatan / Dokumen</label>
-                                <input type="text" name="title" id="inputTitle" class="block w-full rounded-xl border-slate-300 bg-slate-50 p-2.5 text-sm shadow-sm focus:border-indigo-500 focus:ring-indigo-500" placeholder="Contoh: KAK Pelatihan Teknis 2026" required>
+
+                            <!-- Input Judul -->
+                            <div class="space-y-1.5">
+                                <label class="text-xs font-bold text-slate-500 uppercase tracking-wider flex items-center gap-1.5">
+                                    <i class="fas fa-heading text-[10px]"></i> Judul Kegiatan
+                                </label>
+                                <input type="text" name="title" id="inputTitle"
+                                    class="block w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-2.5 text-sm font-medium shadow-sm focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 placeholder:text-slate-400 outline-none transition-all"
+                                    placeholder="Masukkan judul kegiatan..." required>
                             </div>
-                            <div class="space-y-1">
-                                <label class="block text-xs font-bold text-slate-500 uppercase tracking-wide">File PDF (Max 10MB)</label>
-                                <div class="mt-1 flex justify-center rounded-xl border-2 border-dashed border-slate-300 px-6 py-8 hover:bg-slate-50 hover:border-indigo-400 transition-colors group relative cursor-pointer">
-                                    <div class="text-center">
-                                        <div class="mx-auto h-12 w-12 text-slate-300 group-hover:text-indigo-500 transition-colors"><i class="fas fa-cloud-upload-alt text-3xl"></i></div>
-                                        <div class="mt-2 flex text-sm leading-6 text-slate-600 justify-center">
-                                            <label for="inputFile" class="relative cursor-pointer rounded-md bg-transparent font-bold text-indigo-600 hover:text-indigo-500">
-                                                <span>Pilih file</span>
-                                                <input id="inputFile" name="file_upload" type="file" class="sr-only" accept=".pdf" onchange="showFileName(this)">
-                                            </label>
-                                            <p class="pl-1">atau drag and drop</p>
-                                        </div>
-                                        <p class="text-xs leading-5 text-slate-500">PDF hingga 10MB</p>
-                                        <p id="fileNameDisplay" class="mt-2 text-sm font-bold text-slate-800 hidden"></p>
+
+                            <!-- Upload File -->
+                            <div class="space-y-1.5">
+                                <label class="text-xs font-bold text-slate-500 uppercase tracking-wider flex items-center gap-1.5">
+                                    <i class="fas fa-file-pdf text-[10px]"></i> Dokumen PDF <span class="text-slate-400 font-normal normal-case tracking-normal">(maks. 2MB)</span>
+                                </label>
+
+                                <input id="inputFile" name="file_upload" type="file" class="hidden" accept=".pdf" onchange="showFileName(this)">
+                                
+                                <!-- State: Empty -->
+                                <label for="inputFile" id="uploadArea" class="flex items-center gap-3 w-full px-4 py-3 rounded-xl border-2 border-dashed border-slate-200 bg-slate-50 cursor-pointer hover:bg-indigo-50/40 hover:border-indigo-300 transition-all">
+                                    <div class="w-9 h-9 bg-white rounded-lg shadow-sm flex items-center justify-center text-slate-300 flex-shrink-0">
+                                        <i class="fas fa-cloud-upload-alt text-lg"></i>
                                     </div>
+                                    <div>
+                                        <p class="text-sm font-semibold text-slate-600">Klik untuk pilih file</p>
+                                        <p class="text-[11px] text-slate-400">Format PDF saja, maksimal 2MB</p>
+                                    </div>
+                                </label>
+
+                                <!-- State: File terpilih -->
+                                <div id="fileSelectedState" class="hidden items-center gap-3 w-full px-4 py-3 rounded-xl border border-indigo-200 bg-indigo-50">
+                                    <div class="w-9 h-9 bg-rose-100 rounded-lg flex items-center justify-center text-rose-500 flex-shrink-0">
+                                        <i class="far fa-file-pdf text-lg"></i>
+                                    </div>
+                                    <div class="flex-1 min-w-0">
+                                        <p id="fileNameText" class="text-xs font-bold text-slate-800 truncate"></p>
+                                        <p class="text-[10px] text-indigo-500 font-medium">File terpilih</p>
+                                    </div>
+                                    <label for="inputFile" class="text-[10px] text-indigo-600 hover:text-indigo-800 font-bold cursor-pointer flex-shrink-0">Ganti</label>
                                 </div>
-                                <p class="text-[11px] text-amber-600 mt-2 hidden flex items-center gap-1 bg-amber-50 p-2 rounded" id="fileNote"><i class="fas fa-info-circle"></i> Biarkan kosong jika tidak ingin mengganti file saat revisi.</p>
+
+                                <!-- Note Revisi -->
+                                <div id="fileNote" class="hidden items-start gap-2 bg-amber-50 border border-amber-100 p-2.5 rounded-xl">
+                                    <i class="fas fa-info-circle text-amber-500 text-xs mt-0.5 flex-shrink-0"></i>
+                                    <p class="text-[11px] text-amber-700 leading-relaxed">Biarkan kosong jika tidak ingin mengganti file.</p>
+                                </div>
                             </div>
                         </div>
-                        <div class="bg-slate-50 px-6 py-4 flex flex-row-reverse gap-3 border-t border-slate-100">
-                            <button type="submit" class="inline-flex w-full justify-center rounded-xl bg-indigo-600 px-5 py-2.5 text-sm font-bold text-white shadow-sm hover:bg-indigo-700 sm:w-auto transition-colors">Simpan KAK</button>
-                            <button type="button" onclick="closeModal()" class="inline-flex w-full justify-center rounded-xl bg-white px-5 py-2.5 text-sm font-bold text-slate-700 shadow-sm ring-1 ring-inset ring-slate-300 hover:bg-slate-50 sm:w-auto transition-colors">Batal</button>
+
+                        <!-- Footer -->
+                        <div class="bg-slate-50 px-6 py-4 flex flex-col gap-2 border-t border-slate-100 sm:flex-row-reverse">
+                            <button type="submit" class="inline-flex w-full sm:w-auto justify-center items-center rounded-xl bg-indigo-600 px-5 py-2.5 text-sm font-bold text-white shadow-md hover:bg-indigo-700 active:scale-95 transition-all gap-2">
+                                <i class="fas fa-save text-xs"></i> Simpan Dokumen
+                            </button>
+                            <button type="button" onclick="closeModal()" class="inline-flex w-full sm:w-auto justify-center items-center rounded-xl bg-white px-5 py-2.5 text-sm font-bold text-slate-500 border border-slate-200 hover:bg-slate-100 transition-all">
+                                Batal
+                            </button>
                         </div>
                     </form>
                 </div>
@@ -598,13 +635,19 @@
 
         // === FORM & HISTORY LOGIC ===
         function showFileName(input) {
-            const display = document.getElementById('fileNameDisplay');
+            const uploadArea = document.getElementById('uploadArea');
+            const fileSelectedState = document.getElementById('fileSelectedState');
+            const fileNameText = document.getElementById('fileNameText');
+
             if (input.files && input.files[0]) {
-                display.textContent = "File terpilih: " + input.files[0].name;
-                display.classList.remove('hidden');
-                display.classList.add('text-indigo-600');
+                fileNameText.textContent = input.files[0].name;
+                uploadArea.classList.add('hidden');
+                fileSelectedState.classList.remove('hidden');
+                fileSelectedState.classList.add('flex');
             } else {
-                display.classList.add('hidden');
+                uploadArea.classList.remove('hidden');
+                fileSelectedState.classList.add('hidden');
+                fileSelectedState.classList.remove('flex');
             }
         }
 
@@ -616,26 +659,33 @@
             const inputTitle = document.getElementById('inputTitle');
             const inputFile = document.getElementById('inputFile');
             const fileNote = document.getElementById('fileNote');
-            const fileNameDisplay = document.getElementById('fileNameDisplay');
+            const uploadArea = document.getElementById('uploadArea');
+            const fileSelectedState = document.getElementById('fileSelectedState');
+
+            // Reset tampilan file ke state awal
+            inputFile.value = '';
+            uploadArea.classList.remove('hidden');
+            fileSelectedState.classList.add('hidden');
+            fileSelectedState.classList.remove('flex');
 
             modal.classList.remove('hidden');
-            fileNameDisplay.classList.add('hidden'); 
-            inputFile.value = ''; 
 
             if (mode === 'add') {
-                modalTitle.innerHTML = '<i class="fas fa-plus-circle"></i> Upload KAK Baru';
+                modalTitle.innerHTML = '<i class="fas fa-plus-circle text-sm"></i> Upload KAK Baru';
                 form.action = "{{ route('submission.store') }}";
-                methodField.innerHTML = ''; 
+                methodField.innerHTML = '';
                 inputTitle.value = '';
-                inputFile.required = true; 
+                inputFile.required = true;
                 fileNote.classList.add('hidden');
+                fileNote.classList.remove('flex');
             } else {
-                modalTitle.innerHTML = '<i class="fas fa-edit"></i> Revisi KAK';
+                modalTitle.innerHTML = '<i class="fas fa-edit text-sm"></i> Revisi KAK';
                 form.action = "{{ url('/submission/update') }}/" + id;
                 methodField.innerHTML = '<input type="hidden" name="_method" value="PUT">';
                 inputTitle.value = title;
-                inputFile.required = false; 
+                inputFile.required = false;
                 fileNote.classList.remove('hidden');
+                fileNote.classList.add('flex');
             }
         }
 

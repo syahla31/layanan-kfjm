@@ -371,13 +371,27 @@
                                                     $parts = explode(' - ', $item->type);
                                                     $scope = $parts[0] ?? $item->type;
                                                     $type = $parts[1] ?? '';
+
+                                                    // Logika pemetaan warna berdasarkan scope
+                                                    $badgeColors = [
+                                                        'LUK'                       => 'bg-indigo-50 text-indigo-600 border-indigo-100',
+                                                        'Eksterna'                  => 'bg-orange-50 text-orange-600 border-orange-100',
+                                                        'Nuklida'                   => 'bg-rose-50 text-rose-600 border-rose-100',
+                                                        'Radioterapi'               => 'bg-purple-50 text-purple-600 border-purple-100',
+                                                        'Radioaktivitas Lingkungan' => 'bg-teal-50 text-teal-600 border-teal-100',
+                                                    ];
+
+                                                    // Ambil warna, kalau tidak ketemu default ke slate abu-abu
+                                                    $currentColor = $badgeColors[$scope] ?? 'bg-slate-50 text-slate-600 border-slate-200';
                                                 @endphp
+
                                                 <div class="flex flex-col items-start gap-1">
-                                                    <span
-                                                        class="px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wide border border-slate-200 bg-slate-50 text-slate-600">{{ $scope }}</span>
+                                                    <span class="px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wide border {{ $currentColor }}">
+                                                        {{ $scope }}
+                                                    </span>
+                                                    
                                                     @if ($type)
-                                                        <span
-                                                            class="text-xs text-slate-500">{{ $type }}</span>
+                                                        <span class="text-xs text-slate-500">{{ $type }}</span>
                                                     @endif
                                                 </div>
                                             </td>
@@ -467,13 +481,13 @@
                                 class="fas fa-times text-lg"></i></button>
                     </div>
                     <form id="submissionForm" method="POST" enctype="multipart/form-data"
-                        action="{{ route('submission.store') }}" class="p-6 space-y-5 text-left">
+                        action="{{ route('submission.store') }}" class="px-6 pb-6 pt-2 space-y-4 text-left">
                         @csrf
                         <div id="methodField"></div>
                         <input type="hidden" name="type" id="finalType">
                         <input type="hidden" id="scopeValue" value="LUK">
 
-                        <div class="space-y-1.5">
+                        <div class="space-y-1.5 !mt-2">
                             <label class="text-xs font-bold text-slate-500 uppercase tracking-wider">Lingkup
                                 Layanan</label>
                             <div class="relative" id="customScopeDropdown">
@@ -539,6 +553,16 @@
                             </div>
                             <p class="text-[10px] text-amber-600 flex items-center gap-1 hidden px-1" id="fileNote">
                                 <i class="fas fa-info-circle"></i> Biarkan kosong jika tidak ingin mengganti file.</p>
+                        </div>
+
+                        <div id="radiotherapyNote" class="hidden animate-fade-in-up">
+                            <div class="bg-purple-50 border border-purple-200 rounded-lg p-3 flex gap-3">
+                                <i class="fas fa-info-circle text-purple-600 mt-0.5"></i>
+                                <div class="text-xs text-purple-800 leading-relaxed">
+                                    <strong>Catatan Radioterapi:</strong><br>
+                                    Harap pastikan Anda telah menyertakan <b>Hasil Uji LHU</b> dan <b>Sertifikat</b> terkait dalam satu file PDF yang sama sebelum mengunggah.
+                                </div>
+                            </div>
                         </div>
 
                         <div class="flex items-center gap-3 pt-2">
@@ -649,7 +673,41 @@
                 };
                 new ApexCharts(document.querySelector("#statusChart"), options).render();
             }
+            const searchInput = document.getElementById('tableSearch');
+            const tableRows = document.querySelectorAll('#mainTable tbody tr');
+
+            searchInput.addEventListener('input', function() {
+                const searchTerm = this.value.toLowerCase();
+
+                tableRows.forEach(row => {
+                    // Kita ambil teks dari kolom pertama (Dokumen) dan kedua (Kategori)
+                    const docTitle = row.querySelector('td:first-child')?.innerText.toLowerCase() || "";
+                    
+                    if (docTitle.includes(searchTerm)) {
+                        row.style.display = ""; // Tampilkan jika cocok
+                    } else {
+                        row.style.display = "none"; // Sembunyikan jika tidak cocok
+                    }
+                });
+                
+                // Opsional: Tampilkan pesan "Data tidak ditemukan" jika semua baris tersembunyi
+                checkEmptyTable();
+            });
         });
+
+        function checkEmptyTable() {
+            const tbody = document.querySelector('#mainTable tbody');
+            const visibleRows = Array.from(tbody.querySelectorAll('tr')).filter(row => row.style.display !== 'none');
+            
+            // Hapus pesan "tidak ditemukan" yang lama jika ada
+            const oldMsg = document.getElementById('no-results-msg');
+            if (oldMsg) oldMsg.remove();
+
+            if (visibleRows.length === 0) {
+                const noResults = `<tr id="no-results-msg"><td colspan="5" class="px-6 py-24 text-center text-slate-400">Dokumen tidak ditemukan.</td></tr>`;
+                tbody.insertAdjacentHTML('beforeend', noResults);
+            }
+        }
 
         // === FILE SIZE VALIDATION ===
         function updateFileName(input) {
@@ -663,7 +721,7 @@
                     Swal.fire({
                         icon: 'error',
                         title: 'File Terlalu Besar',
-                        text: 'Maksimal ukuran file laporan adalah 10 MB.',
+                        text: 'Maksimal ukuran file laporan adalah 2 MB.',
                         confirmButtonColor: '#0f766e',
                         customClass: {
                             popup: 'rounded-2xl'
@@ -717,6 +775,15 @@
         function selectScope(value, text, shouldToggle = true) {
             document.getElementById('scopeValue').value = value;
             document.getElementById('selectedScopeText').innerText = text;
+            
+            // Logika untuk menampilkan note Radioterapi
+            const radioNote = document.getElementById('radiotherapyNote');
+            if (value === 'Radioterapi') {
+                radioNote.classList.remove('hidden');
+            } else {
+                radioNote.classList.add('hidden');
+            }
+
             if (shouldToggle) toggleDropdown('dropdownMenuScope', 'arrowScope');
         }
 
@@ -733,7 +800,8 @@
                 methodField.innerHTML = '';
                 inputTitle.value = '';
                 fileNote.classList.add('hidden');
-                selectScope('LUK', 'Lembaga Uji Kesesuaian', false);
+                document.getElementById('radiotherapyNote').classList.add('hidden'); // Reset note
+                selectScope('LUK', 'Lembaga Uji Kesesuaian', false); // Reset scope     
             } else {
                 modalTitleSpan.innerText = 'Revisi Laporan';
                 form.action = "{{ url('/submission/update') }}/" + id;

@@ -5,27 +5,21 @@ namespace App\Exports;
 use Maatwebsite\Excel\Concerns\FromCollection;
 use Maatwebsite\Excel\Concerns\WithHeadings;
 use Maatwebsite\Excel\Concerns\WithMapping;
-use Maatwebsite\Excel\Concerns\ShouldAutoSize;
-use Maatwebsite\Excel\Concerns\WithStyles;
-use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
-use PhpOffice\PhpSpreadsheet\Style\Fill;
-use Illuminate\Support\Collection;
 
-class UsersExport implements FromCollection, WithHeadings, WithMapping, ShouldAutoSize, WithStyles
+class UsersExport implements FromCollection, WithHeadings, WithMapping
 {
     protected $users;
 
     /**
-     * @param Collection $users
+     * Menerima data users dari Controller
      */
     public function __construct($users)
     {
-        // Memastikan data selalu dalam bentuk Collection agar FromCollection tidak error
-        $this->users = $users instanceof Collection ? $users : collect($users);
+        $this->users = $users;
     }
 
     /**
-     * @return Collection
+     * Mengembalikan koleksi data
      */
     public function collection()
     {
@@ -33,50 +27,32 @@ class UsersExport implements FromCollection, WithHeadings, WithMapping, ShouldAu
     }
 
     /**
-     * @return array
+     * Menentukan Header/Judul Kolom di Excel
      */
     public function headings(): array
     {
         return [
-            'ID SYSTEM',
-            'NAMA INSTANSI',
-            'EMAIL KORESPONDENSI',
-            'KATEGORI MODUL',
-            'STATUS AKUN',
-            'TANGGAL REGISTRASI',
+            'ID',
+            'Nama Instansi',
+            'Email',
+            'Kategori',
+            'Status',
+            'Tanggal Registrasi',
         ];
     }
 
     /**
-     * @param mixed $user
-     * @return array
+     * Memetakan data dari model ke kolom Excel
      */
     public function map($user): array
     {
         return [
-            '#' . str_pad($user->id, 5, '0', STR_PAD_LEFT),
-            strtoupper($user->name),
+            $user->id,
+            $user->name,
             $user->email,
-            strtoupper($user->category),
-            $user->status === 'active' ? 'AKTIF' : 'PENDING',
-            $user->created_at ? $user->created_at->format('d/m/Y H:i') : '-',
-        ];
-    }
-
-    /**
-     * @param Worksheet $sheet
-     * @return array
-     */
-    public function styles(Worksheet $sheet)
-    {
-        return [
-            1 => [
-                'font' => ['bold' => true, 'size' => 12],
-                'fill' => [
-                    'fillType' => Fill::FILL_SOLID,
-                    'startColor' => ['argb' => 'F2F2F2'],
-                ]
-            ],
+            ucfirst($user->category),
+            strtoupper($user->status),
+            $user->created_at->format('d/m/Y'),
         ];
     }
 }

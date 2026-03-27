@@ -183,85 +183,92 @@
                     </div>
 
                     <div class="overflow-x-auto no-scrollbar">
-                        <table class="w-full text-sm text-left text-slate-600 min-w-[900px] md:min-w-0">
-                            <thead class="text-xs text-slate-500 uppercase bg-slate-50 border-b border-slate-200">
+                        <table class="w-full text-sm text-left text-slate-600">
+                            <thead class="text-[11px] text-slate-400 uppercase bg-slate-50/80 border-b border-slate-100">
                                 <tr>
-                                    <th class="px-6 py-4 font-bold tracking-wider w-40">Tgl Disetujui</th>
-                                    <th class="px-6 py-4 font-bold tracking-wider">Lembaga Pengirim</th>
-                                    <th class="px-6 py-4 font-bold tracking-wider">Jenis & Judul</th>
-                                    <th class="px-6 py-4 font-bold tracking-wider">Dokumen Final</th>
-                                    <th class="px-6 py-4 font-bold tracking-wider text-center">Respon Admin</th>
-                                    <th class="px-6 py-4 font-bold tracking-wider text-center w-20">Jejak</th>
-                                    <th class="px-6 py-4 font-bold tracking-wider text-center">Status</th>
+                                    <th class="px-5 py-3 font-semibold tracking-wider">Lembaga</th>
+                                    <th class="px-5 py-3 font-semibold tracking-wider">Dokumen</th>
+                                    <th class="px-5 py-3 font-semibold tracking-wider text-center">Tgl Disetujui</th>
+                                    <th class="px-5 py-3 font-semibold tracking-wider text-center">File</th>
+                                    <th class="px-5 py-3 font-semibold tracking-wider text-center">Jejak</th>
                                 </tr>
                             </thead>
-                            <tbody class="divide-y divide-slate-100">
+                            <tbody class="divide-y divide-slate-50">
                                 @forelse($histories as $item)
                                 <tr class="table-row-hover transition-colors group">
-                                    <td class="px-6 py-5 whitespace-nowrap">
-                                        <div class="flex flex-col">
-                                            <span class="font-bold text-slate-700">{{ $item->updated_at->format('d M Y') }}</span>
-                                            <span class="text-xs text-slate-400 mt-0.5">{{ $item->updated_at->format('H:i') }} WIB</span>
-                                        </div>
-                                    </td>
-                                    <td class="px-6 py-5">
-                                        <div class="flex items-start gap-3">
-                                            <div class="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center text-slate-500 text-xs font-bold shrink-0 mt-0.5">
+
+                                    {{-- Lembaga --}}
+                                    <td class="px-5 py-3.5">
+                                        <div class="flex items-center gap-2.5">
+                                            <div class="w-7 h-7 rounded-full bg-slate-100 flex items-center justify-center text-slate-500 text-xs font-bold shrink-0">
                                                 {{ substr($item->user->name ?? '?', 0, 1) }}
                                             </div>
-                                            <div>
-                                                <div class="font-bold text-slate-700 line-clamp-1 text-sm">{{ $item->user->name ?? 'Unknown' }}</div>
-                                                <div class="text-[10px] text-slate-400 font-mono mt-0.5">{{ $item->user->kode_instansi ?? '-' }}</div>
+                                            <div class="min-w-0">
+                                                <p class="font-semibold text-slate-700 text-xs truncate max-w-[140px]">{{ $item->user->name ?? 'Unknown' }}</p>
+                                                <p class="text-[10px] text-slate-400 font-mono">{{ $item->user->kode_instansi ?? '-' }}</p>
                                             </div>
                                         </div>
                                     </td>
-                                    <td class="px-6 py-5">
-                                        <div class="flex flex-col gap-1.5">
-                                            @php
-                                                $badgeColor = $item->type == 'KAK' ? 'bg-indigo-100 text-indigo-700 border-indigo-200' : 'bg-teal-100 text-teal-700 border-teal-200';
-                                            @endphp
-                                            <span class="{{ $badgeColor }} border text-[10px] px-2 py-0.5 rounded font-bold w-fit tracking-wider uppercase">{{ $item->type }}</span>
-                                            <span class="text-slate-800 font-medium text-sm line-clamp-1" title="{{ $item->title }}">{{ $item->title }}</span>
+
+                                    {{-- Dokumen --}}
+                                    <td class="px-5 py-3.5">
+                                        <div class="flex items-center gap-2">
+                                            @if($item->type == 'KAK')
+                                                <span class="bg-indigo-50 text-indigo-600 border border-indigo-100 text-[10px] px-1.5 py-0.5 rounded font-bold shrink-0">KAK</span>
+                                            @else
+                                                <span class="bg-teal-50 text-teal-600 border border-teal-100 text-[10px] px-1.5 py-0.5 rounded font-bold shrink-0">LAPKIN</span>
+                                            @endif
+                                            <span class="text-slate-700 font-medium text-xs truncate max-w-[200px]" title="{{ $item->title }}">{{ $item->title }}</span>
                                         </div>
                                     </td>
-                                    <td class="px-6 py-5">
-                                        <a href="{{ asset('storage/' . $item->file_path) }}" target="_blank" class="inline-flex items-center gap-1.5 bg-blue-50 border border-blue-100 text-blue-700 px-3 py-1.5 rounded-lg text-xs font-bold hover:bg-blue-100 transition-all">
-                                            <i class="far fa-file-pdf text-red-500"></i> Lihat File
-                                        </a>
+
+                                    {{-- Tanggal --}}
+                                    <td class="px-5 py-3.5 text-center whitespace-nowrap">
+                                        <p class="text-xs font-semibold text-slate-600">{{ $item->updated_at->format('d M Y') }}</p>
+                                        <p class="text-[10px] text-slate-400">{{ $item->updated_at->format('H:i') }} WIB</p>
                                     </td>
-                                    <td class="px-6 py-5 text-center">
-                                        @if($item->admin_file)
-                                            <a href="{{ asset('storage/' . $item->admin_file) }}" target="_blank" class="inline-flex items-center gap-1.5 text-emerald-600 hover:text-emerald-800 bg-emerald-50 px-3 py-1.5 rounded-lg text-xs font-bold transition-colors border border-emerald-100 hover:border-emerald-200">
-                                                <i class="fas fa-certificate"></i> Unduh SK
+
+                                    {{-- File + SK --}}
+                                    <td class="px-5 py-3.5 text-center">
+                                        <div class="flex items-center justify-center gap-2">
+                                            <a href="{{ asset('storage/' . $item->file_path) }}" target="_blank"
+                                                class="inline-flex items-center gap-1 text-[11px] font-semibold text-slate-500 hover:text-indigo-600 bg-slate-50 hover:bg-indigo-50 border border-slate-100 hover:border-indigo-200 px-2.5 py-1.5 rounded-lg transition-all"
+                                                title="Dokumen Final">
+                                                <i class="far fa-file-pdf text-rose-400"></i> PDF
                                             </a>
-                                        @else
-                                            <div class="flex justify-center">
-                                                <span class="flex items-center gap-1 text-[10px] font-bold text-emerald-600 bg-emerald-100/50 px-2 py-0.5 rounded-full border border-emerald-200">
-                                                    <i class="fas fa-check-circle"></i> SELESAI
+                                            @if($item->admin_file)
+                                                <a href="{{ asset('storage/' . $item->admin_file) }}" target="_blank"
+                                                    class="inline-flex items-center gap-1 text-[11px] font-semibold text-emerald-600 hover:text-emerald-800 bg-emerald-50 hover:bg-emerald-100 border border-emerald-100 px-2.5 py-1.5 rounded-lg transition-all"
+                                                    title="Unduh SK">
+                                                    <i class="fas fa-certificate text-xs"></i> SK
+                                                </a>
+                                            @else
+                                                <span class="text-[10px] text-emerald-500 font-semibold bg-emerald-50 px-2 py-1 rounded-lg border border-emerald-100">
+                                                    Selesai
                                                 </span>
-                                            </div>
-                                        @endif
+                                            @endif
+                                        </div>
                                     </td>
-                                    <td class="px-6 py-5 text-center">
-                                        <button onclick='openHistoryModal(@json($item->files ?? []), "{{ $item->status }}", "{{ $item->title }}")' class="text-slate-400 hover:text-blue-600 p-2 rounded-full hover:bg-blue-50 transition-all" title="Lihat Jejak Dokumen">
-                                            <i class="fas fa-history text-lg"></i>
+
+                                    {{-- Jejak --}}
+                                    <td class="px-5 py-3.5 text-center">
+                                        <button onclick='openHistoryModal(@json($item->files ?? []), "{{ $item->status }}", "{{ $item->title }}")'
+                                            class="w-7 h-7 rounded-lg text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 transition-all flex items-center justify-center mx-auto"
+                                            title="Lihat Jejak">
+                                            <i class="fas fa-history text-sm"></i>
                                         </button>
                                     </td>
-                                    <td class="px-6 py-5 text-center">
-                                        <span class="bg-emerald-100 text-emerald-700 px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest border border-emerald-200 inline-flex items-center gap-1">
-                                            <i class="fas fa-check-circle"></i> Approved
-                                        </span>
-                                    </td>
+
                                 </tr>
                                 @empty
                                 <tr>
-                                    <td colspan="7" class="px-6 py-20 text-center">
+                                    <td colspan="5" class="px-6 py-16 text-center">
                                         <div class="flex flex-col items-center justify-center">
-                                            <div class="w-20 h-20 bg-slate-50 rounded-full flex items-center justify-center mb-4 border border-slate-100">
-                                                <i class="fas fa-folder-open text-3xl text-slate-300"></i>
+                                            <div class="w-16 h-16 bg-slate-50 rounded-full flex items-center justify-center mb-3 border border-slate-100">
+                                                <i class="fas fa-folder-open text-2xl text-slate-300"></i>
                                             </div>
-                                            <h3 class="text-slate-800 font-bold">Tidak ada arsip</h3>
-                                            <p class="text-slate-500 text-sm mt-1">Belum ada dokumen yang disetujui untuk kategori ini.</p>
+                                            <p class="text-slate-700 font-semibold text-sm">Tidak ada arsip</p>
+                                            <p class="text-slate-400 text-xs mt-1">Belum ada dokumen disetujui untuk kategori ini.</p>
                                         </div>
                                     </td>
                                 </tr>
@@ -269,7 +276,6 @@
                             </tbody>
                         </table>
                     </div>
-                </div>
 
                 <div class="mt-8 text-center text-xs text-slate-400">
                     &copy; 2026 Sistem Informasi Jaminan Mutu Ketenaganukliran

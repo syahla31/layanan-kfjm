@@ -553,8 +553,8 @@
 
         function validateFileSize(input) {
             if (input.files && input.files[0]) {
-                if (input.files[0].size / 1024 / 1024 > 10) {
-                    showErrorToast('File Terlalu Besar', 'Maksimal ukuran file adalah 10 MB. Silakan kompres file Anda.');
+                if (input.files[0].size / 1024 / 1024 > 2) {
+                    showErrorToast('File Terlalu Besar', 'Maksimal ukuran file adalah 2 MB. Silakan kompres file Anda.');
                     input.value = '';
                 }
             }

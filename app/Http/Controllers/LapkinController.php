@@ -40,7 +40,7 @@ class LapkinController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'file_upload' => 'required|mimes:pdf|max:10240', // Max 10MB
+            'file_upload' => 'required|mimes:pdf|max:2048', // Max 2MB
             'periode' => 'required|string',
             'tahun' => 'required|numeric',
         ]);

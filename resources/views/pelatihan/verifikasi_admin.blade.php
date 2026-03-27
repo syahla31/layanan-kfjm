@@ -364,7 +364,7 @@
                                     <span class="text-[10px] bg-red-100 text-red-600 px-1.5 py-0.5 rounded uppercase">Wajib</span>
                                 </label>
                                 <input type="file" name="admin_file" onchange="validateFileSize(this)" class="block w-full text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:bg-white file:text-purple-700 border border-slate-300 rounded-lg cursor-pointer bg-white" accept=".pdf" required>
-                                <p class="text-[10px] text-slate-400 italic mt-1"><i class="fas fa-info-circle mr-1"></i> Ukuran file maksimal: <span class="font-bold">10 MB</span></p>
+                                <p class="text-[10px] text-slate-400 italic mt-1"><i class="fas fa-info-circle mr-1"></i> Ukuran file maksimal: <span class="font-bold">2 MB</span></p>
                             </div>
 
                             <div class="space-y-1.5">
@@ -466,8 +466,8 @@
         function validateFileSize(input) {
             if (input.files && input.files[0]) {
                 const fileSize = input.files[0].size / 1024 / 1024; // MB
-                if (fileSize > 10) {
-                    showErrorToast('File Terlalu Besar', 'Maksimal ukuran file adalah 10 MB. Silakan kompres file Anda.');
+                if (fileSize > 2) {
+                    showErrorToast('File Terlalu Besar', 'Maksimal ukuran file adalah 2 MB. Silakan kompres file Anda.');
                     input.value = ''; // Reset input
                 }
             }

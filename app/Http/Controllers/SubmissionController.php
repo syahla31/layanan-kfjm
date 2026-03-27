@@ -15,7 +15,7 @@ class SubmissionController extends Controller
         $request->validate([
             'type' => 'required',
             'title' => 'required',
-            'file_upload' => 'required|mimes:pdf|max:10240',
+            'file_upload' => 'required|mimes:pdf|max:2048', // Max 2MB
         ]);
 
         $user = Auth::user();
@@ -50,7 +50,7 @@ class SubmissionController extends Controller
         // 1. LOGIKA UPLOAD REVISI (Jika ada file yang diupload)
         if ($request->hasFile('file_upload')) {
             $request->validate([
-                'file_upload' => 'required|mimes:pdf|max:10240',
+                'file_upload' => 'required|mimes:pdf|max:2048', // Max 2MB
             ]);
 
             $file = $request->file('file_upload');
@@ -106,6 +106,24 @@ class SubmissionController extends Controller
 
     public function reject(Request $request, $id)
     {
+        $submission = Submission::findOrFail($id);
+
+        // Aturan validasi berbeda tergantung tipe dokumen
+        $rules = [
+            'admin_note' => 'nullable|string|max:1000',
+            'admin_file' => 'nullable|file|mimes:pdf|max:2048',
+        ];
+
+        if ($submission->type === 'KAK') {
+            $rules['admin_file'] = 'required|file|mimes:pdf|max:2048';
+        }
+
+        $request->validate($rules, [
+            'admin_file.required' => 'File PDF wajib disertakan untuk pengembalian dokumen KAK.',
+            'admin_file.max'      => 'Ukuran file tidak boleh melebihi 2 MB.',
+            'admin_file.mimes'    => 'File harus berformat PDF.',
+        ]);
+
         $this->processAdminAction($request, $id, 'rejected');
         return back()->with('success', 'Dokumen dikembalikan untuk revisi.');
     }

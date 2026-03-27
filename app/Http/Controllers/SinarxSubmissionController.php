@@ -24,7 +24,7 @@ class SinarxSubmissionController extends Controller
             'bagian_diperbaiki'=> 'nullable|string|max:255',
             'ketidaksesuaian'  => 'nullable|string',
             'data_sesuai'      => 'nullable|string',
-            'file_upload'      => 'required|mimes:pdf|max:10240', // Max 10MB
+            'file_upload'      => 'required|mimes:pdf|max:2048', // Max 2MB
         ]);
 
         // 2. Simpan File PDF
@@ -61,7 +61,7 @@ class SinarxSubmissionController extends Controller
             'bagian_diperbaiki'=> 'nullable|string|max:255',
             'ketidaksesuaian'  => 'nullable|string',
             'data_sesuai'      => 'nullable|string',
-            'file_upload'      => 'nullable|mimes:pdf|max:10240', 
+            'file_upload'      => 'nullable|mimes:pdf|max:2048', // Max 2MB
         ]);
 
         // Handle pembaruan file jika ada

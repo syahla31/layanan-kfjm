@@ -30,7 +30,7 @@
             <span class="font-medium text-sm">Data Pengguna</span>
         </a>
 
-        <div class="my-4 border-t border-slate-800/50 mx-3"></div>
+        {{-- <div class="my-4 border-t border-slate-800/50 mx-3"></div>
         <div class="px-3 mb-2 text-xs font-bold text-slate-500 uppercase tracking-widest">Sistem</div>
 
         <a href="{{ url('/internal/settings') }}"
@@ -43,7 +43,7 @@
             class="flex items-center gap-3 py-3 px-4 rounded-xl transition-all {{ request()->is('internal/logs') ? 'bg-red-600 text-white shadow-lg' : 'text-slate-400 hover:bg-slate-800/50 hover:text-white' }}">
             <i class="fas fa-database w-5 text-center"></i>
             <span class="font-medium text-sm">Log Aktivitas</span>
-        </a>
+        </a> --}}
     </nav>
 
     <div class="p-4 border-t border-slate-800/50">

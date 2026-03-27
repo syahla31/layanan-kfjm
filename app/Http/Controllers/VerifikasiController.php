@@ -50,7 +50,7 @@ class VerifikasiController extends Controller
         $request->validate([
             'user_id' => 'required|exists:users,id',
             'title' => 'required|string|max:255',
-            'admin_file' => 'required|mimes:pdf|max:10240',
+            'admin_file' => 'required|mimes:pdf|max:2048', // Max 2MB
         ]);
 
         $adminFilePath = null;
@@ -127,7 +127,7 @@ class VerifikasiController extends Controller
         $request->validate([
             'user_id' => 'required|exists:users,id',
             'title' => 'required|string|max:255',
-            'admin_file' => 'required|mimes:pdf|max:10240',
+            'admin_file' => 'required|mimes:pdf|max:2048', // Max 2MB
             'category' => 'required|in:pelatihan,uji',
         ]);
 

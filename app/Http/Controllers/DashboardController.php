@@ -5,6 +5,9 @@ namespace App\Http\Controllers;
 use App\Exports\UsersExport;        // Class export untuk Excel
 use Illuminate\Http\Request;
 use App\Models\User;
+use App\Models\Submission;
+use Carbon\Carbon;
+use Illuminate\Support\Facades\Auth;
 use Maatwebsite\Excel\Facades\Excel; // Pastikan sudah instal maatwebsite/excel
 use Barryvdh\DomPDF\Facade\Pdf;     // Pastikan sudah instal barryvdh/laravel-dompdf
 
@@ -129,5 +132,50 @@ class DashboardController extends Controller
         $user->delete();
 
         return back()->with('success', 'Pendaftaran ' . $user->name . ' telah dihapus.');
+    }
+
+    /**
+     * Menangani Dashboard untuk Lembaga Uji
+     */
+    public function ujiDashboard()
+    {
+        $user = Auth::user();
+        $now = Carbon::now();
+        $deadline = Carbon::now()->addDays(30);
+
+        // Mengambil pengingat survailen & verifikasi untuk Lembaga Uji
+        // Kita asumsikan deadline dihitung dari 1 tahun setelah 'updated_at' status terakhir
+        $reminders = Submission::where('user_id', $user->id)
+            ->where('type', 'uji')
+            ->whereIn('category', ['survailen', 'verifikasi'])
+            ->get()
+            ->filter(function($submission) use ($now, $deadline) {
+                // Contoh logika: masa berlaku adalah 1 tahun dari tanggal update terakhir
+                $expiryDate = Carbon::parse($submission->updated_at)->addYear();
+                return $expiryDate->between($now, $deadline);
+            });
+
+        return view('uji.dashboard', compact('reminders'));
+    }
+
+    /**
+     * Menangani Dashboard untuk Lembaga Pelatihan
+     */
+    public function pelatihanDashboard()
+    {
+        $user = Auth::user();
+        $now = Carbon::now();
+        $deadline = Carbon::now()->addDays(30);
+
+        $reminders = Submission::where('user_id', $user->id)
+            ->where('type', 'pelatihan')
+            ->whereIn('category', ['survailen', 'verifikasi'])
+            ->get()
+            ->filter(function($submission) use ($now, $deadline) {
+                $expiryDate = Carbon::parse($submission->updated_at)->addYear();
+                return $expiryDate->between($now, $deadline);
+            });
+
+        return view('pelatihan.dashboard', compact('reminders'));
     }
 }

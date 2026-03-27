@@ -228,20 +228,130 @@
                         @endif
                     </div>
 
-                    <div class="bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden">
+                    <!-- ================= MOBILE CARD LIST ================= -->
+                    <div class="md:hidden space-y-4">
+
+                        @forelse($submissions as $index => $item)
+                            <div
+                                class="bg-white border border-slate-200 rounded-2xl p-4 shadow-sm hover:shadow-md transition">
+
+                                <!-- HEADER -->
+                                <div class="flex justify-between items-start">
+
+                                    <div class="flex items-center gap-3">
+
+                                        <div
+                                            class="w-9 h-9 rounded-full bg-gradient-to-br from-blue-100 to-indigo-100 text-indigo-600 flex items-center justify-center text-xs font-bold border border-indigo-200">
+                                            {{ substr($item->user->name ?? '?', 0, 1) }}
+                                        </div>
+
+                                        <div>
+                                            <p class="font-semibold text-slate-800 text-sm leading-tight">
+                                                {{ $item->user->name ?? 'Unknown' }}
+                                            </p>
+
+                                            <span class="text-xs text-slate-400">
+                                                {{ $item->created_at->format('d M Y • H:i') }}
+                                            </span>
+                                        </div>
+
+                                    </div>
+
+
+                                    @if ($item->type == 'KAK')
+                                        <span
+                                            class="bg-indigo-100 text-indigo-700 text-[10px] px-2 py-1 rounded-lg font-bold">
+                                            KAK
+                                        </span>
+                                    @else
+                                        <span
+                                            class="bg-teal-100 text-teal-700 text-[10px] px-2 py-1 rounded-lg font-bold">
+                                            LAPKIN
+                                        </span>
+                                    @endif
+
+                                </div>
+
+
+                                <!-- TITLE -->
+                                <p class="text-sm text-slate-700 mt-3 font-medium leading-snug">
+                                    {{ $item->title }}
+                                </p>
+
+
+                                <!-- FILE LINK -->
+                                <a href="{{ asset('storage/' . $item->file_path) }}" target="_blank"
+                                    class="flex items-center gap-2 text-xs font-semibold text-blue-600 mt-2">
+
+                                    <i class="fas fa-file-pdf text-red-500"></i>
+                                    <span>Buka File</span>
+
+                                </a>
+
+
+                                <!-- ACTION BUTTON -->
+                                <div class="flex gap-2 mt-4">
+
+                                    <button
+                                        onclick="openModal('approve','{{ $item->id }}','{{ $item->title }}','{{ $item->type }}')"
+                                        class="flex-1 bg-emerald-600 text-white py-2 rounded-xl text-sm font-semibold flex items-center justify-center gap-2 hover:bg-emerald-700 transition">
+
+                                        <i class="fas fa-check"></i>
+                                        Setujui
+
+                                    </button>
+
+
+                                    <button
+                                        onclick="openModal('reject','{{ $item->id }}','{{ $item->title }}','{{ $item->type }}')"
+                                        class="flex-1 bg-rose-500 text-white py-2 rounded-xl text-sm font-semibold flex items-center justify-center gap-2 hover:bg-rose-600 transition">
+
+                                        <i class="fas fa-undo"></i>
+                                        Revisi
+
+                                    </button>
+
+                                </div>
+
+                            </div>
+
+                        @empty
+
+                            <div class="bg-white rounded-2xl p-10 text-center border border-slate-200">
+
+                                <div
+                                    class="w-20 h-20 bg-slate-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                                    <i class="fas fa-check text-slate-400 text-3xl"></i>
+                                </div>
+
+                                <p class="text-slate-500 text-sm">
+                                    Tidak ada antrian dokumen
+                                </p>
+
+                            </div>
+                        @endforelse
+
+                    </div>
+
+
+                    <div
+                        class="hidden md:block bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden">
                         <div class="overflow-x-auto no-scrollbar">
                             <table class="w-full text-sm text-left text-slate-600 min-w-[800px] md:min-w-0">
                                 <thead class="text-xs text-slate-500 uppercase bg-slate-50 border-b border-slate-200">
                                     <tr>
-                                        <th class="px-4 py-3 md:px-6 md:py-4 font-bold tracking-wider w-16 text-center">
+                                        <th
+                                            class="px-4 py-3 md:px-6 md:py-4 font-bold tracking-wider w-16 text-center">
                                             No</th>
                                         <th class="px-4 py-3 md:px-6 md:py-4 font-bold tracking-wider w-40">Waktu Masuk
                                         </th>
-                                        <th class="px-4 py-3 md:px-6 md:py-4 font-bold tracking-wider">Instansi Pengirim
+                                        <th class="px-4 py-3 md:px-6 md:py-4 font-bold tracking-wider">Instansi
+                                            Pengirim
                                         </th>
                                         <th class="px-4 py-3 md:px-6 md:py-4 font-bold tracking-wider">Detail Dokumen
                                         </th>
-                                        <th class="px-4 py-3 md:px-6 md:py-4 font-bold tracking-wider text-center w-32">
+                                        <th
+                                            class="px-4 py-3 md:px-6 md:py-4 font-bold tracking-wider text-center w-32">
                                             Aksi</th>
                                     </tr>
                                 </thead>
@@ -532,9 +642,20 @@
                 btn.innerText = "Kirim Revisi";
                 btn.className =
                     "inline-flex w-full justify-center rounded-xl bg-rose-600 px-5 py-2.5 text-sm font-bold text-white shadow-lg shadow-rose-200 hover:shadow-none hover:bg-rose-700 sm:w-auto transition-all active:scale-95";
-                fileLabel.innerHTML =
-                    `<span>Upload File Penjelas</span> <span class="text-[10px] bg-slate-200 px-1.5 py-0.5 rounded text-slate-500">Opsional</span>`;
-                fileHelp.innerText = "Upload dokumen coretan revisi jika ada.";
+
+                // Bedakan KAK vs Laporan Kinerja
+                if (type === 'KAK') {
+                    fileLabel.innerHTML =
+                        `<span>Upload Dokumen Revisi (PDF)</span> <span class="text-[10px] bg-red-100 text-red-600 px-1.5 py-0.5 rounded">Wajib</span>`;
+                    fileHelp.innerHTML =
+                        '<i class="fas fa-exclamation-circle text-red-500"></i> Wajib upload. Maks. 2 MB.';
+                    document.querySelector('input[name="admin_file"]').required = true;
+                } else {
+                    fileLabel.innerHTML =
+                        `<span>Upload File Penjelas</span> <span class="text-[10px] bg-slate-200 px-1.5 py-0.5 rounded text-slate-500">Opsional</span>`;
+                    fileHelp.innerText = "Upload dokumen coretan revisi jika ada.";
+                    document.querySelector('input[name="admin_file"]').required = false;
+                }
             }
 
             modal.classList.remove('hidden');
@@ -556,6 +677,17 @@
                 modal.classList.add('hidden');
             }, 300);
         }
+
+        document.getElementById('verifyForm').addEventListener('submit', function (e) {
+            const fileInput = this.querySelector('input[name="admin_file"]');
+            const maxSize = 2 * 1024 * 1024; // 2 MB
+
+            if (fileInput.files.length > 0 && fileInput.files[0].size > maxSize) {
+                e.preventDefault();
+                alert('Ukuran file melebihi batas 2 MB. Silakan pilih file yang lebih kecil.');
+                return;
+            }
+        });
     </script>
 </body>
 

@@ -106,12 +106,6 @@
                     'subtitle' => 'Kelola Laporan Kinerja Tahunan'
                 ])
             </div>
-            
-            <!-- Header Mobile Title -->
-            <div class="lg:hidden px-4 pt-4 pb-2">
-                <h1 class="text-xl font-bold text-slate-800">Dashboard Lapkin</h1>
-                <p class="text-xs text-slate-500">Kelola Laporan Kinerja Tahunan</p>
-            </div>
 
             <!-- MAIN CONTENT -->
             <main class="flex-1 overflow-x-hidden overflow-y-auto p-4 md:p-8 relative">
@@ -423,14 +417,12 @@
         </div>
     </div>
 
-    <!-- MODAL FORMULIR (STYLE EMERALD) -->
+    <!-- === MODAL FORMULIR === -->
     <div id="submissionModal" class="fixed inset-0 z-50 hidden" aria-labelledby="modal-title" role="dialog" aria-modal="true">
         <div class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm transition-opacity" onclick="closeModal()"></div>
-
         <div class="fixed inset-0 z-10 overflow-y-auto">
-            <div class="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
-                
-                <div class="relative transform overflow-hidden rounded-2xl bg-white text-left shadow-2xl transition-all sm:my-8 sm:w-full sm:max-w-lg border border-slate-100 animate-pop-in">
+            <div class="flex min-h-full items-center justify-center p-4 text-center sm:p-0">
+                <div class="relative transform overflow-hidden rounded-2xl bg-white text-left shadow-2xl transition-all w-full sm:max-w-md border border-slate-100 animate-pop-in">
                     
                     <!-- Header Modal Emerald -->
                     <div class="bg-gradient-to-r from-teal-600 to-emerald-600 px-6 py-4 flex justify-between items-center">
@@ -449,7 +441,7 @@
                         <!-- HIDDEN FIELDS -->
                         <input type="hidden" name="periode" value="Tahunan">
 
-                        <div class="px-6 py-6 space-y-5">
+                        <div class="px-6 py-5 space-y-4">
                             <!-- Informasi Jenis (Static) -->
                             <div class="bg-teal-50 border border-teal-100 rounded-lg p-3 flex items-start gap-3">
                                 <i class="fas fa-info-circle text-teal-500 mt-0.5"></i>
@@ -499,12 +491,11 @@
                             </div>
                         </div>
 
-                        <!-- Footer Actions -->
-                        <div class="bg-slate-50 px-6 py-4 flex flex-row-reverse gap-3 border-t border-slate-100">
-                            <button type="submit" class="inline-flex w-full justify-center rounded-xl bg-teal-600 px-5 py-2.5 text-sm font-bold text-white shadow-sm hover:bg-teal-700 sm:w-auto transition-colors">
-                                Simpan Laporan
-                            </button>
-                            <button type="button" onclick="closeModal()" class="inline-flex w-full justify-center rounded-xl bg-white px-5 py-2.5 text-sm font-bold text-slate-700 shadow-sm ring-1 ring-inset ring-slate-300 hover:bg-slate-50 sm:w-auto transition-colors">
+                        <!-- Footer -->
+                        <div class="bg-slate-50 px-6 py-4 flex flex-col gap-2 border-t border-slate-100 sm:flex-row-reverse">
+                            <button type="submit" class="inline-flex w-full sm:w-auto justify-center items-center rounded-xl bg-emerald-600 px-5 py-2.5 text-sm font-bold text-white shadow-md hover:bg-emerald-700 active:scale-95 transition-all gap-2">
+                                <i class="fas fa-save text-xs"></i> Simpan Laporan                            </button>
+                            <button type="button" onclick="closeModal()" class="inline-flex w-full sm:w-auto justify-center items-center rounded-xl bg-white px-5 py-2.5 text-sm font-bold text-slate-500 border border-slate-200 hover:bg-slate-100 transition-all">
                                 Batal
                             </button>
                         </div>
