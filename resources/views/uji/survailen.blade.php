@@ -3,29 +3,28 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Survailen & Audit | SI-MUTU</title>
+    <title>Survailen Berkala | SI-MUTU</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     
-    <!-- Konfigurasi Animasi Tailwind -->
     <script>
         tailwind.config = {
             theme: {
                 extend: {
-                    fontFamily: { sans: ['Inter', 'sans-serif'] },
+                    fontFamily: { sans: ['Outfit', 'sans-serif'] },
                     animation: { 
                         'pop-in': 'popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards',
-                        'fade-out': 'fadeOut 0.3s ease-in forwards'
+                        'fade-in-up': 'fadeInUp 0.5s ease-out forwards'
                     },
                     keyframes: {
                         popIn: {
-                            '0%': { opacity: '0', transform: 'scale(0.8) translateY(20px)' },
+                            '0%': { opacity: '0', transform: 'scale(0.9) translateY(10px)' },
                             '100%': { opacity: '1', transform: 'scale(1) translateY(0)' },
                         },
-                        fadeOut: {
-                            '0%': { opacity: '1' },
-                            '100%': { opacity: '0' },
+                        fadeInUp: {
+                            '0%': { opacity: '0', transform: 'translateY(15px)' },
+                            '100%': { opacity: '1', transform: 'translateY(0)' },
                         }
                     }
                 }
@@ -34,438 +33,398 @@
     </script>
 
     <style>
-        ::-webkit-scrollbar { width: 6px; height: 6px; }
-        ::-webkit-scrollbar-track { background: #f1f5f9; }
-        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
-        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+        ::-webkit-scrollbar { width: 5px; height: 5px; }
+        ::-webkit-scrollbar-track { background: #f8fafc; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
         
         .glass-overlay {
-            background: rgba(15, 23, 42, 0.6);
+            background: rgba(15, 23, 42, 0.5);
             backdrop-filter: blur(4px);
         }
+
+        .score-radio:checked + label {
+            background-color: #2563eb;
+            color: white;
+            border-color: #2563eb;
+            transform: translateY(-3px);
+            box-shadow: 0 10px 15px -3px rgba(37, 99, 235, 0.25);
+        }
+        
+        .score-label { transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1); }
+        .modal-backdrop { backdrop-filter: blur(10px); background-color: rgba(15, 23, 42, 0.3); }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
     </style>
 </head>
-<body class="bg-slate-50 text-slate-800 antialiased">
+<body class="bg-slate-50 text-slate-800 antialiased overflow-hidden">
 
-    <!-- 1. LOGIKA FETCH DATA KHUSUS SURVAILEN -->
     @php
-        use App\Models\Submission;
-        use Illuminate\Support\Facades\Auth;
-        
-        if (!isset($survailens)) {
-            $survailens = Submission::where('user_id', Auth::id())
-                               ->where('type', 'Survailen')
-                               ->orderBy('created_at', 'desc')
-                               ->with('files')
-                               ->get();
-        }
-
-        // Logic Statistik
-        $needAction = $survailens->filter(function($item) {
-            return empty($item->file_path) || $item->status == 'rejected';
-        })->count();
-
-        $waitingVerification = $survailens->where('status', 'pending')->whereNotNull('file_path')->count();
-        $completed = $survailens->where('status', 'approved')->count();
+        $status = $activeSubmission ? $activeSubmission->status : 'none'; 
     @endphp
-    <div class="flex h-screen overflow-hidden bg-slate-50">
+
+    {{-- === MODAL BERHASIL === --}}
+    @if(session('success'))
+    <div id="successModal" class="fixed inset-0 z-[120] flex items-center justify-center p-4 text-center">
+        <div class="absolute inset-0 modal-backdrop" onclick="closeModal('successModal')"></div>
+        <div class="relative bg-white rounded-[2.5rem] w-full max-w-sm p-8 shadow-2xl animate-pop-in border border-white">
+            <div class="w-16 h-16 bg-emerald-50 text-emerald-500 rounded-2xl flex items-center justify-center mx-auto mb-6 text-2xl shadow-inner border border-emerald-100/50">
+                <i class="fas fa-circle-check"></i>
+            </div>
+            <h3 class="text-xl font-black text-slate-900 uppercase tracking-tighter mb-2">Berhasil!</h3>
+            <p class="text-slate-500 text-[11px] font-medium leading-relaxed mb-8 px-2">
+                {{ session('success') }}
+            </p>
+            <button onclick="closeModal('successModal')" class="w-full bg-slate-900 text-white py-4 rounded-2xl font-black text-[10px] uppercase tracking-[0.2em] hover:bg-emerald-600 transition-all shadow-xl active:scale-95">
+                Lanjutkan
+            </button>
+        </div>
+    </div>
+    @endif
+
+    {{-- === MODAL ERROR / VALIDASI === --}}
+    <div id="errorModal" class="fixed inset-0 z-[130] hidden items-center justify-center p-4 text-center">
+        <div class="absolute inset-0 modal-backdrop" onclick="closeModal('errorModal')"></div>
+        <div class="relative bg-white rounded-[2.5rem] w-full max-w-md p-8 shadow-2xl animate-pop-in border border-white text-center">
+            <div class="w-16 h-16 bg-rose-50 text-rose-500 rounded-2xl flex items-center justify-center mx-auto mb-6 text-2xl shadow-inner border border-rose-100/50">
+                <i class="fas fa-circle-exclamation"></i>
+            </div>
+            <h3 class="text-xl font-black text-slate-900 uppercase tracking-tighter mb-2">Dokumen Belum Lengkap</h3>
+            <p class="text-slate-400 text-[10px] font-bold uppercase tracking-widest mb-4">Mohon lengkapi berkas berikut:</p>
+            <div class="bg-slate-50 rounded-2xl p-4 mb-8 text-left max-h-48 overflow-y-auto border border-slate-100 no-scrollbar">
+                <ul id="errorList" class="space-y-2">
+                    @if($errors->any())
+                        @foreach ($errors->all() as $error)
+                            <li class="text-[11px] font-bold text-rose-600 flex items-start gap-2">
+                                <i class="fas fa-caret-right mt-1 shrink-0"></i> <span>{{ $error }}</span>
+                            </li>
+                        @endforeach
+                    @endif
+                </ul>
+            </div>
+            <button onclick="closeModal('errorModal')" class="w-full bg-slate-900 text-white py-4 rounded-2xl font-black text-[10px] uppercase tracking-[0.2em] hover:bg-rose-600 transition-all shadow-xl active:scale-95">
+                Mengerti, Saya Lengkapi
+            </button>
+        </div>
+    </div>
+
+    {{-- === MODAL KONFIRMASI KIRIM === --}}
+    <div id="confirmFinalModal" class="fixed inset-0 z-[120] hidden flex items-center justify-center p-4 text-center">
+        <div class="absolute inset-0 modal-backdrop" onclick="closeConfirmModal()"></div>
+        <div class="relative bg-white rounded-[2.5rem] w-full max-w-sm p-8 shadow-2xl animate-pop-in border border-white text-center">
+            <div class="w-16 h-16 bg-amber-50 text-amber-500 rounded-2xl flex items-center justify-center mx-auto mb-6 text-2xl shadow-inner border border-amber-100/50">
+                <i class="fas fa-triangle-exclamation"></i>
+            </div>
+            <h3 class="text-xl font-black text-slate-900 uppercase tracking-tighter mb-2">Kirim Pengajuan?</h3>
+            <p class="text-slate-500 text-[11px] font-medium leading-relaxed mb-8 px-2">
+                Pastikan seluruh dokumen sudah benar. Data yang sudah dikirim <span class="text-rose-500 font-bold">tidak dapat diubah kembali</span> selama verifikasi.
+            </p>
+            <div class="flex gap-3">
+                <button onclick="closeConfirmModal()" class="flex-1 bg-slate-100 text-slate-600 py-4 rounded-2xl font-black text-[10px] uppercase tracking-[0.2em] hover:bg-slate-200 transition-all">
+                    Batal
+                </button>
+                <button onclick="submitFinalFormNow()" class="flex-1 bg-teal-600 text-white py-4 rounded-2xl font-black text-[10px] uppercase tracking-[0.2em] hover:bg-slate-900 transition-all shadow-xl active:scale-95">
+                    Ya, Kirim
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div class="flex h-screen overflow-hidden">
         
-        <!-- === MOBILE OVERLAY === -->
+        <!-- MOBILE OVERLAY -->
         <div id="sidebarOverlay" onclick="toggleSidebar()" class="fixed inset-0 z-40 hidden lg:hidden glass-overlay transition-opacity duration-300"></div>
 
-        <!-- === SIDEBAR WRAPPER (Responsive) === -->
-        <aside id="sidebar" class="fixed inset-y-0 left-0 z-50 w-64 bg-white shadow-2xl lg:shadow-none transform -translate-x-full transition-transform duration-300 ease-in-out lg:translate-x-0 lg:static lg:inset-auto flex flex-col h-full border-r border-slate-200">
+        <!-- SIDEBAR -->
+        <aside id="sidebar" class="fixed inset-y-0 left-0 z-50 w-64 bg-[#1e3a8a] transform -translate-x-full transition-transform duration-300 lg:translate-x-0 lg:static flex flex-col h-full border-r border-teal-900/20">
             @include('components.uji-sidebar')
         </aside>
 
         <div class="flex-1 flex flex-col h-screen overflow-hidden relative">
             
-            <div class="md:hidden bg-white border-b border-slate-200 px-4 py-3 flex items-center justify-between z-20 sticky top-0 shadow-sm">
+            <!-- MOBILE HEADER BAR -->
+            <div class="lg:hidden bg-white border-b border-slate-200 px-4 py-3 flex items-center justify-between sticky top-0 z-30 shadow-sm">
                 <div class="flex items-center gap-3">
-                    <!-- Tombol Hamburger di Kiri -->
-                    <button onclick="toggleSidebar()" class="p-2 text-slate-500 hover:text-teal-600 hover:bg-slate-100 rounded-lg transition-colors">
+                    <button onclick="toggleSidebar()" class="p-2 text-slate-600 hover:bg-slate-100 rounded-xl transition-colors">
                         <i class="fas fa-bars text-xl"></i>
                     </button>
-                    
-                    <!-- Logo/Brand -->
-                    <div class="flex items-center gap-2">
-                        <div class="w-8 h-8 rounded-lg bg-teal-600 flex items-center justify-center text-white shadow-sm">
-                            <i class="fas fa-flask text-sm"></i>
-                        </div>
-                        <span class="font-bold text-slate-800 text-sm tracking-wide">SI-LAB UJI</span>
-                    </div>
+                    <span class="font-bold text-slate-800 text-sm tracking-tight uppercase">SI-MUTU <span class="text-teal-600">DKKN</span></span>
                 </div>
-
-                <!-- Profile Icon Kanan -->
-                <div class="w-8 h-8 rounded-full bg-teal-100 flex items-center justify-center text-teal-600 text-xs font-bold border border-teal-200">
-                    {{ substr(Auth::user()->name ?? 'L', 0, 1) }}
+                <div class="w-8 h-8 rounded-xl bg-teal-100 flex items-center justify-center text-teal-600 text-xs font-bold border border-teal-200 shadow-sm">
+                    {{ substr(Auth::user()->name ?? 'U', 0, 1) }}
                 </div>
             </div>
 
-            <!-- Header Desktop -->
+            <!-- DESKTOP HEADER -->
             <div class="hidden lg:block">
                 @include('components.uji-header', [
-                    'title' => 'Status Mutu & Survailen',
-                    'subtitle' => 'Tindak lanjut hasil audit dan pengawasan'
+                    'title' => 'Survailen Berkala',
+                    'subtitle' => 'Manajemen Akreditasi Lembaga'
                 ])
             </div>
 
             <!-- MAIN CONTENT -->
-            <main class="flex-1 overflow-x-hidden overflow-y-auto p-4 md:p-8 relative space-y-6">
-
-                <!-- SUCCESS POP-UP -->
-                @if (session('success'))
-                <div id="successModal" class="fixed inset-0 z-[100] flex items-center justify-center bg-slate-900/40 backdrop-blur-[3px] transition-all duration-300">
-                    <div class="bg-white rounded-2xl shadow-2xl p-8 max-w-sm w-full mx-4 text-center animate-pop-in relative overflow-hidden border border-white/50">
-                        <div class="absolute top-0 left-0 w-full h-1.5 bg-gradient-to-r from-amber-400 to-orange-500"></div>
-                        <div class="absolute -top-10 -right-10 w-32 h-32 bg-amber-50 rounded-full blur-2xl opacity-60 pointer-events-none"></div>
-                        <div class="absolute -bottom-10 -left-10 w-32 h-32 bg-orange-50 rounded-full blur-2xl opacity-60 pointer-events-none"></div>
-                        
-                        <div class="w-20 h-20 bg-amber-100 rounded-full flex items-center justify-center mx-auto mb-4 shadow-inner relative z-10">
-                            <i class="fas fa-check text-4xl text-amber-600 drop-shadow-sm"></i>
-                        </div>
-                        
-                        <h3 class="text-2xl font-bold text-slate-800 mb-2 relative z-10">Respon Terkirim!</h3>
-                        <p class="text-slate-600 mb-6 text-sm leading-relaxed relative z-10 font-medium">
-                            {{ session('success') }}
-                        </p>
-                        
-                        <div class="relative z-10 w-full bg-slate-100 h-1.5 rounded-full mb-5 overflow-hidden">
-                            <div id="progressBar" class="h-full bg-amber-500 rounded-full" style="width: 100%"></div>
-                        </div>
-                        
-                        <button onclick="closeNotification('successModal')" class="relative z-10 w-full bg-white border-2 border-slate-100 hover:border-amber-400 hover:bg-amber-50 text-slate-500 hover:text-amber-700 font-bold py-3 rounded-xl transition-all duration-300 transform active:scale-95 shadow-sm hover:shadow-md group">
-                            <span class="flex items-center justify-center gap-2">
-                                Tutup Sekarang 
-                                <i class="fas fa-times group-hover:rotate-90 transition-transform duration-300 text-xs"></i>
-                            </span>
-                        </button>
+            <main class="flex-1 overflow-x-hidden overflow-y-auto p-5 lg:p-10 no-scrollbar relative text-left">
+                
+                <div class="max-w-5xl mx-auto">
+                    
+                    {{-- Judul Halaman Mobile --}}
+                    <div class="lg:hidden mb-6">
+                        <h1 class="text-2xl font-black text-slate-900 uppercase tracking-tighter leading-tight">Survailen Berkala</h1>
+                        <p class="text-[10px] text-slate-500 font-bold uppercase tracking-[0.2em]">Kualitas & Akreditasi</p>
                     </div>
-                </div>
-                @endif
 
-                <!-- ERROR POP-UP -->
-                @if ($errors->any() || session('error'))
-                <div id="errorModal" class="fixed inset-0 z-[100] flex items-center justify-center bg-slate-900/40 backdrop-blur-[3px] transition-all duration-300">
-                    <div class="bg-white rounded-2xl shadow-2xl p-8 max-w-sm w-full mx-4 text-center animate-pop-in relative overflow-hidden border border-white/50">
-                        <div class="absolute top-0 left-0 w-full h-1.5 bg-gradient-to-r from-rose-500 to-red-600"></div>
-                        <div class="w-20 h-20 bg-rose-100 rounded-full flex items-center justify-center mx-auto mb-5 shadow-inner relative z-10">
-                            <i class="fas fa-times text-4xl text-rose-600 drop-shadow-sm"></i>
+                    {{-- 1. VIEW: TIDAK ADA DATA --}}
+                    @if($status == 'none')
+                        <div class="bg-white rounded-[2.5rem] p-10 lg:p-20 text-center border border-slate-100 shadow-xl shadow-slate-200/40 animate-fade-in-up overflow-hidden relative">
+                            <div class="relative z-10 text-center">
+                                <div class="w-16 h-16 lg:w-24 lg:h-24 bg-teal-50 text-teal-600 rounded-3xl flex items-center justify-center mx-auto mb-8 text-2xl lg:text-4xl border border-teal-100 shadow-inner">
+                                    <i class="fas fa-history"></i>
+                                </div>
+                                <h2 class="text-xl lg:text-3xl font-black text-slate-900 uppercase tracking-tighter mb-4">Pengajuan Baru</h2>
+                                <p class="text-slate-400 text-[11px] lg:text-base max-w-md mx-auto font-medium mb-10 leading-relaxed px-4">
+                                    Lakukan penilaian mandiri (Self Assessment) terlebih dahulu sebelum mengunggah dokumen pendukung akreditasi.
+                                </p>
+                                <button type="button" onclick="document.getElementById('startSection').classList.remove('hidden'); document.getElementById('startSection').scrollIntoView({behavior: 'smooth'})" 
+                                    class="bg-slate-900 text-white px-10 py-5 rounded-2xl font-black text-[10px] uppercase tracking-[0.2em] hover:bg-teal-600 transition-all shadow-xl active:scale-95 group mx-auto flex items-center gap-3">
+                                    Mulai Sekarang <i class="fas fa-arrow-right group-hover:translate-x-1 transition-transform"></i>
+                                </button>
+                            </div>
                         </div>
-                        
-                        <h3 class="text-2xl font-bold text-slate-800 mb-2 relative z-10">Gagal!</h3>
-                        <div class="text-slate-600 mb-8 text-sm leading-relaxed relative z-10 font-medium">
-                            @if(session('error'))
-                                <p>{{ session('error') }}</p>
-                            @else
-                                <ul class="list-none space-y-1">
-                                    @foreach ($errors->all() as $error)
-                                        <li>{{ $error }}</li>
+
+                        {{-- Section: Self Assessment --}}
+                        <div id="startSection" class="hidden mt-10 bg-white rounded-[2.5rem] p-6 lg:p-10 shadow-2xl border border-slate-100 animate-fade-in-up">
+                            <div class="mb-10 flex flex-col items-center sm:flex-row sm:items-center gap-5 text-center sm:text-left">
+                                <div class="w-14 h-14 bg-teal-600 text-white rounded-2xl flex items-center justify-center text-xl shadow-lg shrink-0 shadow-teal-200"><i class="fas fa-clipboard-list"></i></div>
+                                <div>
+                                    <h3 class="text-xl lg:text-2xl font-black text-slate-900 uppercase tracking-tight">1. Self Assessment</h3>
+                                    <p class="text-[10px] lg:text-[11px] text-slate-400 font-bold uppercase tracking-widest mt-1">Berikan nilai sesuai kondisi nyata lembaga Anda</p>
+                                </div>
+                            </div>
+
+                            <form action="{{ route('survailen.store.self') }}" method="POST" class="space-y-4">
+                                @csrf
+                                @php
+                                    $components = [
+                                        'legalitas' => ['label' => 'Legalitas & Izin', 'bobot' => '10%'],
+                                        'mutu' => ['label' => 'Sistem Manajemen Mutu', 'bobot' => '20%'],
+                                        'rekaman' => ['label' => 'Rekaman Implementasi', 'bobot' => '20%'],
+                                        'kinerja' => ['label' => 'Kinerja & Pelaporan', 'bobot' => '5%'],
+                                        'sdm' => ['label' => 'Sumber Daya Manusia', 'bobot' => '10%'],
+                                        'sarpras' => ['label' => 'Sarana & Prasarana', 'bobot' => '15%'],
+                                        'kurikulum' => ['label' => 'Kurikulum & Modul', 'bobot' => '20%']
+                                    ];
+                                @endphp
+                                <div class="grid grid-cols-1 gap-4">
+                                    @foreach($components as $key => $data)
+                                    <div class="flex flex-col items-center sm:flex-row sm:items-center justify-between p-6 px-8 rounded-[2rem] border border-slate-100 hover:border-teal-200 hover:bg-teal-50/30 transition-all bg-white shadow-sm group">
+                                        <div class="mb-5 sm:mb-0 text-center sm:text-left">
+                                            <span class="block font-black text-slate-800 text-sm lg:text-base uppercase tracking-tight group-hover:text-teal-600 transition-colors">{{ $data['label'] }}</span>
+                                            <span class="text-[10px] font-bold text-slate-400 uppercase mt-1 inline-block bg-slate-50 px-2 py-0.5 rounded">Estimasi Bobot: {{ $data['bobot'] }}</span>
+                                        </div>
+                                        <div class="flex gap-3 justify-center">
+                                            @for($i=1; $i<=4; $i++)
+                                                <input type="radio" name="scores[{{ $key }}]" value="{{ $i }}" id="s_{{ $key }}_{{ $i }}" class="hidden score-radio" required>
+                                                <label for="s_{{ $key }}_{{ $i }}" class="score-label w-11 h-11 lg:w-12 lg:h-12 flex items-center justify-center rounded-2xl border-2 border-slate-100 bg-white text-slate-400 font-black text-sm lg:text-base cursor-pointer hover:bg-slate-50 shadow-sm">{{ $i }}</label>
+                                            @endfor
+                                        </div>
+                                    </div>
                                     @endforeach
-                                </ul>
+                                </div>
+                                <div class="pt-10 flex justify-center sm:justify-end">
+                                    <button type="submit" class="w-full sm:w-auto bg-teal-600 text-white font-black px-12 py-5 rounded-[1.5rem] shadow-xl shadow-teal-100 hover:bg-slate-900 transition-all text-[11px] uppercase tracking-widest flex items-center justify-center gap-2 active:scale-95">
+                                        Simpan & Lanjutkan <i class="fas fa-chevron-right text-[10px]"></i>
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+
+                    {{-- 2. VIEW: UPLOAD / VERIFIKASI --}}
+                    @else
+                        <div class="bg-white rounded-[2.5rem] p-6 lg:p-10 shadow-xl border border-teal-50 animate-fade-in-up relative overflow-hidden mb-12">
+                            <div class="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-10 border-b border-slate-100 text-left">
+                                <div class="text-left">
+                                    <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-teal-600 text-white text-[9px] font-black uppercase tracking-widest mb-4 shadow-lg shadow-teal-100">
+                                        <span class="relative flex h-2 w-2"><span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-teal-400 opacity-75"></span><span class="relative inline-flex rounded-full h-2 w-2 bg-teal-100"></span></span>
+                                        {{ $status == 'uploading' ? 'Lengkapi Dokumen' : 'Sedang Diverifikasi' }}
+                                    </div>
+                                    <h2 class="text-2xl lg:text-3xl font-black text-slate-900 uppercase tracking-tighter">{{ $activeSubmission->title }}</h2>
+                                    <p class="text-slate-400 text-[11px] font-bold uppercase tracking-widest mt-1">Dibuat Pada: {{ $activeSubmission->created_at->format('d M Y') }}</p>
+                                </div>
+                            </div>
+
+                            @if($status == 'uploading')
+                                <form id="documentUploadForm" action="{{ route('survailen.store.docs', $activeSubmission->id) }}" method="POST" enctype="multipart/form-data" class="space-y-12">
+                                    @csrf
+                                    <input type="hidden" name="submit_action" id="formSubmitAction" value="draft">
+                                    
+                                    @php
+                                        $fileGroups = [
+                                            'Legalitas & Administrasi' => ['file_oss' => 'NIB / Izin OSS', 'file_mou' => 'MoU Kerjasama (Opsional)', 'file_izin_lainnya' => 'Izin Pendukung'],
+                                            'Sistem Manajemen Mutu' => ['file_manual_mutu' => 'Manual Mutu', 'file_prosedur_pelatihan' => 'SOP Pelatihan'],
+                                            'Monitoring & Rekaman' => ['file_pantau_mutu' => 'Hasil Pantau Mutu', 'file_rekaman_lainnya' => 'Rekaman Implementasi (Opsional)'],
+                                            'Kinerja & Rencana' => ['file_lapkin' => 'Laporan Kinerja', 'file_kak' => 'KAK Kegiatan'],
+                                            'Sumber Daya Manusia' => ['file_daftar_manajemen' => 'Daftar Manajemen', 'file_daftar_pengajar' => 'Daftar Pengajar'],
+                                            'Sarana & Prasarana' => ['file_daftar_sarana' => 'Daftar Sarana', 'file_daftar_prasarana' => 'Daftar Gedung'],
+                                            'Kurikulum & Materi' => ['file_kurikulum' => 'Dokumen Kurikulum', 'file_modul' => 'Modul Pelatihan', 'file_bahan_ajar' => 'Bahan Ajar']
+                                        ];
+                                    @endphp
+
+                                    @foreach($fileGroups as $groupLabel => $files)
+                                        <div class="space-y-5">
+                                            <h4 class="text-[11px] lg:text-xs font-black text-slate-400 uppercase tracking-[0.3em] border-l-4 border-teal-600 pl-4 leading-none text-left">{{ $groupLabel }}</h4>
+                                            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 text-left">
+                                                @foreach($files as $field => $label)
+                                                    <div class="relative group">
+                                                        @php 
+                                                            $hasFile = $activeSubmission->details && $activeSubmission->details->$field; 
+                                                            $isOptional = str_contains($label, 'Opsional');
+                                                        @endphp
+                                                        <div id="box_{{ $field }}" class="{{ $hasFile ? 'bg-emerald-50 border-emerald-200' : 'bg-slate-50 border-slate-200' }} border-2 border-dashed rounded-3xl p-6 lg:p-8 transition-all group-hover:border-teal-400 group-hover:bg-white flex flex-col items-center text-center h-full relative overflow-hidden shadow-sm">
+                                                            <div class="w-12 h-12 lg:w-14 lg:h-14 {{ $hasFile ? 'bg-emerald-500 text-white shadow-emerald-100' : 'bg-white text-teal-500 shadow-slate-100' }} rounded-2xl flex items-center justify-center mb-4 shadow-lg transition-all group-hover:scale-110 group-hover:rotate-3">
+                                                                <i class="fas {{ $hasFile ? 'fa-check' : 'fa-file-pdf' }} text-base lg:text-xl"></i>
+                                                            </div>
+                                                            <span class="text-sm lg:text-base font-black text-slate-800 uppercase tracking-tight leading-tight mb-2">
+                                                                {{ $label }} @if(!$isOptional && !$hasFile) <span class="text-rose-500">*</span> @endif
+                                                            </span>
+                                                            <p id="label_{{ $field }}" class="text-[11px] lg:text-[12px] {{ $hasFile ? 'text-emerald-600' : 'text-slate-400' }} font-bold truncate max-w-full italic px-2">
+                                                                {{ $hasFile ? 'Sudah Terunggah' : 'PDF (Maks. 2MB)' }}
+                                                            </p>
+                                                        </div>
+                                                        <input type="file" name="{{ $field }}" 
+                                                            data-label="{{ $label }}"
+                                                            data-has-file="{{ $hasFile ? 'true' : 'false' }}"
+                                                            data-optional="{{ $isOptional ? 'true' : 'false' }}"
+                                                            onchange="updateFileName(this, '{{ $field }}')" class="absolute inset-0 opacity-0 cursor-pointer" accept=".pdf">
+                                                    </div>
+                                                @endforeach
+                                            </div>
+                                        </div>
+                                    @endforeach
+
+                                    <div class="flex flex-col sm:flex-row gap-5 pt-10 border-t border-slate-100">
+                                        <button type="button" onclick="submitAsDraft()" class="flex-1 bg-slate-100 text-slate-700 py-5 px-8 rounded-2xl font-black text-[11px] uppercase tracking-[0.2em] hover:bg-slate-200 transition-all flex items-center justify-center gap-3">
+                                            <i class="fas fa-save"></i> Simpan Draft
+                                        </button>
+                                        <button type="button" onclick="openConfirmFinalModal()" class="flex-1 bg-teal-600 text-white py-5 px-8 rounded-2xl font-black text-[11px] uppercase tracking-[0.2em] shadow-xl shadow-teal-100 hover:bg-slate-900 transition-all flex items-center justify-center gap-3 active:scale-95">
+                                            <i class="fas fa-paper-plane"></i> Kirim Verifikasi
+                                        </button>
+                                    </div>
+                                </form>
+                            @else
+                                <div class="py-20 lg:py-24 text-center bg-teal-50/20 rounded-[3rem] border border-teal-100/50">
+                                    <div class="relative inline-block mb-8">
+                                        <div class="absolute inset-0 bg-teal-400 rounded-full animate-ping opacity-10"></div>
+                                        <div class="relative w-16 h-16 lg:w-20 lg:h-20 bg-white rounded-3xl flex items-center justify-center text-teal-600 text-2xl lg:text-3xl shadow-xl border border-teal-50"><i class="fas fa-user-shield"></i></div>
+                                    </div>
+                                    <h3 class="text-xl lg:text-3xl font-black text-slate-900 uppercase tracking-tighter leading-none mb-4 text-center">Verifikasi Berjalan</h3>
+                                    <p class="text-slate-400 text-[11px] lg:text-base max-w-sm mx-auto font-medium leading-relaxed px-6 text-center">Asesor BAPETEN sedang melakukan audit dokumen. Hasil akreditasi akan terbit di bagian arsip jika sudah selesai.</p>
+                                </div>
                             @endif
                         </div>
-                        
-                        <button onclick="closeNotification('errorModal')" class="relative z-10 w-full bg-slate-800 hover:bg-slate-900 text-white font-bold py-3.5 rounded-xl transition-all shadow-lg transform active:scale-95">
-                            Coba Lagi
-                        </button>
-                    </div>
-                </div>
-                @endif
+                    @endif
 
-                <!-- CANCEL POP-UP (Untuk Tombol Batal) -->
-                <div id="cancelModal" class="fixed inset-0 z-[100] hidden flex items-center justify-center bg-slate-900/50 backdrop-blur-[2px] transition-all duration-300">
-                    <div class="bg-white rounded-2xl shadow-2xl p-8 max-w-sm w-full mx-4 text-center animate-pop-in relative overflow-hidden border border-white/50">
-                        <div class="absolute top-0 left-0 w-full h-1.5 bg-gradient-to-r from-orange-400 to-red-500"></div>
-                        <div class="w-20 h-20 bg-orange-50 border-4 border-orange-100 rounded-full flex items-center justify-center mx-auto mb-5 relative z-10">
-                            <i class="fas fa-question text-4xl text-orange-500 drop-shadow-sm"></i>
+                    {{-- ARSIP AKREDITASI --}}
+                    <div class="mt-20 space-y-10 pb-24 text-left">
+                        <div class="flex items-center gap-6 text-left">
+                            <h3 class="text-[11px] lg:text-[12px] font-black text-slate-400 uppercase tracking-[0.5em] whitespace-nowrap text-left">Arsip Akreditasi</h3>
+                            <div class="flex-1 h-px bg-slate-200/80"></div>
                         </div>
-                        
-                        <h3 class="text-xl font-bold text-slate-800 mb-2 relative z-10">Batalkan Tindak Lanjut?</h3>
-                        <p class="text-slate-500 mb-8 text-sm leading-relaxed relative z-10 font-medium">
-                            Anda yakin ingin membatalkan atau menghapus data ini? Tindakan ini tidak dapat dibatalkan.
-                        </p>
-                        
-                        <div class="flex flex-col gap-3 relative z-10">
-                            <form id="cancelForm" action="" method="POST" class="w-full">
-                                @csrf @method('DELETE')
-                                <button type="submit" class="w-full bg-rose-600 hover:bg-rose-700 text-white font-bold py-3 rounded-xl transition-all shadow-lg shadow-rose-200 transform active:scale-95 flex items-center justify-center gap-2">
-                                    <i class="fas fa-trash-alt"></i> Ya, Hapus
-                                </button>
-                            </form>
-                            <button onclick="closeCancelModal()" class="w-full bg-white text-slate-600 border border-slate-200 hover:bg-slate-50 font-bold py-3 rounded-xl transition-all">
-                                Tidak, Kembali
-                            </button>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- STATISTIK SECTION -->
-                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
-                    <!-- Perlu Respon -->
-                    <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-100 hover:shadow-md transition-all duration-300 group">
-                        <div class="flex justify-between items-start">
-                            <div>
-                                <p class="text-slate-500 text-xs font-semibold uppercase tracking-wider group-hover:text-rose-600 transition-colors">Perlu Respon</p>
-                                <h3 class="text-3xl font-bold text-slate-800 mt-2">{{ $needAction }}</h3>
-                            </div>
-                            <div class="p-3 bg-rose-50 rounded-xl text-rose-500 group-hover:scale-110 transition-transform">
-                                <i class="fas fa-exclamation-circle text-xl"></i>
-                            </div>
-                        </div>
-                        <div class="mt-4 flex items-center text-xs text-slate-400">
-                            <span class="text-rose-600 font-medium bg-rose-50 px-1.5 py-0.5 rounded mr-2">Action</span> Dokumen Audit Baru/Revisi
-                        </div>
-                    </div>
-
-                    <!-- Menunggu -->
-                    <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-100 hover:shadow-md transition-all duration-300 group">
-                        <div class="flex justify-between items-start">
-                            <div>
-                                <p class="text-slate-500 text-xs font-semibold uppercase tracking-wider group-hover:text-amber-600 transition-colors">Menunggu Admin</p>
-                                <h3 class="text-3xl font-bold text-slate-800 mt-2">{{ $waitingVerification }}</h3>
-                            </div>
-                            <div class="p-3 bg-amber-50 rounded-xl text-amber-500 group-hover:scale-110 transition-transform">
-                                <i class="fas fa-clock text-xl"></i>
-                            </div>
-                        </div>
-                        <div class="mt-4 flex items-center text-xs text-slate-400">
-                            <span class="text-amber-600 font-medium bg-amber-50 px-1.5 py-0.5 rounded mr-2">Proses</span> Verifikasi Tindak Lanjut
-                        </div>
-                    </div>
-
-                    <!-- Selesai -->
-                    <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-100 hover:shadow-md transition-all duration-300 group">
-                        <div class="flex justify-between items-start">
-                            <div>
-                                <p class="text-slate-500 text-xs font-semibold uppercase tracking-wider group-hover:text-emerald-600 transition-colors">Selesai</p>
-                                <h3 class="text-3xl font-bold text-slate-800 mt-2">{{ $completed }}</h3>
-                            </div>
-                            <div class="p-3 bg-emerald-50 rounded-xl text-emerald-600 group-hover:scale-110 transition-transform">
-                                <i class="fas fa-check-double text-xl"></i>
-                            </div>
-                        </div>
-                        <div class="mt-4 flex items-center text-xs text-slate-400">
-                            <span class="text-emerald-600 font-medium bg-emerald-50 px-1.5 py-0.5 rounded mr-2">Sukses</span> Kasus Ditutup
-                        </div>
-                    </div>
-                </div>
-
-                <!-- TABEL DATA -->
-                <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
-                    <div class="px-6 py-5 border-b border-slate-100 bg-white">
-                        <h3 class="font-bold text-slate-800 text-lg">Daftar Dokumen Masuk</h3>
-                    </div>
-
-                    <div class="overflow-x-auto">
-                        <table class="w-full text-sm text-left text-slate-600 min-w-[900px] md:min-w-0">
-                            <thead class="text-xs text-slate-500 uppercase bg-slate-50/50 border-b border-slate-100">
-                                <tr>
-                                    <th class="px-6 py-4 font-semibold tracking-wider w-40">Tanggal Masuk</th>
-                                    <th class="px-6 py-4 font-semibold tracking-wider">Perihal / Judul</th>
-                                    <th class="px-6 py-4 font-semibold tracking-wider">Dokumen Admin</th>
-                                    <th class="px-6 py-4 font-semibold tracking-wider">Respon Anda</th>
-                                    <th class="px-6 py-4 font-semibold tracking-wider text-center">Status</th>
-                                    <th class="px-6 py-4 font-semibold tracking-wider text-center">Aksi</th>
-                                </tr>
-                            </thead>
-                            <tbody class="divide-y divide-slate-100">
-                                @forelse($survailens as $item)
-                                <tr class="bg-white hover:bg-slate-50 transition-colors cursor-pointer group" 
-                                    onclick='openHistoryModal(@json($item->files ?? []), "{{ $item->status }}", "{{ $item->title }}")'>
-                                    
-                                    <!-- Tanggal Admin Kirim -->
-                                    <td class="px-6 py-5 whitespace-nowrap">
-                                        <div class="flex flex-col">
-                                            <span class="font-bold text-slate-700">{{ $item->created_at->format('d M Y') }}</span>
-                                            <span class="text-[11px] text-slate-400">{{ $item->created_at->format('H:i') }} WIB</span>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 text-left">
+                            @forelse($survailens as $hist)
+                                <div class="group bg-white p-6 lg:p-8 rounded-[2.5rem] border border-slate-100 shadow-sm hover:shadow-2xl transition-all relative overflow-hidden text-left">
+                                    <div class="flex flex-row items-center gap-6 text-left">
+                                        <div class="w-16 h-16 {{ $hist->predikat == 'A' ? 'bg-emerald-50 text-emerald-600 border-emerald-100' : 'bg-teal-50 text-teal-600 border-teal-100' }} rounded-2xl flex items-center justify-center text-3xl font-black shadow-inner border shrink-0 group-hover:scale-110 transition-transform">
+                                            {{ $hist->predikat ?? '?' }}
                                         </div>
-                                    </td>
-
-                                    <!-- Judul -->
-                                    <td class="px-6 py-5">
-                                        <div class="flex flex-col">
-                                            <span class="font-bold text-slate-800 group-hover:text-amber-600 transition-colors text-sm line-clamp-1">{{ $item->title }}</span>
-                                            <span class="text-[10px] text-amber-600 bg-amber-50 px-1.5 py-0.5 rounded w-fit mt-1 border border-amber-100 font-bold">
-                                                SURVAILEN
-                                            </span>
-                                        </div>
-                                    </td>
-
-                                    <!-- Dokumen DARI Admin -->
-                                    <td class="px-6 py-5 text-left">
-                                        @php
-                                            $adminFile = $item->admin_file ?: ($item->files->where('version', 0)->first()->admin_file ?? null);
-                                        @endphp
-                                        @if($adminFile)
-                                            <a href="{{ asset('storage/' . $adminFile) }}" target="_blank" onclick="event.stopPropagation()" class="inline-flex items-center gap-2 bg-white hover:bg-red-50 text-slate-700 border border-slate-200 hover:border-red-200 px-3 py-2 rounded-xl transition-all group/file shadow-sm">
-                                                <i class="fas fa-file-pdf text-red-500 group-hover/file:scale-110 transition-transform"></i>
-                                                <div class="flex flex-col text-left">
-                                                    <span class="text-[9px] uppercase font-bold text-slate-400 leading-none">Download</span>
-                                                    <span class="text-xs font-bold">Surat Admin</span>
-                                                </div>
-                                            </a>
-                                        @else
-                                            <span class="text-xs text-slate-400 italic bg-slate-100 px-2 py-1 rounded font-medium">Tanpa Lampiran</span>
-                                        @endif
-                                    </td>
-
-                                    <td class="px-6 py-5 text-left">
-                                        @if($item->file_path)
-                                            <a href="{{ asset('storage/' . $item->file_path) }}" target="_blank" onclick="event.stopPropagation()" class="text-blue-600 hover:text-blue-800 hover:underline text-xs flex items-center gap-2 font-bold w-fit bg-blue-50/50 p-2 rounded-lg border border-blue-100/50">
-                                                <i class="fas fa-paperclip"></i> Bukti Upload
-                                            </a>
-                                        @else
-                                            <div class="flex items-center gap-2 text-rose-500 font-bold bg-rose-50 px-3 py-1.5 rounded-lg border border-rose-100 w-fit">
-                                                <span class="animate-pulse flex h-2 w-2 rounded-full bg-rose-500"></span>
-                                                <span class="text-[10px]">BELUM RESPON</span>
+                                        <div class="flex-1 text-left">
+                                            <h4 class="font-black text-slate-900 uppercase tracking-tight text-sm lg:text-base leading-tight mb-2 text-left">{{ $hist->title }}</h4>
+                                            <div class="flex flex-wrap items-center gap-3 text-left">
+                                                <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest text-left">{{ $hist->updated_at->format('d M Y') }}</p>
+                                                <span class="w-1 h-1 rounded-full bg-slate-200"></span>
+                                                <p class="text-[10px] font-black text-teal-600 uppercase tracking-widest text-left">{{ number_format($hist->final_score, 1) }}%</p>
                                             </div>
-                                        @endif
-                                    </td>
-
-                                    <!-- Status -->
-                                    <td class="px-6 py-5 text-center">
-                                        @if(!$item->file_path)
-                                            <span class="inline-block px-2.5 py-1 bg-slate-100 text-slate-500 text-[10px] font-bold rounded-full uppercase tracking-wider border border-slate-200">Menunggu Anda</span>
-                                        @elseif($item->status == 'pending')
-                                            <span class="inline-block px-2.5 py-1 bg-amber-100 text-amber-600 text-[10px] font-bold rounded-full uppercase tracking-wider border border-amber-200">Verifikasi</span>
-                                        @elseif($item->status == 'approved')
-                                            <span class="inline-block px-2.5 py-1 bg-emerald-100 text-emerald-600 text-[10px] font-bold rounded-full uppercase tracking-wider border border-emerald-200">Selesai</span>
-                                        @elseif($item->status == 'rejected')
-                                            <span class="inline-block px-2.5 py-1 bg-rose-100 text-rose-600 text-[10px] font-bold rounded-full uppercase tracking-wider border border-rose-200">Ditolak</span>
-                                        @endif
-                                    </td>
-
-                                    <!-- Aksi User -->
-                                    <td class="px-6 py-5 text-center">
-                                        @if(!$item->file_path || $item->status == 'rejected')
-                                            <button onclick="event.stopPropagation(); openUploadModal({{ $item->id }}, '{{ $item->title }}')" class="w-full bg-amber-500 hover:bg-amber-600 text-white px-3 py-1.5 rounded-lg text-xs font-bold shadow-md shadow-amber-200 hover:shadow-lg transition-all active:scale-95 flex items-center justify-center gap-1.5 whitespace-nowrap">
-                                                <i class="fas fa-upload"></i> {{ $item->status == 'rejected' ? 'Revisi' : 'Tindak Lanjut' }}
-                                            </button>
-                                        @elseif($item->status == 'approved')
-                                            <span class="text-emerald-500 text-lg drop-shadow-sm"><i class="fas fa-check-circle"></i></span>
-                                        @else
-                                            <button onclick="event.stopPropagation(); openUploadModal({{ $item->id }}, '{{ $item->title }}')" class="text-slate-400 hover:text-amber-600 text-xs font-medium flex items-center justify-center gap-1 mx-auto hover:bg-slate-100 px-2 py-1 rounded transition-colors">
-                                                <i class="fas fa-edit mr-1"></i> Edit
-                                            </button>
-                                        @endif
-                                    </td>
-                                </tr>
-                                @empty
-                                <tr>
-                                    <td colspan="6" class="px-6 py-20 text-center">
-                                        <div class="flex flex-col items-center justify-center">
-                                            <div class="w-16 h-16 bg-slate-100 rounded-full flex items-center justify-center mb-3 text-slate-300">
-                                                <i class="fas fa-clipboard-list text-3xl"></i>
-                                            </div>
-                                            <p class="font-medium text-slate-500">Tidak ada dokumen survailen masuk.</p>
-                                            <p class="text-xs text-slate-400">Jika ada audit, Admin akan mengirimkannya ke sini.</p>
                                         </div>
-                                    </td>
-                                </tr>
-                                @endforelse
-                            </tbody>
-                        </table>
+                                        <button type="button" data-submission='@json($hist)' onclick='showDetailModal(this, event)' class="w-11 h-11 lg:w-12 lg:h-12 bg-slate-50 rounded-2xl flex items-center justify-center text-slate-400 hover:bg-slate-900 hover:text-white transition-all shadow-sm active:scale-90">
+                                            <i class="fas fa-eye text-base"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            @empty
+                                <div class="col-span-full py-20 text-center bg-slate-50/50 rounded-[3rem] border border-dashed border-slate-200 text-center">
+                                    <p class="text-slate-300 italic text-[11px] font-bold uppercase tracking-widest text-center">Belum Ada Riwayat Akreditasi</p>
+                                </div>
+                            @endforelse
+                        </div>
                     </div>
                 </div>
-                
+
                 <div class="mt-8 text-center text-xs text-slate-400">
                     &copy; 2026 Sistem Informasi Jaminan Mutu Ketenaganukliran
                 </div>
-
             </main>
         </div>
     </div>
 
-    <!-- MODAL UPLOAD RESPON -->
-    <div id="uploadModal" class="fixed inset-0 z-50 hidden" aria-labelledby="modal-title" role="dialog" aria-modal="true">
-        <div class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm transition-opacity" onclick="closeModal()"></div>
-        <div class="fixed inset-0 z-10 overflow-y-auto">
-            <div class="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
-                
-                <div class="relative transform overflow-hidden rounded-2xl bg-white text-left shadow-2xl transition-all sm:my-8 sm:w-full sm:max-w-lg border border-slate-100 animate-pop-in">
-                    
-                    <div class="bg-gradient-to-r from-amber-500 to-orange-600 px-6 py-4 flex justify-between items-center text-white">
-                        <h3 class="text-lg font-bold flex items-center gap-2">
-                            <i class="fas fa-reply"></i> Respon Tindak Lanjut
-                        </h3>
-                        <button onclick="closeModal()" class="text-amber-100 hover:text-white bg-white/10 hover:bg-white/20 p-2 rounded-lg transition-colors">
-                            <i class="fas fa-times"></i>
-                        </button>
-                    </div>
-
-                    <form id="responseForm" method="POST" enctype="multipart/form-data" action="">
-                        @csrf
-                        <input type="hidden" name="_method" value="PUT">
-                        <input type="hidden" name="force_status" value="pending">
-
-                        <div class="px-6 py-6 space-y-5">
-                            
-                            <div class="space-y-1.5">
-                                <label class="block text-xs font-bold text-slate-500 uppercase tracking-wide">Menanggapi Dokumen</label>
-                                <input type="text" id="docTitle" class="block w-full rounded-xl border-slate-200 bg-slate-50 p-3 text-sm font-bold text-slate-600" readonly>
-                            </div>
-
-                            <div class="space-y-2 bg-slate-50 p-4 rounded-xl border border-slate-200">
-                                <label class="block text-xs font-bold text-slate-500 uppercase tracking-wide flex justify-between">
-                                    <span>Upload Bukti Tindak Lanjut (PDF)</span>
-                                    <span class="text-[10px] bg-amber-100 text-amber-700 px-1.5 py-0.5 rounded">Wajib</span>
-                                </label>
-                                <input id="inputFile" name="file_upload" type="file" class="block w-full text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-xs file:font-bold file:bg-amber-100 file:text-amber-700 hover:file:bg-amber-200 border border-slate-300 rounded-lg cursor-pointer bg-white" accept=".pdf" onchange="showFileName(this)" required>
-                                <p id="fileNameDisplay" class="mt-2 text-sm font-bold text-amber-600 hidden"></p>
-                            </div>
-
-                            <div class="space-y-1.5">
-                                <label class="block text-xs font-bold text-slate-500 uppercase tracking-wide">Catatan Tambahan (Opsional)</label>
-                                <textarea name="user_note" rows="2" class="block w-full rounded-xl border-slate-300 bg-white p-3 text-sm focus:border-amber-500 focus:ring-amber-500" placeholder="Keterangan singkat mengenai tindak lanjut..."></textarea>
-                            </div>
-                        </div>
-
-                        <div class="bg-slate-50 px-6 py-4 flex flex-row-reverse gap-3 border-t border-slate-100">
-                            <button type="submit" class="inline-flex w-full justify-center rounded-xl bg-amber-600 px-5 py-2.5 text-sm font-bold text-white shadow-lg shadow-amber-200 hover:shadow-none hover:bg-amber-700 transition-all active:scale-95">
-                                Kirim Respon
-                            </button>
-                            <button type="button" onclick="closeModal()" class="inline-flex w-full justify-center rounded-xl bg-white px-5 py-2.5 text-sm font-bold text-slate-700 shadow-sm ring-1 ring-inset ring-slate-300 hover:bg-slate-50 transition-all">
-                                Batal
-                            </button>
-                        </div>
-                    </form>
+    {{-- MODAL DETAIL RIWAYAT --}}
+    <div id="detailModal" class="fixed inset-0 z-[100] hidden items-center justify-center p-3 lg:p-4 text-left">
+        <div class="absolute inset-0 modal-backdrop" onclick="closeDetailModal()"></div>
+        <div class="relative bg-white rounded-[2.5rem] w-full max-w-4xl max-h-[92vh] flex flex-col shadow-2xl overflow-hidden animate-pop-in border border-white">
+            
+            {{-- Header Modal --}}
+            <div class="p-6 lg:p-10 flex justify-between items-start shrink-0 border-b border-slate-50 text-left">
+                <div class="text-left">
+                    <h3 id="modalTitle" class="text-xl lg:text-2xl font-black text-slate-900 uppercase tracking-tighter leading-tight text-left">Detail Survailen</h3>
+                    <p id="modalDate" class="text-[9px] lg:text-[10px] text-slate-400 font-bold uppercase tracking-[0.2em] mt-2 text-left"></p>
                 </div>
+                <button type="button" onclick="closeDetailModal()" class="w-11 h-11 lg:w-12 lg:h-12 bg-slate-50 rounded-2xl flex items-center justify-center text-slate-400 hover:bg-rose-50 hover:text-rose-500 transition-all active:scale-90"><i class="fas fa-times text-lg"></i></button>
             </div>
-        </div>
-    </div>
 
-    <!-- MODAL HISTORY (USER SIDE - PRO TIMELINE) -->
-    <div id="historyModal" class="fixed inset-0 z-50 hidden" aria-labelledby="modal-title" role="dialog" aria-modal="true">
-        <div class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm transition-opacity" onclick="closeHistoryModal()"></div>
-        <div class="fixed inset-0 z-10 overflow-y-auto">
-            <div class="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
-                <div class="relative transform overflow-hidden rounded-2xl bg-white text-left shadow-2xl transition-all sm:my-8 sm:w-full sm:max-w-3xl border border-slate-100 animate-pop-in">
-                    
-                    <!-- Header -->
-                    <div class="bg-gradient-to-r from-slate-800 to-slate-900 px-6 py-5 flex justify-between items-center text-white shadow-md relative overflow-hidden">
-                        <div class="absolute top-0 right-0 w-32 h-32 bg-white opacity-5 rounded-full -mr-10 -mt-10 pointer-events-none"></div>
-                        <div>
-                            <h3 class="text-xl font-bold flex items-center gap-3">
-                                <div class="bg-white/10 p-2 rounded-lg backdrop-blur-sm"><i class="fas fa-history text-lg"></i></div>
-                                Perjalanan Audit
-                            </h3>
-                            <p class="text-xs text-slate-300 mt-1 opacity-90" id="historyTitle">Detail riwayat dan tanggapan admin</p>
+            <div class="flex-1 overflow-y-auto px-6 lg:px-12 py-8 lg:py-10 space-y-12 no-scrollbar text-left">
+                
+                {{-- STATS CARD AREA --}}
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-5 lg:gap-8">
+                    {{-- Predikat --}}
+                    <div class="bg-slate-50/50 p-6 rounded-[2rem] border border-slate-100 flex flex-row sm:flex-col justify-between sm:justify-center items-center group">
+                        <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest sm:mb-3 text-left">Predikat</p>
+                        <h4 id="modalPredikat" class="text-4xl lg:text-6xl font-black text-teal-600 leading-none group-hover:scale-110 transition-transform">-</h4>
+                    </div>
+                    {{-- Skor --}}
+                    <div class="bg-slate-50/50 p-6 rounded-[2rem] border border-slate-100 flex flex-row sm:flex-col justify-between sm:justify-center items-center">
+                        <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest sm:mb-3 text-left">Skor Final</p>
+                        <h4 id="modalScore" class="text-2xl lg:text-3xl font-black text-slate-800 leading-none">0%</h4>
+                    </div>
+                    {{-- Status --}}
+                    <div class="bg-slate-50/50 p-6 rounded-[2rem] border border-slate-100 flex flex-row sm:flex-col justify-between sm:justify-center items-center">
+                        <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest sm:mb-4 text-left text-left">Status</p>
+                        <span class="px-5 py-2 bg-emerald-500 text-white rounded-full font-black text-[9px] uppercase tracking-widest shadow-lg shadow-emerald-100 text-center">Lulus</span>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 text-left">
+                    {{-- Rincian Tabel --}}
+                    <div class="space-y-5 text-left">
+                        <h5 class="text-[11px] font-black text-slate-400 uppercase tracking-[0.3em] pl-2 text-left text-left">Rincian Skor Kategori</h5>
+                        <div class="bg-white rounded-[2rem] border border-slate-100 overflow-hidden shadow-sm text-left">
+                            <table class="w-full text-[11px] lg:text-[12px] text-left border-collapse">
+                                <tbody id="modalTableBody" class="divide-y divide-slate-50 text-left"></tbody>
+                            </table>
                         </div>
-                        <button onclick="closeHistoryModal()" class="text-slate-400 hover:text-white bg-white/10 hover:bg-white/20 rounded-xl p-2 transition-all active:scale-95 z-10">
-                            <i class="fas fa-times text-lg"></i>
-                        </button>
                     </div>
 
-                    <!-- Timeline Body -->
-                    <div class="max-h-[65vh] overflow-y-auto bg-slate-50">
-                        <div id="timelineContainer" class="px-6 py-8 relative">
-                            <!-- Timeline items will be injected here -->
+                    {{-- Berkas Hasil --}}
+                    <div class="space-y-6 text-left">
+                        <div id="modalFiles" class="space-y-5 text-left">
+                            <h5 class="text-[11px] font-black text-slate-400 uppercase tracking-[0.3em] pl-2 text-center sm:text-left text-left text-left">Dokumen Resmi</h5>
+                            <div class="grid grid-cols-1 gap-4 text-left">
+                                <a id="btnLHS" target="_blank" class="flex items-center justify-between p-5 bg-slate-900 text-white rounded-3xl hover:bg-teal-600 transition-all active:scale-95 shadow-xl shadow-slate-200">
+                                    <span class="text-[10px] font-bold uppercase tracking-widest flex items-center gap-4 text-left"><i class="fas fa-file-pdf text-base"></i> Laporan (LHS)</span>
+                                    <i class="fas fa-download text-[8px] opacity-50"></i>
+                                </a>
+                                <a id="btnCert" target="_blank" class="flex items-center justify-between p-5 bg-amber-500 text-white rounded-3xl hover:bg-amber-600 transition-all active:scale-95 shadow-xl shadow-amber-100">
+                                    <span class="text-[10px] font-bold uppercase tracking-widest flex items-center gap-4 text-left"><i class="fas fa-award text-base"></i> Sertifikat</span>
+                                    <i class="fas fa-download text-[10px] opacity-50"></i>
+                                </a>
+                            </div>
                         </div>
-                    </div>
-
-                    <div class="bg-white px-6 py-4 flex justify-end border-t border-slate-200 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)] relative z-20">
-                         <button onclick="closeHistoryModal()" class="px-6 py-2.5 bg-white border border-slate-300 text-slate-700 text-sm rounded-xl hover:bg-slate-50 font-bold shadow-sm transition-colors">Tutup</button>
                     </div>
                 </div>
             </div>
@@ -473,247 +432,165 @@
     </div>
 
     <script>
-        // === SIDEBAR TOGGLE ===
-        function toggleSidebar() {
-            const sidebar = document.getElementById('sidebar');
-            const overlay = document.getElementById('sidebarOverlay');
-            
-            if (sidebar.classList.contains('-translate-x-full')) {
-                // Open Sidebar
-                sidebar.classList.remove('-translate-x-full');
-                overlay.classList.remove('hidden');
-            } else {
-                // Close Sidebar
-                sidebar.classList.add('-translate-x-full');
-                overlay.classList.add('hidden');
-            }
-        }
-
-        // === NOTIFICATIONS & MODALS ===
-        function closeNotification(modalId) {
-            const modal = document.getElementById(modalId);
-            if(modal) {
-                modal.classList.add('opacity-0');
-                modal.querySelector('div').classList.add('scale-95');
-                setTimeout(() => {
-                    modal.style.display = 'none';
-                }, 300);
-            }
-        }
-
-        function openCancelModal(url) {
-            const modal = document.getElementById('cancelModal');
-            const form = document.getElementById('cancelForm');
-            
-            // Set action URL form hapus
-            form.action = url;
-            
-            modal.classList.remove('hidden');
-        }
-
-        function closeCancelModal() {
-            const modal = document.getElementById('cancelModal');
-            if(modal) {
-                modal.classList.add('hidden');
-            }
-        }
-
-        // Auto Close Success Modal Logic
-        document.addEventListener('DOMContentLoaded', () => {
-            const successModal = document.getElementById('successModal');
-            if(successModal) {
-                const progressBar = document.getElementById('progressBar');
-                
-                // Animate Progress Bar (3 seconds)
-                setTimeout(() => {
-                    progressBar.style.transition = 'width 3s linear';
-                    progressBar.style.width = '0%';
-                }, 100);
-
-                // Close after 3.1 seconds
-                setTimeout(() => {
-                    closeNotification('successModal');
-                }, 3100);
+        {{-- ON PAGE LOAD: Check for Server Errors --}}
+        window.addEventListener('DOMContentLoaded', (event) => {
+            const errorList = document.getElementById('errorList');
+            if (errorList && errorList.children.length > 0) {
+                document.getElementById('errorModal').classList.remove('hidden');
+                document.getElementById('errorModal').classList.add('flex');
             }
         });
 
-        // === UPLOAD FORM LOGIC ===
-        function showFileName(input) {
-            const display = document.getElementById('fileNameDisplay');
-            if (input.files && input.files[0]) {
-                display.textContent = "File: " + input.files[0].name;
-                display.classList.remove('hidden');
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('sidebarOverlay');
+            if (sidebar.classList.contains('-translate-x-full')) {
+                sidebar.classList.remove('-translate-x-full');
+                overlay.classList.remove('hidden');
+                document.body.style.overflow = 'hidden';
             } else {
-                display.classList.add('hidden');
+                sidebar.classList.add('-translate-x-full');
+                overlay.classList.add('hidden');
+                document.body.style.overflow = '';
             }
         }
 
-        function openUploadModal(id, title) {
-            const modal = document.getElementById('uploadModal');
-            const form = document.getElementById('responseForm');
-            const titleField = document.getElementById('docTitle');
-            
-            form.action = "{{ url('/submission/update') }}/" + id;
-            titleField.value = title;
-            
-            document.getElementById('inputFile').value = '';
-            document.getElementById('fileNameDisplay').classList.add('hidden');
-
-            modal.classList.remove('hidden');
+        function closeModal(id) {
+            document.getElementById(id).classList.add('hidden');
+            document.getElementById(id).classList.remove('flex');
         }
 
-        function closeModal() {
-            document.getElementById('uploadModal').classList.add('hidden');
-        }
+        function openConfirmFinalModal() { 
+            // CLIENT SIDE VALIDATION BEFORE CONFIRMATION
+            const form = document.getElementById('documentUploadForm');
+            const fileInputs = form.querySelectorAll('input[type="file"]');
+            let missingFields = [];
 
-        // === HISTORY TIMELINE LOGIC ===
-        function openHistoryModal(files, currentStatus, docTitle) {
-            const container = document.getElementById('timelineContainer');
-            document.getElementById('historyTitle').innerText = "Riwayat: " + docTitle;
-            container.innerHTML = ''; 
-            
-            if(!files || files.length === 0) {
-                container.innerHTML = `
-                    <div class="flex flex-col items-center justify-center py-10 text-slate-400">
-                        <i class="far fa-folder-open text-4xl mb-3 opacity-50"></i>
-                        <p class="text-sm">Belum ada riwayat tercatat.</p>
-                    </div>`;
+            fileInputs.forEach(input => {
+                const isOptional = input.getAttribute('data-optional') === 'true';
+                const hasFileAlready = input.getAttribute('data-has-file') === 'true';
+                const label = input.getAttribute('data-label').replace(' (Opsional)', '');
+
+                // Jika wajib, belum ada di DB, dan input masih kosong
+                if (!isOptional && !hasFileAlready && input.files.length === 0) {
+                    missingFields.push(label);
+                }
+            });
+
+            if (missingFields.length > 0) {
+                // Tampilkan Modal Peringatan
+                const errorList = document.getElementById('errorList');
+                errorList.innerHTML = '';
+                missingFields.forEach(field => {
+                    const li = document.createElement('li');
+                    li.className = "text-[11px] font-bold text-rose-600 flex items-start gap-2";
+                    li.innerHTML = `<i class="fas fa-caret-right mt-1 shrink-0"></i> <span>Dokumen <b>${field}</b> wajib diunggah</span>`;
+                    errorList.appendChild(li);
+                });
+                document.getElementById('errorModal').classList.remove('hidden');
+                document.getElementById('errorModal').classList.add('flex');
             } else {
-                // 1. Sort ascending (Oldest to Newest)
-                files.sort((a, b) => a.version - b.version);
+                // Jika Lengkap, Tampilkan Modal Konfirmasi
+                const modal = document.getElementById('confirmFinalModal');
+                modal.classList.remove('hidden');
+                modal.classList.add('flex');
+            }
+        }
+
+        function closeConfirmModal() { 
+            const modal = document.getElementById('confirmFinalModal');
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+        }
+
+        function submitFinalFormNow() {
+            document.getElementById('formSubmitAction').value = 'final';
+            document.getElementById('documentUploadForm').submit();
+        }
+
+        function submitAsDraft() {
+            document.getElementById('formSubmitAction').value = 'draft';
+            document.getElementById('documentUploadForm').submit();
+        }
+
+        const weightConfigs = {
+            'legalitas': { label: 'Legalitas', bobot: 10, icon: 'fa-building' },
+            'mutu': { label: 'Manajemen Mutu', bobot: 20, icon: 'fa-check-double' },
+            'rekaman': { label: 'Rekaman Sistem', bobot: 20, icon: 'fa-history' },
+            'kinerja': { label: 'Kinerja', bobot: 5, icon: 'fa-chart-line' },
+            'sdm': { label: 'Sumber Daya Manusia', bobot: 10, icon: 'fa-users' },
+            'sarpras': { label: 'Sarana Prasarana', bobot: 15, icon: 'fa-tools' },
+            'kurikulum': { label: 'Kurikulum', bobot: 20, icon: 'fa-book-open' }
+        };
+
+        const storageBase = "{{ \Storage::disk('public')->url('') }}".replace(/\/$/, "");
+
+        function showDetailModal(btn, event) {
+            if (event) event.preventDefault();
+            try {
+                const item = JSON.parse(btn.getAttribute('data-submission'));
+                const scores = item.evaluator_scores ? JSON.parse(item.evaluator_scores) : {};
                 
-                // 2. FILTER & MERGE Logic (To show only relevant milestones)
-                let cleanFiles = [];
-                files.forEach((file) => {
-                    if (cleanFiles.length > 0) {
-                        let lastClean = cleanFiles[cleanFiles.length - 1];
-                        // If same file, just update admin notes/files (merge effect)
-                        if (file.file_path === lastClean.file_path && file.file_name === lastClean.file_name) {
-                            if (file.admin_note) lastClean.admin_note = file.admin_note;
-                            if (file.admin_file) lastClean.admin_file = file.admin_file;
-                            return;
-                        }
-                    }
-                    cleanFiles.push({...file}); 
-                });
+                document.getElementById('modalTitle').innerText = item.title;
+                document.getElementById('modalDate').innerText = 'Validitas Terakhir: ' + new Date(item.updated_at).toLocaleDateString('id-ID', {day:'numeric', month:'long', year:'numeric'});
+                document.getElementById('modalPredikat').innerText = item.predikat || 'D';
+                document.getElementById('modalScore').innerText = parseFloat(item.final_score).toFixed(1) + '%';
 
-                // 3. Render Timeline Items
-                cleanFiles.forEach((file, index) => {
-                    const d = new Date(file.created_at);
-                    const dateStr = d.toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' });
-                    
-                    let isLatest = (index === cleanFiles.length - 1);
-                    let isStart = (file.version == 0);
-
-                    // --- CONTENT BUILDER ---
-                    let versionLabel, colorClass, actionTitle, userFileHTML, adminFeedbackHTML;
-
-                    // 1. Setup Versi & Icon
-                    if (isStart) {
-                        versionLabel = '<i class="fas fa-flag"></i>';
-                        colorClass = 'bg-amber-100 text-amber-600 ring-4 ring-amber-50';
-                        actionTitle = "Inisiasi Audit (Admin)";
-                        
-                        // File Admin di Versi Awal
-                        userFileHTML = '';
-                        if(file.admin_file) {
-                            userFileHTML = `
-                                <div class="mt-2 bg-amber-50 rounded-lg p-3 border border-amber-100 flex items-start gap-3">
-                                    <div class="bg-white p-2 rounded-md shadow-sm text-red-500"><i class="fas fa-file-pdf text-lg"></i></div>
-                                    <div>
-                                        <p class="text-xs font-bold text-slate-700 mb-0.5">Surat Audit Awal</p>
-                                        <a href="/storage/${file.admin_file}" target="_blank" class="text-[11px] text-blue-600 hover:underline font-medium">Lihat Dokumen</a>
-                                    </div>
+                const tableBody = document.getElementById('modalTableBody');
+                tableBody.innerHTML = '';
+                Object.keys(weightConfigs).forEach(key => {
+                    const score = scores[key] || 0;
+                    tableBody.innerHTML += `
+                        <tr class="hover:bg-slate-50 transition-colors">
+                            <td class="px-6 py-5 flex items-center gap-4 text-left text-left">
+                                <div class="w-9 h-9 bg-slate-100 text-slate-500 rounded-xl flex items-center justify-center shrink-0">
+                                    <i class="fas ${weightConfigs[key].icon} text-[12px]"></i>
                                 </div>
-                                ${file.admin_note ? `<div class="mt-2 text-xs text-slate-600 italic bg-white p-2 rounded border border-slate-100">"${file.admin_note}"</div>` : ''}
-                            `;
-                        }
-                        adminFeedbackHTML = ''; // Tidak ada feedback karena ini start
-
-                    } else {
-                        versionLabel = `v${file.version}`;
-                        colorClass = isLatest ? 'bg-blue-600 text-white ring-4 ring-blue-100 shadow-md' : 'bg-white border-2 border-slate-200 text-slate-500';
-                        actionTitle = "Tindak Lanjut Lembaga";
-
-                        // File User
-                        userFileHTML = `
-                            <div class="mt-2 flex items-center gap-3 group/file cursor-pointer" onclick="window.open('/storage/${file.file_path}', '_blank')">
-                                <div class="w-10 h-10 rounded-lg bg-blue-50 flex items-center justify-center text-blue-600 group-hover/file:bg-blue-100 group-hover/file:scale-110 transition-all">
-                                    <i class="fas fa-file-alt"></i>
+                                <div class="text-left">
+                                    <span class="block font-black text-slate-800 uppercase text-[11px] tracking-tight text-left">${weightConfigs[key].label}</span>
+                                    <span class="text-[9px] font-bold text-slate-400 uppercase tracking-widest text-left">Bobot: ${weightConfigs[key].bobot}%</span>
                                 </div>
-                                <div class="flex-1">
-                                    <p class="text-sm font-bold text-slate-700 group-hover/file:text-blue-700 transition-colors">${file.file_name || 'File Lembaga'}</p>
-                                    <p class="text-[10px] text-slate-400">Klik untuk melihat file</p>
-                                </div>
-                            </div>
-                            ${file.user_note ? `<div class="mt-2 ml-1 text-xs text-slate-500 italic pl-3 border-l-2 border-slate-200">"${file.user_note}"</div>` : ''}
-                        `;
-
-                        // Admin Feedback Logic
-                        let badgeHTML = '';
-                        if (isLatest) {
-                            if (currentStatus === 'approved') badgeHTML = `<span class="bg-emerald-100 text-emerald-700 px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider border border-emerald-200">SELESAI</span>`;
-                            else if (currentStatus === 'rejected') badgeHTML = `<span class="bg-rose-100 text-rose-700 px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider border border-rose-200">MINTA REVISI</span>`;
-                        } else if (file.admin_note || file.admin_file) {
-                            badgeHTML = `<span class="bg-slate-200 text-slate-600 px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider">Revisi Sebelumnya</span>`;
-                        }
-
-                        if (badgeHTML || file.admin_note || file.admin_file) {
-                            adminFeedbackHTML = `
-                                <div class="mt-4 pt-3 border-t border-slate-100 relative">
-                                    <div class="absolute -top-2 left-4 bg-slate-50 px-2 text-[10px] font-bold text-slate-400 uppercase tracking-widest">Evaluasi Admin</div>
-                                    <div class="flex justify-between items-center mb-2">
-                                        <span class="text-xs font-bold text-slate-700">Tanggapan</span>
-                                        ${badgeHTML}
-                                    </div>
-                                    ${file.admin_note ? `<div class="bg-yellow-50/50 border border-yellow-100 rounded-lg p-3 text-xs text-slate-700 mb-2"><i class="fas fa-comment-alt text-yellow-500 mr-1.5"></i> "${file.admin_note}"</div>` : ''}
-                                    ${file.admin_file ? `<a href="/storage/${file.admin_file}" target="_blank" class="flex items-center gap-2 text-xs font-bold text-blue-600 bg-blue-50/50 hover:bg-blue-50 p-2 rounded-lg transition-colors border border-blue-100/50"><i class="fas fa-paperclip"></i> Lampiran Balasan Admin</a>` : ''}
-                                </div>
-                            `;
-                        } else {
-                            adminFeedbackHTML = `<div class="mt-4 pt-2 border-t border-slate-100 text-center"><span class="text-[10px] text-slate-400 italic">Menunggu evaluasi admin...</span></div>`;
-                        }
-                    }
-
-                    // --- RENDER HTML ITEM ---
-                    const itemHTML = `
-                        <div class="relative flex gap-6 pb-8 last:pb-0">
-                            <!-- Vertical Line -->
-                            <div class="absolute top-0 left-4 -bottom-8 w-0.5 bg-slate-200 last:hidden"></div>
-                            
-                            <!-- Icon/Badge -->
-                            <div class="relative z-10 flex-shrink-0 w-8 h-8 rounded-full ${colorClass} flex items-center justify-center border-2 border-white shadow-sm">
-                                <span class="text-[10px] font-bold">${versionLabel}</span>
-                            </div>
-
-                            <!-- Content Card -->
-                            <div class="flex-1 bg-white rounded-xl p-4 border border-slate-200 shadow-sm relative hover:shadow-md transition-all duration-300 group/card">
-                                <!-- Date Header -->
-                                <div class="flex justify-between items-center mb-3">
-                                    <span class="text-xs font-bold text-slate-700 flex items-center gap-2">
-                                        ${actionTitle}
-                                        ${isLatest ? '<span class="flex h-2 w-2 relative"><span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span><span class="relative inline-flex rounded-full h-2 w-2 bg-blue-500"></span></span>' : ''}
-                                    </span> 
-                                    <span class="text-[10px] text-slate-400 bg-slate-50 px-2 py-1 rounded-full border border-slate-100 font-mono">${dateStr}</span>
-                                </div>
-
-                                <!-- User File Section -->
-                                ${userFileHTML}
-
-                                <!-- Admin Feedback Section -->
-                                ${adminFeedbackHTML || ''}
-                            </div>
-                        </div>
+                            </td>
+                            <td class="px-6 py-5 text-right">
+                                <div class="w-9 h-9 inline-flex items-center justify-center rounded-xl bg-teal-600 text-white font-black text-[12px] shadow-lg shadow-teal-100">${score}</div>
+                            </td>
+                        </tr>
                     `;
-                    
-                    container.innerHTML += itemHTML;
                 });
-            }
-            document.getElementById('historyModal').classList.remove('hidden');
+
+                const btnLHS = document.getElementById('btnLHS');
+                if(item.admin_file) {
+                    btnLHS.href = storageBase + '/' + item.admin_file.replace(/^\//, "");
+                    btnLHS.classList.remove('hidden');
+                    btnLHS.classList.add('flex');
+                } else { btnLHS.classList.remove('flex'); btnLHS.classList.add('hidden'); }
+
+                const btnCert = document.getElementById('btnCert');
+                if(item.certificate_file) {
+                    btnCert.href = storageBase + '/' + item.certificate_file.replace(/^\//, "");
+                    btnCert.classList.remove('hidden');
+                    btnCert.classList.add('flex');
+                } else { btnCert.classList.remove('flex'); btnCert.classList.add('hidden'); }
+
+                document.getElementById('detailModal').classList.remove('hidden');
+                document.getElementById('detailModal').classList.add('flex');
+                document.body.style.overflow = 'hidden';
+            } catch (err) { console.error(err); }
         }
 
-        function closeHistoryModal() {
-            document.getElementById('historyModal').classList.add('hidden');
+        function closeDetailModal() {
+            document.getElementById('detailModal').classList.add('hidden');
+            document.body.style.overflow = '';
+        }
+
+        function updateFileName(input, fieldId) {
+            const label = document.getElementById('label_' + fieldId);
+            const box = document.getElementById('box_' + fieldId);
+            if (input.files && input.files[0]) {
+                label.innerText = input.files[0].name;
+                label.className = "text-[11px] lg:text-[12px] text-teal-600 font-black mt-2 truncate max-w-full text-center";
+                box.className = "bg-teal-50 border-teal-400 border-2 border-dashed rounded-[2rem] p-6 lg:p-8 transition-all flex flex-col items-center text-center h-full shadow-lg shadow-teal-100/50";
+            }
         }
     </script>
 </body>

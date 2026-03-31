@@ -1,49 +1,26 @@
 <!DOCTYPE html>
 <html lang="id">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Manajemen Survailen Uji | SI-LAB ADMIN</title>
+    <title>Evaluasi Surveilan | SI-MUTU Admin</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-
-    <!-- Choices.js CSS -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/choices.js/public/assets/styles/choices.min.css" />
-
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
     <script>
         tailwind.config = {
             theme: {
                 extend: {
-                    fontFamily: {
-                        sans: ['Inter', 'sans-serif']
-                    },
-                    animation: {
-                        'pop-in': 'popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards',
-                        'toast-in': 'toastIn 0.4s ease-out forwards',
+                    fontFamily: { sans: ['Outfit', 'sans-serif'] },
+                    colors: { primary: '#1e3a8a', secondary: '#2563eb' },
+                    animation: { 
+                        'pop-in': 'popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards',
+                        'slide-up': 'slideUp 0.4s ease-out forwards',
                     },
                     keyframes: {
-                        popIn: {
-                            '0%': {
-                                opacity: '0',
-                                transform: 'scale(0.8) translateY(20px)'
-                            },
-                            '100%': {
-                                opacity: '1',
-                                transform: 'scale(1) translateY(0)'
-                            },
-                        },
-                        toastIn: {
-                            '0%': {
-                                opacity: '0',
-                                transform: 'translateY(-20px)'
-                            },
-                            '100%': {
-                                opacity: '1',
-                                transform: 'translateY(0)'
-                            },
-                        }
+                        popIn: { '0%': { opacity: '0', transform: 'scale(0.97) translateY(5px)' }, '100%': { opacity: '1', transform: 'scale(1) translateY(0)' } },
+                        slideUp: { '0%': { opacity: '0', transform: 'translateY(10px)' }, '100%': { opacity: '1', transform: 'translateY(0)' } }
                     }
                 }
             }
@@ -51,317 +28,160 @@
     </script>
 
     <style>
-        body {
-            font-family: 'Inter', sans-serif;
-        }
-
-        .table-row-hover:hover td {
-            background-color: #f0fdfa;
-        }
-
-        .no-scrollbar::-webkit-scrollbar {
-            display: none;
-        }
-
-        .no-scrollbar {
-            -ms-overflow-style: none;
-            scrollbar-width: none;
-        }
-
-        .modal-scroll::-webkit-scrollbar {
-            width: 6px;
-        }
-
-        .modal-scroll::-webkit-scrollbar-track {
-            background: #f1f5f9;
-        }
-
-        .modal-scroll::-webkit-scrollbar-thumb {
-            background: #5eead4;
-            border-radius: 10px;
-        }
-
-        .modal-scroll::-webkit-scrollbar-thumb:hover {
-            background: #2dd4bf;
-        }
-
-        /* Custom Choices.js Styling */
-        .choices__inner {
-            background-color: #f8fafc !important;
-            border: 1px solid #e2e8f0 !important;
-            border-radius: 0.75rem !important;
-            min-height: 48px !important;
-            display: flex;
-            align-items: center;
-        }
-
-        .is-focused .choices__inner {
-            border-color: #0d9488 !important;
-            box-shadow: 0 0 0 4px rgba(13, 148, 136, 0.1) !important;
-        }
-
-        .choices__list--dropdown {
-            border-radius: 1rem !important;
-            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1) !important;
-        }
+        ::-webkit-scrollbar { width: 5px; height: 5px; }
+        ::-webkit-scrollbar-track { background: #f8fafc; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+        .modal-backdrop { backdrop-filter: blur(10px); background-color: rgba(15, 23, 42, 0.4); }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .score-1:checked + label { background-color: #ef4444; color: white; border-color: #ef4444; }
+        .score-2:checked + label { background-color: #f59e0b; color: white; border-color: #f59e0b; }
+        .score-3:checked + label { background-color: #3b82f6; color: white; border-color: #3b82f6; }
+        .score-4:checked + label { background-color: #10b981; color: white; border-color: #10b981; }
+        .score-label { transition: all 0.2s ease; border-width: 2px; }
+        .glass-overlay { background: rgba(15, 23, 42, 0.5); backdrop-filter: blur(4px); }
+        
+        /* Disabled state styling */
+        input:disabled + label { cursor: default; opacity: 0.7; }
+        input:disabled:not(:checked) + label { border-color: #f1f5f9; background: #f8fafc; color: #cbd5e1; }
     </style>
 </head>
-
-<body class="bg-slate-50 text-slate-800 antialiased">
+<body class="bg-slate-50 text-slate-800 antialiased overflow-hidden text-left">
 
     @php
-        use App\Models\Submission;
-        use App\Models\User;
-
-        if (!isset($audits)) {
-            $audits = Submission::with(['user', 'files'])
-                ->where('category', 'uji')
-                ->where('type', 'Survailen')
-                ->orderBy('created_at', 'desc')
-                ->get();
-        }
-        $users = User::where('role', 'user')->where('category', 'uji')->get();
-
-        $waitingUser = $audits->whereNull('file_path')->count();
-        $needReview = $audits->whereNotNull('file_path')->where('status', 'pending')->count();
-        $completed = $audits->where('status', 'approved')->count();
+        $needReview = $audits->where('status', 'verification')->count();
+        $completed = $audits->where('status', 'completed')->count();
+        $total = $audits->count();
     @endphp
 
-    <!-- Container untuk Toast Validasi (Floating) -->
-    <div id="toast-container" class="fixed top-5 right-5 z-[110] flex flex-col gap-3 pointer-events-none"></div>
-
-    <!-- === POP-UP NOTIFIKASI MODAL === -->
-
-    <!-- 1. Success Modal -->
-    @if (session('success'))
-        <div id="successModal"
-            class="fixed inset-0 z-[100] flex items-center justify-center bg-slate-900/40 backdrop-blur-[3px] transition-all duration-300">
-            <div
-                class="bg-white rounded-2xl shadow-2xl p-8 max-w-sm w-full mx-4 text-center animate-pop-in relative overflow-hidden border border-white/50">
-                <div class="absolute top-0 left-0 w-full h-1.5 bg-gradient-to-r from-teal-400 to-emerald-500"></div>
-                <div
-                    class="w-20 h-20 bg-teal-100 rounded-full flex items-center justify-center mx-auto mb-4 shadow-inner">
-                    <i class="fas fa-check text-4xl text-teal-600 drop-shadow-sm"></i>
-                </div>
-                <h3 class="text-2xl font-bold text-slate-800 mb-2">Berhasil!</h3>
-                <p class="text-slate-600 mb-6 text-sm leading-relaxed font-medium">{{ session('success') }}</p>
-                <div class="w-full bg-slate-100 h-1.5 rounded-full mb-5 overflow-hidden">
-                    <div id="progressBar" class="h-full bg-teal-500 rounded-full" style="width: 100%"></div>
-                </div>
-                <button onclick="closeNotification('successModal')"
-                    class="w-full bg-white border-2 border-slate-100 hover:border-teal-400 hover:bg-teal-50 text-slate-500 hover:text-teal-700 font-bold py-3 rounded-xl transition-all duration-300 group">
-                    Tutup Sekarang <i class="fas fa-times group-hover:rotate-90 transition-transform text-xs ml-1"></i>
-                </button>
+    {{-- === MODAL BERHASIL === --}}
+    @if(session('success'))
+    <div id="successModal" class="fixed inset-0 z-[120] flex items-center justify-center p-4 text-center">
+        <div class="absolute inset-0 modal-backdrop" onclick="closeSuccessModal()"></div>
+        <div class="relative bg-white rounded-[2.5rem] w-full max-w-sm p-8 shadow-2xl animate-pop-in border border-white">
+            <div class="w-16 h-16 bg-emerald-50 text-emerald-500 rounded-2xl flex items-center justify-center mx-auto mb-6 text-2xl shadow-inner border border-emerald-100/50">
+                <i class="fas fa-circle-check"></i>
             </div>
+            <h3 class="text-xl font-black text-slate-900 uppercase tracking-tighter mb-2">Simpan Berhasil</h3>
+            <p class="text-slate-500 text-[11px] font-medium leading-relaxed mb-8 px-4 text-center">
+                {{ session('success') }}
+            </p>
+            <button onclick="closeSuccessModal()" class="w-full bg-slate-900 text-white py-4 rounded-2xl font-black text-[10px] uppercase tracking-[0.2em] hover:bg-emerald-600 transition-all shadow-xl active:scale-95 text-center">
+                Tutup
+            </button>
         </div>
+    </div>
     @endif
 
-    <!-- 2. Error Modal -->
-    @if ($errors->any() || session('error'))
-        <div id="errorModal"
-            class="fixed inset-0 z-[100] flex items-center justify-center bg-slate-900/40 backdrop-blur-[3px] transition-all duration-300">
-            <div
-                class="bg-white rounded-2xl shadow-2xl p-8 max-w-sm w-full mx-4 text-center animate-pop-in relative overflow-hidden border border-white/50">
-                <div class="absolute top-0 left-0 w-full h-1.5 bg-gradient-to-r from-rose-500 to-red-600"></div>
-                <div
-                    class="w-20 h-20 bg-rose-100 rounded-full flex items-center justify-center mx-auto mb-5 shadow-inner">
-                    <i class="fas fa-exclamation-triangle text-4xl text-rose-600"></i>
-                </div>
-                <h3 class="text-2xl font-bold text-slate-800 mb-2">Gagal!</h3>
-                <div class="text-slate-600 mb-8 text-sm leading-relaxed font-medium">
-                    @if (session('error'))
-                        <p>{{ session('error') }}</p>
-                    @else
-                        <ul class="list-none space-y-1">
-                            @foreach ($errors->all() as $error)
-                                <li>{{ $error }}</li>
-                            @endforeach
-                        </ul>
-                    @endif
-                </div>
-                <button onclick="closeNotification('errorModal')"
-                    class="w-full bg-slate-800 hover:bg-slate-900 text-white font-bold py-3.5 rounded-xl transition-all shadow-lg transform active:scale-95">Coba
-                    Lagi</button>
+    {{-- === MODAL GAGAL === --}}
+    @if($errors->any())
+    <div id="errorModal" class="fixed inset-0 z-[120] flex items-center justify-center p-4 text-center">
+        <div class="absolute inset-0 modal-backdrop" onclick="closeErrorModal()"></div>
+        <div class="relative bg-white rounded-[2.5rem] w-full max-w-sm p-8 shadow-2xl animate-pop-in border border-white">
+            <div class="w-16 h-16 bg-rose-50 text-rose-500 rounded-2xl flex items-center justify-center mx-auto mb-6 text-2xl shadow-inner border border-rose-100/50">
+                <i class="fas fa-circle-exclamation"></i>
             </div>
+            <h3 class="text-xl font-black text-slate-900 uppercase tracking-tighter mb-2">Gagal Simpan</h3>
+            <div class="text-slate-500 text-[11px] font-bold leading-relaxed mb-8 text-left bg-slate-50 p-4 rounded-2xl border border-slate-100 no-scrollbar overflow-y-auto max-h-32">
+                <ul class="list-disc ml-4 space-y-1">
+                    @foreach ($errors->all() as $error) <li>{{ $error }}</li> @endforeach
+                </ul>
+            </div>
+            <button onclick="closeErrorModal()" class="w-full bg-rose-600 text-white py-4 rounded-2xl font-black text-[10px] uppercase tracking-[0.2em] hover:bg-slate-900 transition-all shadow-xl active:scale-95 text-center">
+                Perbaiki
+            </button>
         </div>
+    </div>
     @endif
 
     <div class="flex h-screen overflow-hidden">
-        <div class="hidden md:flex h-full bg-teal-900">
+        
+        <!-- MOBILE OVERLAY -->
+        <div id="sidebarOverlay" onclick="toggleSidebar()" class="fixed inset-0 z-40 hidden lg:hidden glass-overlay transition-opacity duration-300"></div>
+
+        <!-- SIDEBAR -->
+        <aside id="sidebar" class="fixed inset-y-0 left-0 z-50 w-64 bg-primary transform -translate-x-full transition-transform duration-300 lg:translate-x-0 lg:static flex flex-col h-full border-r border-white/5">
             @include('components.uji-sidebar')
-        </div>
+        </aside>
 
-        <div id="mobileSidebar" class="fixed inset-0 z-50 hidden">
-            <div class="absolute inset-0 bg-slate-900/60 backdrop-blur-sm transition-opacity" onclick="toggleSidebar()">
-            </div>
-            <div
-                class="absolute left-0 top-0 bottom-0 w-64 bg-teal-900 shadow-xl transform transition-transform duration-300">
-                @include('components.uji-sidebar')
-            </div>
-        </div>
-
-        <div class="flex-1 flex flex-col h-screen overflow-hidden bg-slate-50 relative w-full">
-            <!-- Header Mobile -->
-            <div
-                class="md:hidden bg-white border-b border-slate-200 px-4 py-3 flex items-center justify-between z-20 sticky top-0 shadow-sm">
+        <div class="flex-1 flex flex-col h-screen overflow-hidden relative">
+            
+            <!-- === MOBILE HEADER BAR === -->
+            <div class="lg:hidden bg-white border-b border-slate-200 px-4 py-3 flex items-center justify-between sticky top-0 z-30 shadow-sm">
                 <div class="flex items-center gap-3">
-                    <button onclick="toggleSidebar()"
-                        class="p-2 text-slate-500 hover:text-teal-600 hover:bg-slate-100 rounded-lg transition-colors">
+                    <button onclick="toggleSidebar()" class="p-2 text-slate-600 hover:bg-slate-100 rounded-xl transition-colors">
                         <i class="fas fa-bars text-xl"></i>
                     </button>
-                    <div class="flex items-center gap-2">
-                        <div
-                            class="w-8 h-8 rounded-lg bg-teal-600 flex items-center justify-center text-white shadow-sm">
-                            <i class="fas fa-flask text-sm"></i></div>
-                        <span class="font-bold text-slate-800 text-sm tracking-wide">SI-LAB UJI</span>
-                    </div>
+                    <span class="font-bold text-slate-800 text-sm tracking-tight uppercase">SI-MUTU <span class="text-teal-600">DKKN</span></span>
                 </div>
-                <div
-                    class="w-8 h-8 rounded-full bg-teal-100 flex items-center justify-center text-teal-600 text-xs font-bold border border-teal-200">
-                    {{ substr(Auth::user()->name ?? 'L', 0, 1) }}
+                <div class="w-8 h-8 rounded-xl bg-teal-100 flex items-center justify-center text-teal-600 text-xs font-bold border border-teal-200 shadow-sm">
+                    {{ substr(Auth::user()->name ?? 'A', 0, 1) }}
                 </div>
             </div>
 
-            <div class="hidden md:block">
-                @include('components.uji-header', [
-                    'title' => 'Manajemen Audit & Survailen',
-                    'subtitle' => 'Kirim dan pantau tindak lanjut audit lembaga',
-                ])
+            <!-- DESKTOP HEADER -->
+            <div class="hidden lg:block">
+                @include('components.uji-header', ['title' => 'Evaluasi Surveilan', 'subtitle' => 'Penilaian Akreditasi Lembaga Pelatihan'])
             </div>
 
-            <main class="flex-1 overflow-x-hidden overflow-y-auto p-4 md:p-6 lg:p-8 space-y-6">
-                <!-- Statistik Widgets -->
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6">
-                    <div
-                        class="relative bg-white rounded-2xl p-6 border border-slate-100 shadow-sm hover:-translate-y-1 transition-all group overflow-hidden">
-                        <div class="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20"><i
-                                class="fas fa-paper-plane text-6xl text-slate-500"></i></div>
-                        <div class="relative z-10">
-                            <span
-                                class="bg-slate-100 text-slate-600 px-2 py-1 rounded-md text-[10px] font-bold uppercase">Terkirim</span>
-                            <h2 class="text-4xl font-bold text-slate-800 mt-2">{{ $waitingUser }}</h2>
-                            <p class="text-xs text-slate-400 mt-2">Menunggu respon lembaga</p>
-                        </div>
-                    </div>
-                    <div
-                        class="relative bg-white rounded-2xl p-6 border border-slate-100 shadow-sm hover:-translate-y-1 transition-all group overflow-hidden">
-                        <div class="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20"><i
-                                class="fas fa-microscope text-6xl text-teal-500"></i></div>
-                        <div class="relative z-10">
-                            <span
-                                class="bg-teal-100 text-teal-600 px-2 py-1 rounded-md text-[10px] font-bold uppercase animate-pulse">Perlu
-                                Review</span>
-                            <h2 class="text-4xl font-bold text-slate-800 mt-2">{{ $needReview }}</h2>
-                            <p class="text-xs text-slate-400 mt-2">Respon masuk dari Lab</p>
-                        </div>
-                    </div>
-                    <div
-                        class="relative bg-white rounded-2xl p-6 border border-slate-100 shadow-sm hover:-translate-y-1 transition-all group overflow-hidden">
-                        <div class="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20"><i
-                                class="fas fa-clipboard-check text-6xl text-emerald-500"></i></div>
-                        <div class="relative z-10">
-                            <span
-                                class="bg-emerald-100 text-emerald-600 px-2 py-1 rounded-md text-[10px] font-bold uppercase">Selesai</span>
-                            <h2 class="text-4xl font-bold text-slate-800 mt-2">{{ $completed }}</h2>
-                            <p class="text-xs text-slate-400 mt-2">Audit ditutup (Compliant)</p>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- TABLE CARD -->
-                <div class="bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden">
-                    <div
-                        class="px-6 py-5 border-b border-slate-100 bg-white flex flex-col md:flex-row justify-between items-center gap-4">
+            <main class="flex-1 overflow-y-auto p-4 lg:p-10 space-y-8 no-scrollbar text-left">
+                
+                {{-- STATS CARDS --}}
+                <div class="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-4 lg:gap-6 animate-slide-up">
+                    <div class="bg-white rounded-[2rem] p-6 border border-slate-100 shadow-sm flex flex-col items-center md:flex-row md:items-center gap-4 lg:gap-5 text-center md:text-left">
+                        <div class="w-14 h-14 bg-teal-50 text-teal-600 rounded-2xl flex items-center justify-center text-xl shadow-inner shrink-0"><i class="fas fa-archive"></i></div>
                         <div>
-                            <h3 class="font-bold text-slate-800 text-lg">Daftar Audit Laboratorium</h3>
-                            <p class="text-sm text-slate-500 mt-0.5">Survailen dan inspeksi lembaga uji</p>
+                            <p class="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Total Arsip</p>
+                            <h2 class="text-3xl font-black text-slate-800 leading-tight">{{ $total }}</h2>
                         </div>
-                        <button onclick="openCreateModal()"
-                            class="bg-teal-600 hover:bg-teal-700 text-white px-5 py-2.5 rounded-xl shadow-lg shadow-teal-200 transition-all flex items-center gap-2 font-bold text-sm transform active:scale-95 border border-teal-700">
-                            <i class="fas fa-plus-circle"></i> Buat Surat Audit Baru
-                        </button>
                     </div>
+                    <div class="bg-white rounded-[2rem] p-6 border border-slate-100 shadow-sm flex flex-col items-center md:flex-row md:items-center gap-4 lg:gap-5 text-center md:text-left">
+                        <div class="w-14 h-14 bg-amber-50 text-amber-600 rounded-2xl flex items-center justify-center text-xl shadow-inner shrink-0"><i class="fas fa-clock"></i></div>
+                        <div>
+                            <p class="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Perlu Penilaian</p>
+                            <h2 class="text-3xl font-black text-slate-800 leading-tight">{{ $needReview }}</h2>
+                        </div>
+                    </div>
+                    <div class="bg-white rounded-[2rem] p-6 border border-slate-100 shadow-sm flex flex-col items-center md:flex-row md:items-center gap-4 lg:gap-5 text-center md:text-left">
+                        <div class="w-14 h-14 bg-emerald-50 text-emerald-600 rounded-2xl flex items-center justify-center text-xl shadow-inner shrink-0"><i class="fas fa-check-double"></i></div>
+                        <div>
+                            <p class="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Selesai</p>
+                            <h2 class="text-3xl font-black text-slate-800 leading-tight">{{ $completed }}</h2>
+                        </div>
+                    </div>
+                </div>
 
-                    <div class="overflow-x-auto no-scrollbar">
-                        <table class="w-full text-sm text-left text-slate-600 min-w-[800px] md:min-w-0">
-                            <thead class="text-xs text-slate-500 uppercase bg-slate-50 border-b border-slate-200">
-                                <tr>
-                                    <th class="px-6 py-4 font-bold tracking-wider">Tgl Kirim</th>
-                                    <th class="px-6 py-4 font-bold tracking-wider">Laboratorium</th>
-                                    <th class="px-6 py-4 font-bold tracking-wider">Perihal</th>
-                                    <th class="px-6 py-4 font-bold tracking-wider text-center">Jejak</th>
-                                    <th class="px-6 py-4 font-bold tracking-wider text-center">Status & Tindakan</th>
-                                </tr>
-                            </thead>
-                            <tbody class="divide-y divide-slate-100">
-                                @forelse($audits as $item)
-                                    <tr class="table-row-hover transition-colors group">
-                                        <td class="px-6 py-5 whitespace-nowrap">
-                                            <div class="flex flex-col">
-                                                <span
-                                                    class="font-bold text-slate-700">{{ $item->created_at->format('d M Y') }}</span>
-                                                <span
-                                                    class="text-[10px] text-slate-400 mt-0.5">{{ $item->created_at->format('H:i') }}
-                                                    WIB</span>
+                {{-- ANTRIAN --}}
+                <div class="max-w-6xl mx-auto space-y-4 animate-slide-up text-left" style="animation-delay: 0.1s">
+                    <h4 class="text-[10px] font-black text-slate-400 uppercase tracking-[0.4em] px-2 text-center md:text-left">Antrian Evaluasi</h4>
+                    <div class="grid grid-cols-1 gap-4">
+                        @forelse($audits as $item)
+                        <div class="bg-white rounded-[2rem] border border-slate-100 p-6 lg:p-8 hover:shadow-xl transition-all group relative overflow-hidden text-center md:text-left">
+                            <div class="flex flex-col md:flex-row items-center justify-between gap-6 relative z-10 text-center md:text-left">
+                                <div class="flex flex-col md:flex-row items-center gap-5 flex-1 text-center md:text-left">
+                                    <div class="w-16 h-16 rounded-2xl bg-slate-50 flex items-center justify-center font-black text-primary text-xl uppercase shadow-inner border border-slate-100 shrink-0">
+                                        {{ substr($item->user->name, 0, 1) }}
+                                    </div>
+                                    <div class="flex flex-col items-center md:items-start text-center md:text-left">
+                                        <h4 class="font-black text-slate-800 uppercase tracking-tight text-lg lg:text-xl">{{ $item->user->name }}</h4>
+                                        <div class="flex flex-wrap items-center justify-center md:justify-start gap-3 mt-2">
+                                            <span class="text-[10px] text-slate-400 font-bold uppercase tracking-widest">ID #{{ substr($item->id, 0, 8) }}</span>
+                                            <div class="px-3 py-1 rounded-full text-[8px] font-black uppercase tracking-[0.1em] border {{ $item->status == 'completed' ? 'bg-emerald-50 text-emerald-600 border-emerald-100' : 'bg-amber-50 text-amber-600 border-amber-100' }}">
+                                                {{ $item->status == 'verification' ? 'PENDING EVALUASI' : 'SELESAI / TERBIT' }}
                                             </div>
-                                        </td>
-                                        <td class="px-6 py-5">
-                                            <div class="flex items-center gap-3">
-                                                <div
-                                                    class="w-8 h-8 rounded-full bg-teal-50 flex items-center justify-center text-teal-600 text-xs font-bold shrink-0 border border-teal-100">
-                                                    {{ substr($item->user->name ?? '?', 0, 1) }}
-                                                </div>
-                                                <div class="min-w-0">
-                                                    <div class="font-bold text-slate-800 line-clamp-1 text-sm">
-                                                        {{ $item->user->name ?? 'Unknown' }}</div>
-                                                    <div class="text-[10px] text-slate-400 font-mono mt-0.5">
-                                                        {{ $item->user->kode_instansi ?? 'LAB-???' }}</div>
-                                                </div>
-                                            </div>
-                                        </td>
-                                        <td class="px-6 py-5">
-                                            <span
-                                                class="text-sm font-medium text-slate-800 line-clamp-1">{{ $item->title }}</span>
-                                        </td>
-                                        <td class="px-6 py-5 text-center">
-                                            <button
-                                                onclick='openHistoryModal(@json($item->files ?? []), "{{ $item->status }}", "{{ $item->title }}")'
-                                                class="text-slate-400 hover:text-teal-600 p-2 rounded-full hover:bg-teal-50 transition-all"><i
-                                                    class="fas fa-history text-lg"></i></button>
-                                        </td>
-                                        <td class="px-6 py-5 text-center whitespace-nowrap">
-                                            @if ($item->status == 'approved')
-                                                <span
-                                                    class="bg-emerald-100 text-emerald-700 px-3 py-1.5 rounded-full text-[10px] font-bold uppercase tracking-wider border border-emerald-200 inline-flex items-center gap-1.5">
-                                                    <i class="fas fa-check-circle"></i> Selesai
-                                                </span>
-                                            @elseif($item->file_path && $item->file_path !== '-' && $item->status == 'pending')
-                                                <button
-                                                    onclick="openVerifyModal('{{ $item->id }}', '{{ $item->title }}')"
-                                                    class="bg-teal-600 hover:bg-teal-700 text-white px-4 py-1.5 rounded-lg text-xs font-bold shadow-md active:scale-95 transition-all inline-flex items-center gap-2">
-                                                    <i class="fas fa-tasks"></i> Verifikasi
-                                                </button>
-                                            @elseif($item->status == 'rejected')
-                                                <span
-                                                    class="bg-rose-100 text-rose-700 px-3 py-1.5 rounded-full text-[10px] font-bold uppercase border border-rose-200">
-                                                    Menunggu Revisi
-                                                </span>
-                                            @else
-                                                <span
-                                                    class="bg-slate-100 text-slate-500 px-3 py-1.5 rounded-full text-[10px] font-bold uppercase border border-slate-200">
-                                                    Terkirim
-                                                </span>
-                                            @endif
-                                        </td>
-                                    </tr>
-                                @empty
-                                    <tr>
-                                        <td colspan="5" class="px-6 py-12 text-center text-slate-400">Belum ada
-                                            audit laboratorium.</td>
-                                    </tr>
-                                @endforelse
-                            </tbody>
-                        </table>
+                                        </div>
+                                    </div>
+                                </div>
+                                <button type="button" data-submission='@json($item)' onclick="openEvaluateModal(this)" class="w-full md:w-auto bg-slate-900 text-white px-10 py-4 rounded-2xl font-black text-[10px] uppercase tracking-[0.2em] hover:bg-emerald-900 transition-all shadow-xl active:scale-95">
+                                    {{ $item->status == 'completed' ? 'LIHAT DETAIL' : 'MULAI PENILAIAN' }}
+                                </button>
+                            </div>
+                        </div>
+                        @empty
+                        <div class="py-24 text-center bg-white rounded-[3rem] border border-dashed border-slate-200 text-slate-300">
+                            <i class="fas fa-inbox text-5xl mb-4 opacity-30"></i>
+                            <p class="font-black uppercase text-[10px] tracking-[0.3em]">Belum Ada Pengajuan</p>
+                        </div>
+                        @endforelse
                     </div>
                 </div>
 
@@ -372,298 +192,240 @@
         </div>
     </div>
 
-    <!-- MODAL CREATE AUDIT -->
-    <div id="createModal" class="fixed inset-0 z-50 hidden" role="dialog" aria-modal="true">
-        <div class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm transition-opacity" onclick="closeCreateModal()">
-        </div>
-        <div class="fixed inset-0 z-10 overflow-y-auto">
-            <div class="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
-                <div
-                    class="relative transform overflow-hidden rounded-3xl bg-white text-left shadow-2xl transition-all sm:my-8 sm:w-full sm:max-w-lg animate-pop-in border border-slate-100">
-                    <div
-                        class="bg-gradient-to-r from-teal-600 to-emerald-600 px-6 py-4 flex justify-between items-center text-white">
-                        <h3 class="text-lg font-bold flex items-center gap-2"><i class="fas fa-paper-plane"></i> Kirim
-                            Surat Audit</h3>
-                        <button onclick="closeCreateModal()"
-                            class="text-teal-100 hover:text-white p-2 rounded-lg bg-white/10"><i
-                                class="fas fa-times"></i></button>
-                    </div>
-                    <form action="{{ route('survailen.store') }}" method="POST" enctype="multipart/form-data">
-                        @csrf
-                        <input type="hidden" name="category" value="uji">
-                        <div class="px-6 py-6 space-y-5">
-                            <div class="space-y-1.5">
-                                <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider">Tujuan
-                                    Lembaga Uji</label>
-                                <select name="user_id" id="user-select-choices" required>
-                                    <option value="" disabled selected>-- Pilih Lembaga Uji --</option>
-                                    @foreach ($users as $u)
-                                        <option value="{{ $u->id }}">{{ $u->name }}
-                                            ({{ $u->kode_instansi ?? '-' }})</option>
-                                    @endforeach
-                                </select>
-                            </div>
-                            <div class="space-y-1.5">
-                                <label
-                                    class="block text-xs font-bold text-slate-700 uppercase tracking-wider">Perihal</label>
-                                <input type="text" name="title"
-                                    class="block w-full rounded-xl border-slate-200 bg-slate-50 p-3 text-sm focus:border-teal-500 outline-none transition-all"
-                                    placeholder="Judul audit..." required>
-                            </div>
-                            <div class="space-y-2 bg-slate-50 p-4 rounded-xl border border-slate-200">
-                                <label class="block text-xs font-bold text-slate-700 uppercase flex justify-between">
-                                    <span>Upload Surat (PDF)</span>
-                                    <span
-                                        class="text-[10px] bg-red-100 text-red-600 px-1.5 py-0.5 rounded font-bold">10MB
-                                        MAX</span>
-                                </label>
-                                <input type="file" name="admin_file" onchange="validateFileSize(this)"
-                                    class="block w-full text-xs text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:bg-white file:text-teal-700 border border-slate-200 rounded-lg cursor-pointer bg-white shadow-sm"
-                                    accept=".pdf" required>
-                            </div>
-                        </div>
-                        <div class="bg-slate-50 px-6 py-4 flex flex-row-reverse gap-3 border-t">
-                            <button type="submit"
-                                class="bg-teal-600 hover:bg-teal-700 text-white px-6 py-2.5 rounded-xl text-sm font-bold shadow-lg shadow-teal-200 active:scale-95">Kirim</button>
-                            <button type="button" onclick="closeCreateModal()"
-                                class="bg-white border border-slate-300 text-slate-700 px-5 py-2.5 rounded-xl text-sm font-bold hover:bg-slate-50">Batal</button>
-                        </div>
-                    </form>
+    {{-- MODAL EVALUASI --}}
+    <div id="evaluateModal" class="fixed inset-0 z-[110] hidden items-center justify-center p-3 lg:p-4 text-left">
+        <div class="absolute inset-0 modal-backdrop" onclick="closeEvaluateModal()"></div>
+        <div class="relative bg-white rounded-[2rem] lg:rounded-[2.5rem] w-full max-w-6xl max-h-[92vh] flex flex-col shadow-2xl overflow-hidden animate-pop-in border border-white text-left">
+            
+            <div id="modalHeader" class="bg-primary p-6 md:p-8 text-white flex justify-between items-center shrink-0 transition-colors duration-500">
+                <div class="text-left">
+                    <h3 id="modalHeaderTitle" class="text-lg lg:text-xl font-black uppercase tracking-tight text-left">Instrumen Evaluasi Survailen</h3>
+                    <p id="evalModalTitle" class="text-[10px] text-teal-200 font-bold uppercase tracking-widest mt-1.5 flex items-center gap-2 text-left"><i class="fas fa-university"></i> <span></span></p>
                 </div>
+                <button onclick="closeEvaluateModal()" class="w-11 h-11 bg-white/10 rounded-2xl flex items-center justify-center hover:bg-rose-500 transition-all"><i class="fas fa-times text-lg"></i></button>
             </div>
-        </div>
-    </div>
-
-    <!-- MODAL VERIFIKASI -->
-    <div id="verifyModal" class="fixed inset-0 z-50 hidden" role="dialog" aria-modal="true">
-        <div class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm transition-opacity" onclick="closeVerifyModal()">
-        </div>
-        <div class="flex min-h-full items-center justify-center p-4">
-            <div
-                class="bg-white rounded-3xl w-full max-w-md shadow-2xl overflow-hidden animate-pop-in border border-slate-100">
-                <div class="bg-teal-600 text-white px-6 py-4 font-bold flex items-center gap-3">
-                    <i class="fas fa-microscope text-lg"></i>
-                    <h3>Review Dokumen Lab</h3>
-                </div>
-                <form id="verifyForm" method="POST" action="" enctype="multipart/form-data">
-                    @csrf
-                    <div class="px-6 py-6 space-y-4">
-                        <div class="p-3 bg-teal-50 rounded-xl border border-teal-100">
-                            <p class="text-[10px] font-bold text-teal-600 uppercase mb-1 tracking-wider">Perihal Audit:
-                            </p>
-                            <p class="text-sm text-slate-700 font-bold" id="verifyTitleDisplay"></p>
-                        </div>
-                        <div class="space-y-3 bg-slate-50 p-4 rounded-xl border">
-                            <div class="space-y-1">
-                                <label class="block text-xs font-bold text-slate-700 uppercase tracking-wide">Evaluasi
-                                    Admin</label>
-                                <textarea name="admin_note" rows="2"
-                                    class="block w-full rounded-lg border-slate-300 text-xs p-2.5 bg-white shadow-sm focus:border-teal-500 outline-none"
-                                    placeholder="Tulis catatan evaluasi..."></textarea>
-                            </div>
-                            <div class="space-y-1">
-                                <label
-                                    class="block text-xs font-bold text-slate-700 uppercase tracking-wide flex justify-between">
-                                    <span>Fail Lampiran (PDF)</span>
-                                    <span class="text-[9px] text-slate-400">10MB MAX</span>
-                                </label>
-                                <input type="file" name="admin_file" onchange="validateFileSize(this)"
-                                    class="block w-full text-xs text-slate-500 border border-slate-200 rounded-lg bg-white shadow-sm file:bg-teal-50 file:border-0 file:py-1 file:px-3 file:text-[10px] file:font-bold file:text-teal-700"
-                                    accept=".pdf">
-                            </div>
-                        </div>
-                        <div class="flex gap-3">
-                            <button type="submit" onclick="setVerifyAction('approve')"
-                                class="flex-1 bg-emerald-600 text-white py-2.5 rounded-xl font-bold hover:bg-emerald-700 shadow-md transform active:scale-95 transition-all">Setujui</button>
-                            <button type="submit" onclick="setVerifyAction('reject')"
-                                class="flex-1 bg-white border border-rose-200 text-rose-600 py-2.5 rounded-xl font-bold hover:bg-rose-50 transform active:scale-95 transition-all">Revisi</button>
-                        </div>
+            
+            <form id="evaluateForm" method="POST" action="" enctype="multipart/form-data" class="flex-1 flex flex-col overflow-hidden bg-slate-50/30 text-left">
+                @csrf
+                <div class="flex-1 overflow-y-auto p-5 lg:p-10 space-y-8 no-scrollbar text-left">
+                    
+                    <div id="progressContainer" class="bg-white p-5 rounded-2xl border border-slate-100 flex items-center justify-between gap-6 shadow-sm">
+                        <div class="flex-1 h-3 bg-slate-100 rounded-full overflow-hidden text-left"><div id="progressBar" class="h-full bg-secondary w-0 transition-all duration-700 ease-out"></div></div>
+                        <span id="progressText" class="text-[9px] lg:text-[10px] font-black text-secondary uppercase tracking-[0.2em] whitespace-nowrap">0 / 7 KATEGORI</span>
                     </div>
-                </form>
-            </div>
-        </div>
-    </div>
 
-    <!-- MODAL HISTORY -->
-    <div id="historyModal" class="fixed inset-0 z-50 hidden" role="dialog" aria-modal="true">
-        <div class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm transition-opacity" onclick="closeHistoryModal()">
-        </div>
-        <div class="flex min-h-full items-center justify-center p-4">
-            <div class="bg-white rounded-3xl w-full max-w-3xl shadow-2xl overflow-hidden border animate-pop-in">
-                <div
-                    class="bg-slate-900 text-white px-6 py-5 flex justify-between items-center relative overflow-hidden">
-                    <div class="absolute top-0 right-0 w-32 h-32 bg-white/5 rounded-full -mr-10 -mt-10"></div>
-                    <h3 class="text-xl font-bold flex items-center gap-3 relative z-10">
-                        <div class="bg-white/10 p-2 rounded-lg backdrop-blur-sm"><i
-                                class="fas fa-history text-lg"></i></div>
-                        Jejak Audit
-                    </h3>
-                    <button onclick="closeHistoryModal()"
-                        class="text-slate-400 hover:text-white transition-colors relative z-10"><i
-                            class="fas fa-times text-xl"></i></button>
-                </div>
-                <div class="max-h-[65vh] overflow-y-auto bg-slate-50 modal-scroll">
-                    <div id="timelineContainer" class="px-8 py-10 relative"></div>
-                </div>
-                <div
-                    class="bg-white px-6 py-4 flex justify-end border-t border-slate-100 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.02)]">
-                    <button onclick="closeHistoryModal()"
-                        class="px-6 py-2.5 bg-slate-100 text-slate-700 rounded-xl text-sm font-bold hover:bg-slate-200 transition-all active:scale-95">Tutup</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <script src="https://cdn.jsdelivr.net/npm/choices.js/public/assets/scripts/choices.min.js"></script>
-    <script>
-        // === POP-UP LOGIC ===
-        function closeNotification(modalId) {
-            const modal = document.getElementById(modalId);
-            if (modal) {
-                modal.classList.add('opacity-0');
-                modal.querySelector('div').classList.add('scale-95');
-                setTimeout(() => {
-                    modal.style.display = 'none';
-                }, 300);
-            }
-        }
-
-        function showErrorToast(title, message) {
-            const container = document.getElementById('toast-container');
-            const toastId = 'toast-' + Date.now();
-            const html = `
-                <div id="${toastId}" class="pointer-events-auto bg-white border-l-4 border-rose-500 shadow-xl rounded-xl animate-toast-in w-72">
-                    <div class="p-4 flex items-start gap-3">
-                        <div class="bg-rose-100 p-2 rounded-full text-rose-600 shrink-0"><i class="fas fa-exclamation-circle"></i></div>
-                        <div class="flex-1"><p class="text-xs font-bold text-slate-800">${title}</p><p class="text-[10px] text-slate-500 mt-0.5 leading-tight">${message}</p></div>
-                        <button onclick="document.getElementById('${toastId}').remove()" class="text-slate-400"><i class="fas fa-times text-[10px]"></i></button>
+                    <div class="bg-white rounded-3xl border border-slate-100 overflow-x-auto shadow-sm text-left no-scrollbar">
+                        <table class="w-full text-left border-collapse min-w-[700px]">
+                            <thead class="bg-slate-50 text-slate-400 font-black uppercase text-[10px] tracking-widest border-b border-slate-100 text-left">
+                                <tr>
+                                    <th class="px-8 py-5 text-left">Kategori & Standar</th>
+                                    <th class="px-6 py-5 text-left">Dokumen User (PDF)</th>
+                                    <th class="px-8 py-5 text-center">Beri Skor (1-4)</th>
+                                    <th class="px-6 py-5 text-center">Bobot</th>
+                                </tr>
+                            </thead>
+                            <tbody id="evaluationTableBody" class="divide-y divide-slate-50 text-left"></tbody>
+                        </table>
                     </div>
-                </div>`;
-            container.insertAdjacentHTML('beforeend', html);
-            setTimeout(() => {
-                const t = document.getElementById(toastId);
-                if (t) {
-                    t.style.opacity = '0';
-                    t.style.transform = 'translateX(20px)';
-                    t.style.transition = '0.4s';
-                    setTimeout(() => t.remove(), 400);
-                }
-            }, 5000);
-        }
 
-        function validateFileSize(input) {
-            if (input.files && input.files[0]) {
-                if (input.files[0].size / 1024 / 1024 > 2) {
-                    showErrorToast('File Terlalu Besar', 'Maksimal ukuran file adalah 2 MB. Silakan kompres file Anda.');
-                    input.value = '';
-                }
-            }
-        }
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 text-left">
+                        <div class="bg-white p-10 rounded-[2.5rem] border border-slate-100 flex flex-col justify-center items-center shadow-sm text-center">
+                            <span class="text-[10px] font-black text-slate-400 uppercase tracking-[0.3em] mb-4 text-left">Hasil Akreditasi Akhir</span>
+                            <div id="finalPercentageDisplay" class="text-6xl lg:text-7xl font-black text-primary tracking-tighter text-left">0.0%</div>
+                            <div id="predikatDisplay" class="text-[10px] lg:text-[11px] font-black text-slate-300 uppercase mt-6 px-8 py-3 rounded-full bg-slate-50 tracking-[0.2em] border border-slate-100 text-center">LENGKAPI SELURUH NILAI</div>
+                        </div>
 
-        document.addEventListener('DOMContentLoaded', function() {
-            const successModal = document.getElementById('successModal');
-            if (successModal) {
-                const pb = document.getElementById('progressBar');
-                setTimeout(() => {
-                    pb.style.transition = 'width 4s linear';
-                    pb.style.width = '0%';
-                }, 100);
-                setTimeout(() => {
-                    closeNotification('successModal');
-                }, 4200);
-            }
-            const el = document.getElementById('user-select-choices');
-            if (el) new Choices(el, {
-                searchEnabled: true,
-                itemSelectText: '',
-                shouldSort: false
-            });
-        });
-
-        // UI Logic
-        function toggleSidebar() {
-            document.getElementById('mobileSidebar').classList.toggle('hidden');
-        }
-
-        function openCreateModal() {
-            document.getElementById('createModal').classList.remove('hidden');
-        }
-
-        function closeCreateModal() {
-            document.getElementById('createModal').classList.add('hidden');
-        }
-
-        let curVerifyId = null;
-
-        function openVerifyModal(id, title) {
-            curVerifyId = id;
-            document.getElementById('verifyTitleDisplay').innerText = title;
-            document.getElementById('verifyModal').classList.remove('hidden');
-        }
-
-        function closeVerifyModal() {
-            document.getElementById('verifyModal').classList.add('hidden');
-        }
-
-        function setVerifyAction(a) {
-            const f = document.getElementById('verifyForm');
-            f.action = `{{ url('/submission') }}/${a}/${curVerifyId}`;
-        }
-
-        function openHistoryModal(files, status, title) {
-            const container = document.getElementById('timelineContainer');
-            container.innerHTML = '';
-            if (!files || files.length === 0) {
-                container.innerHTML =
-                    `<div class="py-10 text-center text-slate-400 text-sm">Belum ada riwayat jejak audit.</div>`;
-            } else {
-                files.sort((a, b) => a.version - b.version);
-                files.forEach((f, i) => {
-                    const date = new Date(f.created_at).toLocaleString('id-ID', {
-                        day: 'numeric',
-                        month: 'short',
-                        year: 'numeric',
-                        hour: '2-digit',
-                        minute: '2-digit'
-                    });
-                    const isLatest = (i === files.length - 1);
-                    const isStart = (f.version == 0);
-                    let versionLabel = isStart ? '<i class="fas fa-flag"></i>' : `v${f.version}`;
-                    let colorClass = isLatest ? 'bg-teal-600 text-white ring-4 ring-teal-100 shadow-md' :
-                        'bg-white border-2 border-slate-200 text-slate-500';
-                    let actionTitle = isStart ? "Inisiasi Surat Audit" : "Tanggapan Laboratorium";
-                    let itemHTML = `
-                        <div class="relative flex gap-6 pb-10 last:pb-0">
-                            <div class="absolute top-0 left-4 -bottom-10 w-0.5 bg-slate-200 last:hidden"></div>
-                            <div class="relative z-10 flex-shrink-0 w-8 h-8 rounded-full ${colorClass} flex items-center justify-center border-2 border-white shadow-sm">
-                                <span class="text-[10px] font-bold">${versionLabel}</span>
-                            </div>
-                            <div class="flex-1 bg-white rounded-2xl p-5 border border-slate-200 shadow-sm relative hover:shadow-md transition-all duration-300">
-                                <div class="flex justify-between items-center mb-3">
-                                    <span class="text-xs font-black text-slate-700 uppercase tracking-widest flex items-center gap-1.5">${actionTitle}</span> 
-                                    <span class="text-[10px] text-slate-400 bg-slate-50 px-2 py-1 rounded-full border border-slate-100 font-mono">${date}</span>
-                                </div>
-                                <div class="flex items-start gap-4">
-                                    <div class="w-10 h-10 rounded-xl bg-teal-50 flex items-center justify-center text-teal-600 flex-shrink-0"><i class="fas ${isStart ? 'fa-file-pdf' : 'fa-file-alt'} text-lg"></i></div>
-                                    <div class="flex-1 min-w-0">
-                                        <p class="text-sm font-bold text-slate-800 truncate">${f.file_name || 'Dokumen Audit'}</p>
-                                        <a href="/storage/${isStart ? f.admin_file : f.file_path}" target="_blank" class="text-[11px] text-teal-600 hover:text-teal-800 font-bold inline-flex items-center gap-1 mt-1 hover:underline"><i class="fas fa-external-link-alt"></i> Buka Dokumen</a>
+                        <div class="space-y-5 text-left">
+                            <div class="bg-white p-8 rounded-[2.5rem] border border-slate-100 shadow-sm space-y-6 text-left">
+                                <div id="inputLHS" class="text-left">
+                                    <label class="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] block mb-3 italic text-left">1. Laporan Hasil Survailen (LHS) <span class="text-rose-500">*</span></label>
+                                    <div id="lhsFileContainer">
+                                        <input type="file" name="admin_file" class="block w-full text-sm text-slate-500 file:mr-4 file:py-2.5 file:px-5 file:rounded-xl file:border-0 file:text-[10px] file:font-black file:uppercase file:bg-primary file:text-white hover:file:bg-secondary cursor-pointer">
                                     </div>
                                 </div>
-                                ${f.admin_note ? `<div class="mt-4 p-3 bg-teal-50/50 border border-teal-100 rounded-xl"><p class="text-[10px] font-black text-teal-600 uppercase mb-1 flex items-center gap-1.5"><i class="fas fa-comment-dots"></i> Catatan Admin</p><p class="text-[11px] text-slate-600 italic leading-relaxed">"${f.admin_note}"</p></div>` : ''}
-                                ${isLatest && status === 'approved' ? `<div class="mt-4 flex items-center gap-2"><span class="bg-emerald-100 text-emerald-700 px-2 py-0.5 rounded text-[10px] font-bold border border-emerald-200 uppercase tracking-wider"><i class="fas fa-check-circle mr-1"></i> Audit Selesai</span></div>` : ''}
+                                <div id="inputCert" class="pt-4 border-t border-slate-50 text-left">
+                                    <label class="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] block mb-3 italic text-left">2. Sertifikat Akreditasi <span class="text-rose-500">*</span></label>
+                                    <div id="certFileContainer">
+                                        <input type="file" name="certificate_file" class="block w-full text-sm text-slate-500 file:mr-4 file:py-2.5 file:px-5 file:rounded-xl file:border-0 file:text-[10px] file:font-black file:uppercase file:bg-amber-500 file:text-white hover:file:bg-amber-600 cursor-pointer">
+                                    </div>
+                                </div>
+                                <p id="fileNote" class="text-[9px] text-slate-400 font-bold italic mt-2 text-left">* Maksimal 2MB per file.</p>
                             </div>
-                        </div>`;
-                    container.innerHTML += itemHTML;
-                });
+                        </div>
+                    </div>
+                </div>
+
+                <div id="modalFooter" class="p-8 bg-white border-t border-slate-100 flex justify-end items-center gap-6 shrink-0">
+                    <button type="button" onclick="closeEvaluateModal()" class="text-[11px] font-black uppercase text-slate-400 tracking-[0.2em] hover:text-rose-500 transition-colors">Batal / Tutup</button>
+                    <button id="saveBtn" type="submit" class="bg-slate-900 text-white px-12 py-5 rounded-2xl text-[11px] font-black uppercase tracking-[0.2em] hover:bg-secondary transition-all shadow-xl active:scale-95"><i class="fas fa-save mr-2"></i> Simpan Penilaian</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        const storageBase = "{{ asset('storage') }}";
+        const evaluateRouteBase = "{{ route('survailen.evaluate', ':id') }}";
+        
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('sidebarOverlay');
+            if (sidebar.classList.contains('-translate-x-full')) {
+                sidebar.classList.remove('-translate-x-full');
+                overlay.classList.remove('hidden');
+            } else {
+                sidebar.classList.add('-translate-x-full');
+                overlay.classList.add('hidden');
             }
-            document.getElementById('historyModal').classList.remove('hidden');
         }
 
-        function closeHistoryModal() {
-            document.getElementById('historyModal').classList.add('hidden');
+        function closeSuccessModal() { document.getElementById('successModal')?.remove(); }
+        function closeErrorModal() { document.getElementById('errorModal')?.remove(); }
+
+        const categories = [
+            { key: 'legalitas', label: '1. Legalitas Lembaga', bobot: 10, hint: 'OSS, MOU, Izin Pendukung', files: [{n: 'NIB/OSS', f: 'file_oss'}, {n: 'MoU', f: 'file_mou'}, {n: 'Izin Lain', f: 'file_izin_lainnya'}] },
+            { key: 'mutu', label: '2. Manajemen Mutu', bobot: 20, hint: 'Manual Mutu & SOP', files: [{n: 'Manual Mutu', f: 'file_manual_mutu'}, {n: 'SOP Pelatihan', f: 'file_prosedur_pelatihan'}] },
+            { key: 'rekaman', label: '3. Rekaman & Pantau', bobot: 20, hint: 'Monev & Implementasi', files: [{n: 'Pantau Mutu', f: 'file_pantau_mutu'}, {n: 'Rekaman Lain', f: 'file_rekaman_lainnya'}] },
+            { key: 'kinerja', label: '4. Laporan Kinerja', bobot: 5, hint: 'Lapkin & KAK', files: [{n: 'Laporan Kinerja', f: 'file_lapkin'}, {n: 'KAK', f: 'file_kak'}] },
+            { key: 'sdm', label: '5. Sumber Daya Manusia', bobot: 10, hint: 'Manajemen & Pengajar', files: [{n: 'Manajemen', f: 'file_daftar_manajemen'}, {n: 'Pengajar', f: 'file_daftar_pengajar'}] },
+            { key: 'sarpras', label: '6. Sarana Prasarana', bobot: 15, hint: 'Fasilitas & Alat', files: [{n: 'Peralatan', f: 'file_daftar_sarana'}, {n: 'Gedung', f: 'file_daftar_prasarana'}] },
+            { key: 'kurikulum', label: '7. Kurikulum & Modul', bobot: 20, hint: 'Materi & Bahan Ajar', files: [{n: 'Kurikulum', f: 'file_kurikulum'}, {n: 'Modul', f: 'file_modul'}, {n: 'Bahan Ajar', f: 'file_bahan_ajar'}] }
+        ];
+
+        function openEvaluateModal(btn) {
+            const item = JSON.parse(btn.getAttribute('data-submission'));
+            const tableBody = document.getElementById('evaluationTableBody');
+            const scores = item.evaluator_scores ? JSON.parse(item.evaluator_scores) : {};
+            const isCompleted = item.status === 'completed';
+            
+            // 1. Reset UI ke mode awal
+            document.getElementById('evaluateForm').action = evaluateRouteBase.replace(':id', item.id);
+            document.getElementById('evalModalTitle').querySelector('span').innerText = item.user.name;
+            
+            // 2. Tampilan Header & Footer Berdasarkan Status
+            const header = document.getElementById('modalHeader');
+            const headerTitle = document.getElementById('modalHeaderTitle');
+            const saveBtn = document.getElementById('saveBtn');
+            const progressContainer = document.getElementById('progressContainer');
+
+            if (isCompleted) {
+                header.classList.replace('bg-primary', 'bg-slate-900');
+                headerTitle.innerText = "Detail Penilaian (Read-Only)";
+                saveBtn.classList.add('hidden');
+                progressContainer.classList.add('hidden');
+            } else {
+                header.classList.replace('bg-slate-900', 'bg-primary');
+                headerTitle.innerText = "Instrumen Evaluasi Survailen";
+                saveBtn.classList.remove('hidden');
+                progressContainer.classList.remove('hidden');
+            }
+
+            // 3. Render Baris Evaluasi
+            tableBody.innerHTML = '';
+            categories.forEach((cat, idx) => {
+                const currentScore = scores[cat.key] || null;
+                
+                // Dokumen dari User
+                let filesHtml = `<div class="grid grid-cols-1 gap-1.5 text-left">`;
+                cat.files.forEach(fileObj => {
+                    const path = item.details ? item.details[fileObj.f] : null;
+                    if (path) {
+                        const cleanPath = path.startsWith('/') ? path.substring(1) : path;
+                        filesHtml += `<a href="${storageBase}/${cleanPath}" target="_blank" class="inline-flex items-center px-3 py-1.5 rounded-lg bg-teal-50 text-teal-600 hover:bg-teal-600 hover:text-white transition-all text-[10px] font-black"><i class="fas fa-file-pdf mr-2"></i>${fileObj.n}</a>`;
+                    } else {
+                        filesHtml += `<div class="px-3 py-1.5 rounded-lg bg-slate-50 text-slate-300 text-[9px] font-bold border border-slate-100 italic"><i class="fas fa-times-circle mr-2"></i>${fileObj.n}</div>`;
+                    }
+                });
+                filesHtml += `</div>`;
+
+                tableBody.innerHTML += `
+                    <tr class="group hover:bg-slate-50/50 transition-colors text-left">
+                        <td class="px-8 py-6 text-left">
+                            <span class="block font-black text-slate-800 text-sm uppercase tracking-tight text-left">${cat.label}</span>
+                            <span class="text-[10px] font-bold text-slate-400 uppercase mt-1 block text-left tracking-wider opacity-60">${cat.hint}</span>
+                        </td>
+                        <td class="px-6 py-6 text-left">${filesHtml}</td>
+                        <td class="px-8 py-6 text-center">
+                            <div class="flex justify-center gap-2">
+                                ${[1, 2, 3, 4].map(s => `
+                                    <div class="relative text-center">
+                                        <input type="radio" name="scores[${cat.key}]" id="s_${idx}_${s}" value="${s}" 
+                                            class="hidden score-btn score-${s}" 
+                                            onchange="calc()" 
+                                            ${currentScore == s ? 'checked' : ''} 
+                                            ${isCompleted ? 'disabled' : ''}
+                                            required>
+                                        <label for="s_${idx}_${s}" class="score-label w-10 h-10 flex items-center justify-center rounded-xl bg-white text-slate-300 text-sm font-black ${isCompleted ? '' : 'cursor-pointer'} border-2 border-slate-100 text-center">${s}</label>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        </td>
+                        <td class="px-6 py-6 text-[11px] font-black text-slate-400 text-center uppercase tracking-widest text-center">${cat.bobot}%</td>
+                    </tr>
+                `;
+            });
+
+            // 4. Update Area Unggah File (LHS & Sertifikat)
+            const lhsContainer = document.getElementById('lhsFileContainer');
+            const certContainer = document.getElementById('certFileContainer');
+            const fileNote = document.getElementById('fileNote');
+
+            if (isCompleted) {
+                fileNote.classList.add('hidden');
+                
+                // Tampilkan link download saja jika sudah selesai
+                lhsContainer.innerHTML = item.admin_file ? 
+                    `<a href="${storageBase}/${item.admin_file}" target="_blank" class="flex items-center gap-3 p-4 bg-slate-100 rounded-2xl text-slate-700 font-bold text-[10px] uppercase hover:bg-primary hover:text-white transition-all"><i class="fas fa-file-pdf text-xl"></i> Lihat Laporan Hasil Survailen</a>` : 
+                    `<span class="text-rose-500 font-bold text-[10px]">FILE TIDAK TERSEDIA</span>`;
+                
+                certContainer.innerHTML = item.certificate_file ? 
+                    `<a href="${storageBase}/${item.certificate_file}" target="_blank" class="flex items-center gap-3 p-4 bg-slate-100 rounded-2xl text-slate-700 font-bold text-[10px] uppercase hover:bg-amber-500 hover:text-white transition-all"><i class="fas fa-certificate text-xl"></i> Lihat Sertifikat Terbit</a>` : 
+                    `<span class="text-rose-500 font-bold text-[10px]">FILE TIDAK TERSEDIA</span>`;
+            } else {
+                fileNote.classList.remove('hidden');
+                lhsContainer.innerHTML = `<input type="file" name="admin_file" class="block w-full text-sm text-slate-500 file:mr-4 file:py-2.5 file:px-5 file:rounded-xl file:border-0 file:text-[10px] file:font-black file:uppercase file:bg-primary file:text-white hover:file:bg-secondary cursor-pointer" required>`;
+                certContainer.innerHTML = `<input type="file" name="certificate_file" class="block w-full text-sm text-slate-500 file:mr-4 file:py-2.5 file:px-5 file:rounded-xl file:border-0 file:text-[10px] file:font-black file:uppercase file:bg-amber-500 file:text-white hover:file:bg-amber-600 cursor-pointer" required>`;
+            }
+
+            document.getElementById('evaluateModal').classList.remove('hidden');
+            document.getElementById('evaluateModal').classList.add('flex');
+            calc();
+        }
+
+        function calc() {
+            const selected = document.querySelectorAll('.score-btn:checked');
+            let totalWeighted = 0;
+            selected.forEach(input => {
+                const key = input.name.match(/\[(.*?)\]/)[1];
+                const cat = categories.find(c => c.key === key);
+                if (cat) totalWeighted += (parseInt(input.value) * cat.bobot);
+            });
+
+            const percentage = (totalWeighted / 400) * 100;
+            document.getElementById('finalPercentageDisplay').innerText = percentage.toFixed(1) + "%";
+            
+            const progressBar = document.getElementById('progressBar');
+            if(progressBar) {
+                const progress = (selected.length / 7) * 100;
+                progressBar.style.width = progress + '%';
+                document.getElementById('progressText').innerText = `${selected.length} / 7 KATEGORI TERISI`;
+            }
+
+            const display = document.getElementById('predikatDisplay');
+            if (selected.length === 7) {
+                let p = (percentage >= 85) ? 'A' : (percentage >= 70) ? 'B' : (percentage >= 55) ? 'C' : 'D';
+                display.innerText = "PREDIKAT HASIL: " + p;
+                display.className = "text-[11px] font-black uppercase mt-6 px-8 py-3 rounded-full bg-primary text-white tracking-[0.2em] shadow-lg text-center";
+            } else {
+                display.innerText = "LENGKAPI SELURUH NILAI";
+                display.className = "text-[11px] font-black uppercase mt-6 px-8 py-3 rounded-full bg-slate-50 text-slate-300 tracking-[0.2em] border text-center";
+            }
+        }
+
+        function closeEvaluateModal() {
+            document.getElementById('evaluateModal').classList.add('hidden');
+            document.getElementById('evaluateModal').classList.remove('flex');
         }
     </script>
 </body>
-
 </html>
