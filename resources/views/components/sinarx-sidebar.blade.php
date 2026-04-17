@@ -30,7 +30,7 @@
             
             <div class="px-3 mb-2 text-xs font-bold text-orange-400 uppercase tracking-widest text-left">Validasi Data</div>
             
-            <a href="{{ url('/sinarx/dashboard') }}" class="flex items-center gap-3 py-3 px-4 rounded-xl transition-all duration-200 group {{ request()->is('sinarx/dashboard*') && !request()->routeIs('lembaga*') ? 'bg-orange-800 text-white shadow-md' : 'text-orange-200 hover:text-white hover:bg-orange-800/50' }}">
+            <a href="{{ url('/sinarx/dashboard') }}" class="flex items-center gap-3 py-3 px-4 rounded-xl transition-all duration-200 group {{ request()->is('sinarx/dashboard*') && !request()->routeIs('lembaga*') ? 'bg-orange-800 text-white shadow-md border-l-4 border-orange-400' : 'text-orange-200 hover:text-white hover:bg-orange-800/50' }}">
                 <i class="fas fa-file-signature w-5 text-center group-hover:text-orange-300 transition-colors"></i>
                 <span class="font-medium text-sm text-left">Permohonan Masuk</span>
                 @if(isset($pendingCount) && $pendingCount > 0)
@@ -41,7 +41,7 @@
             <div class="my-4 border-t border-orange-800/50 mx-3"></div>
             <div class="px-3 mb-2 text-xs font-bold text-orange-400 uppercase tracking-widest text-left mt-4">Manajemen</div>
 
-            <a href="{{ route('lembaga.adminSinarx') }}" class="flex items-center gap-3 py-3 px-4 rounded-xl transition-all duration-200 group {{ request()->routeIs('lembaga.adminSinarx') ? 'bg-orange-800 text-white shadow-md' : 'text-orange-200 hover:text-white hover:bg-orange-800/50' }}">
+            <a href="{{ route('lembaga.adminSinarx') }}" class="flex items-center gap-3 py-3 px-4 rounded-xl transition-all duration-200 group {{ request()->routeIs('lembaga.adminSinarx') ? 'bg-orange-800 text-white shadow-md border-l-4 border-orange-400' : 'text-orange-200 hover:text-white hover:bg-orange-800/50' }}">
                 <i class="fas fa-hospital-user w-5 text-center group-hover:text-orange-300 transition-colors"></i>
                 <span class="font-medium text-sm text-left">Data Lembaga</span>
             </a>
@@ -51,7 +51,7 @@
             
             <div class="px-3 mb-2 text-xs font-bold text-orange-400 uppercase tracking-widest text-left">Navigasi Utama</div>
             
-            <a href="{{ url('/sinarx/dashboard') }}" class="flex items-center gap-3 py-3 px-4 rounded-xl transition-all duration-200 group {{ request()->is('sinarx/dashboard') ? 'bg-orange-800 text-white shadow-md' : 'text-orange-200 hover:text-white hover:bg-orange-800/50' }}">
+            <a href="{{ url('/sinarx/dashboard') }}" class="flex items-center gap-3 py-3 px-4 rounded-xl transition-all duration-200 group {{ request()->is('sinarx/dashboard') ? 'bg-orange-800 text-white shadow-md border-l-4 border-orange-400' : 'text-orange-200 hover:text-white hover:bg-orange-800/50' }}">
                 <i class="fas fa-home w-5 text-center group-hover:text-orange-300 transition-colors"></i>
                 <span class="font-medium text-sm text-left">Dashboard Unit</span>
             </a>
