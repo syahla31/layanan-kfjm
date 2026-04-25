@@ -481,7 +481,7 @@
                                 class="fas fa-times text-lg"></i></button>
                     </div>
                     <form id="submissionForm" method="POST" enctype="multipart/form-data"
-                        action="{{ route('submission.store') }}" class="px-6 pb-6 pt-2 space-y-4 text-left">
+                        action="{{ route('submission.store') }}" class="px-6 pb-6 pt-2 space-y-4 text-left max-h-[75vh] overflow-y-auto modal-scroll">
                         @csrf
                         <div id="methodField"></div>
                         <input type="hidden" name="type" id="finalType">
@@ -555,13 +555,20 @@
                                 <i class="fas fa-info-circle"></i> Biarkan kosong jika tidak ingin mengganti file.</p>
                         </div>
 
-                        <div id="radiotherapyNote" class="hidden animate-fade-in-up">
+                        <div id="radiotherapyNote" class="hidden animate-fade-in-up space-y-3">
                             <div class="bg-purple-50 border border-purple-200 rounded-lg p-3 flex gap-3">
                                 <i class="fas fa-info-circle text-purple-600 mt-0.5"></i>
-                                <div class="text-xs text-purple-800 leading-relaxed">
+                                <div class="text-[10px] text-purple-800 leading-relaxed">
                                     <strong>Catatan Radioterapi:</strong><br>
-                                    Harap pastikan Anda telah menyertakan <b>Hasil Uji LHU</b> dan <b>Sertifikat</b> terkait dalam satu file PDF yang sama sebelum mengunggah.
+                                    Harap lampirkan <b>Link Google Drive</b> yang berisi <b>Hasil Uji LHU</b> dan <b>Sertifikat</b> terkait. Pastikan akses file sudah dibuka (public/anyone with the link).
                                 </div>
+                            </div>
+                            
+                            <div class="space-y-1.5">
+                                <label class="text-xs font-bold text-slate-500 uppercase tracking-wider">Link GDrive (LHU & Sertifikat)</label>
+                                <input type="url" name="gdrive_link" id="gdriveLink"
+                                    class="w-full bg-white border border-slate-200 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all"
+                                    placeholder="https://drive.google.com/...">
                             </div>
                         </div>
 
@@ -778,10 +785,13 @@
             
             // Logika untuk menampilkan note Radioterapi
             const radioNote = document.getElementById('radiotherapyNote');
+
             if (value === 'Radioterapi') {
                 radioNote.classList.remove('hidden');
             } else {
                 radioNote.classList.add('hidden');
+                // Kosongkan input jika user pindah kategori
+                document.getElementById('gdriveLink').value = '';
             }
 
             if (shouldToggle) toggleDropdown('dropdownMenuScope', 'arrowScope');

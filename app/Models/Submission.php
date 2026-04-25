@@ -17,7 +17,8 @@ class Submission extends Model
         'file_path', 
         'status', 
         'admin_note',
-        'admin_file'
+        'admin_file',
+        'gdrive_link' // Tambahkan ini
     ];
 
     public function user()

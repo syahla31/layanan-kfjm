@@ -9,49 +9,22 @@ class SurvailenSubmission extends Model
 {
     use HasFactory;
 
-    /**
-     * Atribut yang dapat diisi secara massal.
-     * Disesuaikan dengan struktur migrasi BAB III.
-     */
+    protected $table = 'survailen_submissions';
+
     protected $fillable = [
-        'user_id',
-        'category',
-        'scope',
-        'title',
-        'status',
-        
-        // Berkas Dokumen (7 Kategori BAB III)
-        'file_legalitas',
-        'file_mutu',
-        'file_rekaman',
-        'file_kinerja',
-        'file_sdm',
-        'file_sarpras',
-        'file_kurikulum',
-        
-        // Data Penilaian
-        'self_assessment_scores',
-        'evaluator_scores',
-        'evaluator_comments',
-        
-        // Hasil Akhir & Sertifikasi
-        'final_score',
-        'predikat',
-        'admin_note',
-        'admin_file',
-        'certificate_file'
+        'user_id', 'category', 'scope', 'title', 'status',
+        'self_assessment_scores', 'evaluator_scores', 'evaluator_comments',
+        'final_score', 'predikat', 'admin_note', 'admin_file', 'certificate_file'
     ];
 
-    /**
-     * Relasi ke model User.
-     */
     public function user()
     {
         return $this->belongsTo(User::class);
     }
 
-    public function details()
+    // Relasi ke tabel survailen_files
+    public function files()
     {
-        return $this->hasOne(SurvailenDetail::class);
+        return $this->hasMany(SurvailenFile::class, 'survailen_submission_id');
     }
 }

@@ -16,6 +16,7 @@ class SubmissionController extends Controller
             'type' => 'required',
             'title' => 'required',
             'file_upload' => 'required|mimes:pdf|max:2048', // Max 2MB
+            'gdrive_link' => 'nullable|url',
         ]);
 
         $user = Auth::user();
@@ -28,7 +29,8 @@ class SubmissionController extends Controller
             'type' => $request->type,
             'title' => $request->title,
             'file_path' => $path,
-            'status' => 'pending'
+            'status' => 'pending',
+            'gdrive_link' => $request->gdrive_link, // Simpan link Google Drive jika ada
         ]);
 
         SubmissionFile::create([
@@ -46,6 +48,11 @@ class SubmissionController extends Controller
     {
         // Cari data milik user yang sedang login
         $submission = Submission::where('user_id', Auth::id())->findOrFail($id);
+
+        // Validasi untuk link GDrive
+        $request->validate([
+            'gdrive_link' => 'nullable|url',
+        ]);
 
         // 1. LOGIKA UPLOAD REVISI (Jika ada file yang diupload)
         if ($request->hasFile('file_upload')) {
@@ -70,7 +77,8 @@ class SubmissionController extends Controller
                 'status' => 'pending',
                 'admin_note' => null,
                 'admin_file' => null,
-                'title' => $request->title ?? $submission->title
+                'title' => $request->title ?? $submission->title,
+                'gdrive_link' => $request->gdrive_link ?? $submission->gdrive_link
             ])->save();
 
             return back()->with('success', 'Dokumen revisi berhasil diupload.');
@@ -81,6 +89,7 @@ class SubmissionController extends Controller
         // agar di tampilan Blade terbaca sebagai "Selesai".
         $submission->forceFill([
             'title' => $request->title ?? $submission->title,
+            'gdrive_link' => $request->gdrive_link ?? $submission->gdrive_link,
             'status' => 'approved', 
         ])->save();
 

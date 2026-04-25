@@ -3,13 +3,15 @@
 namespace App\Http\Controllers;
 
 use App\Models\SurvailenSubmission;
-use App\Models\SurvailenDetail;
+use App\Models\SurvailenFile;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
+use Barryvdh\DomPDF\Facade\Pdf;
+use Carbon\Carbon;
 
 class SurvailenController extends Controller
 {
@@ -20,15 +22,14 @@ class SurvailenController extends Controller
     {
         $user = Auth::user();
 
-        // Ambil pengajuan aktif (yang belum selesai)
-        $activeSubmission = SurvailenSubmission::with('details')
+        // Load submission aktif beserta relasi file-filenya
+        $activeSubmission = SurvailenSubmission::with('files')
             ->where('user_id', $user->id)
             ->where('category', $user->category)
             ->where('status', '!=', 'completed')
             ->latest()
             ->first();
 
-        // Riwayat pengajuan yang sudah selesai
         $survailens = SurvailenSubmission::where('user_id', $user->id)
             ->where('category', $user->category)
             ->where('status', 'completed')
@@ -46,7 +47,8 @@ class SurvailenController extends Controller
     {
         $user = Auth::user();
 
-        $audits = SurvailenSubmission::with(['user', 'details'])
+        // Ambil semua pengajuan berdasarkan kategori admin (pelatihan/uji)
+        $audits = SurvailenSubmission::with(['user', 'files'])
             ->where('category', $user->category)
             ->orderBy('created_at', 'desc')
             ->get();
@@ -56,143 +58,95 @@ class SurvailenController extends Controller
     }
 
     /**
-     * TAHAP 1 - USER: Simpan Self Assessment (Mulai Pengajuan Baru)
+     * TAHAP 1 - USER: Simpan Self Assessment
      */
     public function storeSelfAssessment(Request $request)
     {
-        $request->validate([
-            'scores' => 'required|array'
-        ]);
+        $request->validate(['scores' => 'required|array']);
 
         try {
             $user = Auth::user();
-
-            // Cek apakah ada pengajuan yang masih berjalan
-            $exists = SurvailenSubmission::where('user_id', $user->id)
-                ->where('status', '!=', 'completed')
-                ->exists();
-
-            if ($exists) {
-                return back()->withErrors(['error' => 'Anda masih memiliki pengajuan aktif yang belum selesai.']);
-            }
-
             SurvailenSubmission::create([
                 'user_id' => $user->id,
                 'category' => $user->category,
                 'status' => 'uploading',
-                'title' => 'Survailen ' . strtoupper($user->category) . ' - ' . now()->format('d M Y'),
+                'title' => 'Survailen ' . ucfirst($user->category) . ' - ' . now()->format('d M Y'),
                 'self_assessment_scores' => json_encode($request->scores),
             ]);
 
-            return back()->with('success', 'Penilaian mandiri tersimpan! Silakan lengkapi dokumen pendukung.');
+            return back()->with('success', 'Penilaian mandiri tersimpan! Silakan lanjut unggah dokumen pendukung.');
         } catch (\Exception $e) {
             Log::error("Gagal simpan self assessment: " . $e->getMessage());
-            return back()->withErrors(['error' => 'Terjadi kesalahan sistem saat menyimpan data.']);
+            return back()->withErrors(['error' => 'Gagal menyimpan data penilaian mandiri: ' . $e->getMessage()]);
         }
     }
 
     /**
-     * TAHAP 2 - USER: Unggah Dokumen Terperinci
+     * TAHAP 2 - USER: Unggah Dokumen Multi-Upload (Masuk ke tabel survailen_files)
      */
     public function storeDocuments(Request $request, $id)
     {
-        $submission = SurvailenSubmission::where('user_id', Auth::id())
-            ->where('status', 'uploading') // Hanya bisa upload jika status masih uploading
-            ->findOrFail($id);
+        $submission = SurvailenSubmission::where('user_id', Auth::id())->findOrFail($id);
 
-        $rules = [
-            'file_oss'               => 'required|mimes:pdf|max:2048',
-            'file_mou'               => 'nullable|mimes:pdf|max:2048',
-            'file_izin_lainnya'      => 'required|mimes:pdf|max:2048',
-            'file_manual_mutu'       => 'required|mimes:pdf|max:2048',
-            'file_prosedur_pelatihan'=> 'required|mimes:pdf|max:2048',
-            'file_pantau_mutu'       => 'required|mimes:pdf|max:2048',
-            'file_rekaman_lainnya'   => 'nullable|mimes:pdf|max:2048',
-            'file_lapkin'            => 'required|mimes:pdf|max:2048',
-            'file_kak'               => 'required|mimes:pdf|max:2048',
-            'file_daftar_manajemen'  => 'required|mimes:pdf|max:2048',
-            'file_daftar_pengajar'   => 'required|mimes:pdf|max:2048',
-            'file_daftar_sarana'     => 'required|mimes:pdf|max:2048',
-            'file_daftar_prasarana'  => 'required|mimes:pdf|max:2048',
-            'file_kurikulum'         => 'required|mimes:pdf|max:2048',
-            'file_modul'             => 'required|mimes:pdf|max:2048',
-            'file_bahan_ajar'        => 'required|mimes:pdf|max:2048',
-        ];
-
-        // Jika sudah ada detail, beberapa file mungkin jadi nullable (opsional jika hanya update)
-        if ($submission->details) {
-            foreach ($rules as $key => $rule) {
-                $rules[$key] = str_replace('required', 'nullable', $rule);
-            }
-        }
-
-        $request->validate($rules);
+        // Validasi array files
+        $request->validate([
+            'files.*.*' => 'required|mimes:pdf|max:10240',
+        ], [
+            'files.*.*.mimes' => 'Semua berkas harus berformat PDF.',
+            'files.*.*.max'   => 'Ukuran berkas tidak boleh lebih dari 10MB.',
+        ]);
 
         try {
-            DB::beginTransaction();
+            $uploadedFiles = $request->file('files');
 
-            $folder = 'survailen/' . $submission->category . '/' . Auth::id();
-            $fileKeys = array_keys($rules);
-            $detailData = [];
+            if ($uploadedFiles && is_array($uploadedFiles)) {
+                foreach ($uploadedFiles as $categoryKey => $fileArray) {
+                    if (is_array($fileArray)) {
+                        foreach ($fileArray as $file) {
+                            $folder = 'survailen/' . $submission->category . '/' . Auth::id() . '_' . time();
+                            $path = $file->store($folder, 'public');
 
-            // Ambil data detail lama untuk pengecekan hapus file
-            $oldDetails = $submission->details;
-
-            foreach ($fileKeys as $key) {
-                if ($request->hasFile($key)) {
-                    // Hapus file lama jika ada
-                    if ($oldDetails && $oldDetails->$key) {
-                        Storage::disk('public')->delete($oldDetails->$key);
+                            SurvailenFile::create([
+                                'survailen_submission_id' => $submission->id,
+                                'category_key'            => $categoryKey,
+                                'file_path'               => $path,
+                                'file_name'               => $file->getClientOriginalName(),
+                            ]);
+                        }
                     }
-                    // Simpan file baru
-                    $detailData[$key] = $request->file($key)->store($folder, 'public');
                 }
-            }
-
-            // Update atau Create detail
-            $submission->details()->updateOrCreate(
-                ['survailen_submission_id' => $submission->id],
-                $detailData
-            );
-
-            // Jika tombol yang ditekan adalah 'Kirim Ke Verifikasi'
-            if ($request->submit_action == 'final') {
-                $submission->update(['status' => 'verification']);
-                $msg = 'Seluruh dokumen berhasil dikirim untuk verifikasi!';
             } else {
-                $msg = 'Draft dokumen berhasil disimpan!';
+                return back()->withErrors(['error' => 'Tidak ada file yang diterima oleh sistem.']);
             }
 
-            DB::commit();
-            return back()->with('success', $msg);
+            $submission->update(['status' => 'verification']);
+
+            return back()->with('success', 'Seluruh berkas berhasil diunggah dan disimpan!');
         } catch (\Exception $e) {
-            DB::rollBack();
-            Log::error("Gagal upload berkas detail: " . $e->getMessage());
-            return back()->withErrors(['error' => 'Gagal mengunggah dokumen: ' . $e->getMessage()]);
+            Log::error("Gagal upload berkas multi: " . $e->getMessage());
+            return back()->withErrors(['error' => 'Terjadi kesalahan saat menyimpan file: ' . $e->getMessage()]);
         }
     }
 
     /**
-     * TAHAP 3 - ADMIN: Evaluasi Akhir
+     * TAHAP 3 - ADMIN: Penilaian Asesor
      */
     public function evaluate(Request $request, $id)
     {
         $submission = SurvailenSubmission::findOrFail($id);
 
-        // Validasi: Scores wajib, File wajib (kecuali sudah ada), Note jadi nullable/opsional
         $request->validate([
             'scores'           => 'required|array',
-            'admin_note'       => 'nullable|string', 
-            'admin_file'       => $submission->admin_file ? 'nullable|mimes:pdf|max:2048' : 'required|mimes:pdf|max:2048',
-            'certificate_file' => $submission->certificate_file ? 'nullable|mimes:pdf|max:2048' : 'required|mimes:pdf|max:2048',
+            'comments'         => 'nullable|array',
+            'admin_note'       => 'required|string',
+            'admin_file'       => 'nullable|mimes:pdf|max:5120',
+            'certificate_file' => 'nullable|mimes:pdf|max:5120',
         ]);
 
         try {
-            DB::beginTransaction();
-
             $weights = [
-                'legalitas' => 10, 'mutu' => 20, 'rekaman' => 20,
-                'kinerja' => 5, 'sdm' => 10, 'sarpras' => 15, 'kurikulum' => 20,
+                'file_legalitas' => 10, 'file_mutu' => 20, 'file_rekaman' => 20,
+                'file_kinerja' => 5, 'file_sdm' => 10, 'file_sarpras' => 15, 'file_kurikulum' => 20
             ];
 
             $totalWeightedScore = 0;
@@ -204,83 +158,97 @@ class SurvailenController extends Controller
 
             $percentage = ($totalWeightedScore / 400) * 100;
             
-            // Logika Predikat
-            $predikat = 'D';
             if ($percentage >= 85) $predikat = 'A';
             elseif ($percentage >= 70) $predikat = 'B';
             elseif ($percentage >= 55) $predikat = 'C';
+            else $predikat = 'D';
 
             $updateData = [
-                'evaluator_scores' => json_encode($request->scores),
-                'final_score'      => $percentage,
-                'predikat'         => $predikat,
-                'status'           => 'completed',
-                'admin_note'       => $request->admin_note ?? '-', // Isi default jika kosong
+                'evaluator_scores'   => json_encode($request->scores),
+                'evaluator_comments' => json_encode(array_filter($request->comments ?? [])), // Menghapus nilai null/kosong
+                'final_score'        => $percentage,
+                'predikat'           => $predikat,
+                'status'             => 'completed',
+                'admin_note'         => $request->admin_note,
             ];
 
-            // Simpan File 1: Laporan Hasil Survailen (LHS)
+            $evalFolder = 'survailen/evaluasi/' . $submission->id;
             if ($request->hasFile('admin_file')) {
-                if ($submission->admin_file) Storage::disk('public')->delete($submission->admin_file);
-                $updateData['admin_file'] = $request->file('admin_file')->store('survailen/hasil', 'public');
+                $updateData['admin_file'] = $request->file('admin_file')->store($evalFolder, 'public');
             }
-
-            // Simpan File 2: Sertifikat Akreditasi
             if ($request->hasFile('certificate_file')) {
-                if ($submission->certificate_file) Storage::disk('public')->delete($submission->certificate_file);
-                $updateData['certificate_file'] = $request->file('certificate_file')->store('survailen/sertifikat', 'public');
+                $updateData['certificate_file'] = $request->file('certificate_file')->store($evalFolder, 'public');
             }
 
+            $submission = SurvailenSubmission::with('user')->findOrFail($id);
             $submission->update($updateData);
 
-            DB::commit();
-            return back()->with('success', 'Penilaian berhasil disimpan! Predikat: ' . $predikat);
+            // --- DEBUGGING: CEK APAKAH INI BERJALAN ---
+            try {
+                $data = [
+                    'nama_user' => $submission->user->name,
+                    'predikat'  => $submission->predikat,
+                    'tanggal'   => Carbon::now('Asia/Jakarta')->isoFormat('D MMMM Y'),
+                    'category'  => $submission->category // Tambahkan ini agar di view bisa dicek
+                ];
+
+                // DINAMIS: Cek kategori, jika 'uji' panggil view uji, jika 'pelatihan' panggil pelatihan
+                $viewPath = $submission->category == 'uji' ? 'uji.sertifikat_template' : 'pelatihan.sertifikat_template';
+                
+                $pdf = Pdf::loadView($viewPath, $data)
+                        ->setPaper('A4', 'landscape');
+                
+                $sertifikatPath = 'survailen/evaluasi/' . $submission->id . '/Sertifikat_' . Str::slug($submission->user->name) . '.pdf';
+                
+                Storage::disk('public')->put($sertifikatPath, $pdf->output());
+
+                $submission->update(['certificate_file' => $sertifikatPath]);
+
+            } catch (\Exception $e) {
+                dd($e->getMessage()); 
+            }
+
+            return back()->with('success', 'Penilaian & Sertifikat berhasil dipublikasikan!');
         } catch (\Exception $e) {
-            DB::rollBack();
-            Log::error("Evaluasi Gagal: " . $e->getMessage());
-            return back()->withErrors(['error' => 'Gagal menyimpan penilaian: ' . $e->getMessage()]);
+            Log::error("Gagal simpan evaluasi: " . $e->getMessage());
+            return back()->withErrors(['error' => 'Gagal menyimpan hasil penilaian: ' . $e->getMessage()]);
         }
     }
 
     /**
-     * GLOBAL: Hapus Data
+     * GLOBAL: Hapus Data & File Fisik
      */
     public function destroy($id)
     {
-        $submission = SurvailenSubmission::with('details')->findOrFail($id);
+        $submission = SurvailenSubmission::with('files')->findOrFail($id);
         
-        // Pastikan hanya owner atau admin yang bisa hapus
-        if (Auth::id() !== $submission->user_id && Auth::user()->role !== 'admin') {
-            abort(403);
+        foreach ($submission->files as $file) {
+            if (Storage::disk('public')->exists($file->file_path)) {
+                Storage::disk('public')->delete($file->file_path);
+            }
+            $file->delete();
         }
 
-        try {
-            DB::beginTransaction();
+        if ($submission->admin_file) Storage::disk('public')->delete($submission->admin_file);
+        if ($submission->certificate_file) Storage::disk('public')->delete($submission->certificate_file);
 
-            // 1. Hapus file-file di tabel detail
-            if ($submission->details) {
-                $detailsArray = $submission->details->toArray();
-                foreach ($detailsArray as $key => $path) {
-                    if (str_starts_with($key, 'file_') && $path) {
-                        Storage::disk('public')->delete($path);
-                    }
-                }
-            }
+        $submission->delete();
+        return back()->with('success', 'Data survailen berhasil dihapus.');
+    }
 
-            // 2. Hapus file admin
-            if ($submission->admin_file) {
-                Storage::disk('public')->delete($submission->admin_file);
-            }
+    public function generateSertifikat($submission_id)
+    {
+        $submission = SurvailenSubmission::with('user')->findOrFail($submission_id);
 
-            // 3. Hapus folder jika kosong (optional)
-            // Storage::disk('public')->deleteDirectory('survailen/' . $submission->category . '/' . $submission->user_id);
+        $data = [
+            'nama_user' => $submission->user->name,
+            'predikat'  => $submission->predikat,
+            'tanggal'   => Carbon::now('Asia/Jakarta')->isoFormat('D MMMM Y')
+        ];
 
-            $submission->delete(); 
+        $pdf = Pdf::loadView('pelatihan.sertifikat_template', $data)
+                ->setPaper('a4', 'landscape');
 
-            DB::commit();
-            return back()->with('success', 'Data survailen dan berkas terkait berhasil dihapus.');
-        } catch (\Exception $e) {
-            DB::rollBack();
-            return back()->withErrors(['error' => 'Gagal menghapus data: ' . $e->getMessage()]);
-        }
+        return $pdf->stream('Sertifikat_' . $submission->user->name . '.pdf');
     }
 }
