@@ -25,6 +25,7 @@
         }
         .animate-float { animation: floating 3s ease-in-out infinite; }
 
+        /* Pattern Dekoratif */
         .bg-pattern {
             background-image: radial-gradient(#cbd5e1 0.5px, transparent 0.5px);
             background-size: 15px 15px;
@@ -34,6 +35,8 @@
 <body class="bg-[#fcfcfd] text-slate-800 antialiased overflow-hidden">
 
     @php
+        // Simulasi mengambil semua data delivery untuk user ini
+        // Di aplikasi nyata, ini dikirim dari KtunDeliveryController
         $deliveries = \App\Models\KtunDelivery::where('user_id', Auth::id())->latest()->get();
         $latestDelivery = $deliveries->first();
         $previousDeliveries = $deliveries->skip(1);
@@ -56,22 +59,28 @@
 
         <div class="flex-1 flex flex-col h-screen overflow-hidden relative w-full">
             
-            <div class="lg:hidden bg-white border-b border-slate-200 px-4 py-3 flex items-center justify-between sticky top-0 z-30 shadow-sm">
+            <!-- HEADER MOBILE (Sticky with Hamburger) -->
+            <div class="md:hidden bg-white border-b border-slate-100 px-5 py-3.5 flex items-center justify-between z-30 sticky top-0 shadow-sm">
                 <div class="flex items-center gap-3">
-                    <button onclick="toggleSidebar()" class="p-2 text-slate-600 hover:bg-slate-100 rounded-xl transition-colors">
+                    <button onclick="toggleSidebar()" class="w-10 h-10 flex items-center justify-center text-slate-500 hover:text-blue-600 hover:bg-blue-50 rounded-2xl transition-all active:scale-90">
                         <i class="fas fa-bars text-xl"></i>
                     </button>
-                    <span class="font-bold text-slate-800 text-sm tracking-tight">SI-MUTU <span class="text-blue-600">DKKN</span></span>
+                    <div class="flex items-center gap-2">
+                        <div class="w-8 h-8 rounded-lg bg-blue-600 flex items-center justify-center text-white shadow-sm">
+                            <i class="fas fa-flask text-sm"></i>
+                        </div>
+                        <span class="font-bold text-slate-800 text-sm tracking-tight">SI-LAB Pelatihan</span>
+                    </div>
                 </div>
-                <div class="w-8 h-8 rounded-xl bg-blue-100 flex items-center justify-center text-blue-600 text-xs font-bold border border-blue-200">
-                    {{ substr(Auth::user()->name ?? 'U', 0, 1) }}
+                <div class="w-9 h-9 rounded-full bg-blue-50 flex items-center justify-center text-blue-600 text-xs font-bold border border-blue-100 uppercase">
+                    {{ substr(Auth::user()->name ?? 'L', 0, 1) }}
                 </div>
             </div>
 
             <!-- HEADER DESKTOP -->
             <div class="hidden md:block">
                 @include('components.pelatihan-header', [
-                    'title' => 'Dokumen Penetapan Dokumen',
+                    'title' => 'Penetapan Dokumen',
                     'subtitle' => 'Kelola dan unduh paket dokumen penetapan (KTUN)'
                 ])
             </div>
@@ -81,13 +90,14 @@
                 <div class="max-w-5xl mx-auto space-y-10">
                     
                     @if($latestDelivery)
-                        <!-- PANEL DOKUMEN TERBARU -->
+                        <!-- PANEL DOKUMEN TERBARU (GIFT BOX STYLE) -->
                         <div class="bg-white rounded-[3rem] md:rounded-[4rem] p-8 md:p-14 shadow-[0_40px_100px_-25px_rgba(0,0,0,0.06)] border border-slate-50 relative overflow-hidden animate-gemay">
                             <div class="absolute top-0 right-0 w-80 h-80 bg-blue-50 rounded-full blur-3xl opacity-50 -mr-32 -mt-32"></div>
+                            <div class="absolute bottom-0 left-0 w-60 h-60 bg-blue-50 rounded-full blur-2xl opacity-40 -ml-20 -mb-20"></div>
                             
                             <div class="relative z-10 flex flex-col items-center text-center">
                                 <div class="mb-8 relative">
-                                    <div class="w-20 h-20 md:w-28 md:h-28 bg-gradient-to-br from-blue-400 to-blue-600 rounded-[2rem] md:rounded-[2.5rem] flex items-center justify-center shadow-2xl shadow-blue-100 animate-float border-4 border-white">
+                                    <div class="w-20 h-20 md:w-28 md:h-28 bg-gradient-to-br {{ $latestDelivery->is_survey_filled ? 'from-blue-400 to-blue-600' : 'from-blue-400 to-blue-600' }} rounded-[2rem] md:rounded-[2.5rem] flex items-center justify-center shadow-2xl {{ $latestDelivery->is_survey_filled ? 'shadow-blue-100' : 'shadow-blue-100' }} animate-float border-4 border-white">
                                         <i class="fas {{ $latestDelivery->is_survey_filled ? 'fa-envelope-open-text' : 'fa-box-open' }} text-3xl md:text-5xl text-white"></i>
                                     </div>
                                     @if(!$latestDelivery->is_survey_filled)
@@ -115,6 +125,7 @@
                                         <span>BUKA PAKET DOKUMEN</span>
                                     </button>
                                 @else
+                                    <!-- DOCUMENT CARDS -->
                                     <div class="grid grid-cols-1 sm:grid-cols-3 gap-5 w-full">
                                         @foreach([
                                             ['path' => $latestDelivery->file_surat_pengantar, 'label' => 'Surat Pengantar', 'icon' => 'fa-file-alt'],
@@ -136,7 +147,7 @@
                             </div>
                         </div>
 
-                        <!-- ARSIP -->
+                        <!-- BAGIAN RIWAYAT DOKUMEN (ARSIP) -->
                         <div class="bg-white rounded-[3rem] p-8 md:p-12 shadow-sm border border-slate-100 relative overflow-hidden animate-gemay">
                             <h3 class="text-xl font-extrabold text-slate-800 mb-8 flex items-center gap-3">
                                 <div class="w-10 h-10 bg-slate-50 text-slate-400 rounded-2xl flex items-center justify-center shadow-inner border border-slate-100">
@@ -174,14 +185,15 @@
                                             </td>
                                             <td class="py-5 text-right">
                                                 @if($item->is_survey_filled)
+                                                    <!-- PERBAIKAN: Menambahkan ikon Surat Pengantar agar lengkap (3 file) -->
                                                     <div class="flex justify-end gap-2">
-                                                        <a href="{{ asset('storage/'.$item->file_surat_pengantar) }}" target="_blank" class="w-9 h-9 flex items-center justify-center bg-white border border-slate-200 text-slate-400 hover:text-blue-600 hover:border-blue-200 rounded-xl transition-all shadow-sm">
+                                                        <a href="{{ asset('storage/'.$item->file_surat_pengantar) }}" target="_blank" class="w-9 h-9 flex items-center justify-center bg-white border border-slate-200 text-slate-400 hover:text-blue-600 hover:border-blue-200 rounded-xl transition-all shadow-sm" title="Unduh Surat Pengantar">
                                                             <i class="fas fa-file-alt text-xs"></i>
                                                         </a>
-                                                        <a href="{{ asset('storage/'.$item->file_ktun) }}" target="_blank" class="w-9 h-9 flex items-center justify-center bg-white border border-slate-200 text-slate-400 hover:text-blue-600 hover:border-blue-200 rounded-xl transition-all shadow-sm">
+                                                        <a href="{{ asset('storage/'.$item->file_ktun) }}" target="_blank" class="w-9 h-9 flex items-center justify-center bg-white border border-slate-200 text-slate-400 hover:text-blue-600 hover:border-blue-200 rounded-xl transition-all shadow-sm" title="Unduh KTUN">
                                                             <i class="fas fa-certificate text-xs"></i>
                                                         </a>
-                                                        <a href="{{ asset('storage/'.$item->file_kwintansi) }}" target="_blank" class="w-9 h-9 flex items-center justify-center bg-white border border-slate-200 text-slate-400 hover:text-blue-600 hover:border-blue-200 rounded-xl transition-all shadow-sm">
+                                                        <a href="{{ asset('storage/'.$item->file_kwintansi) }}" target="_blank" class="w-9 h-9 flex items-center justify-center bg-white border border-slate-200 text-slate-400 hover:text-blue-600 hover:border-blue-200 rounded-xl transition-all shadow-sm" title="Unduh Kwitansi">
                                                             <i class="fas fa-receipt text-xs"></i>
                                                         </a>
                                                     </div>
@@ -199,77 +211,121 @@
                                 </table>
                             </div>
                         </div>
+
+                    @else
+                        <!-- EMPTY STATE -->
+                        <div class="bg-white rounded-[3.5rem] p-16 md:p-24 text-center shadow-sm border border-slate-100 animate-gemay">
+                            <div class="w-20 h-20 bg-slate-50 rounded-full flex items-center justify-center mx-auto mb-6 text-slate-200">
+                                <i class="fas fa-ghost text-4xl"></i>
+                            </div>
+                            <h3 class="text-xl font-extrabold text-slate-400 tracking-tight uppercase">Belum Ada Dokumen</h3>
+                            <p class="text-slate-300 text-sm mt-1 font-medium italic">Dokumen KTUN akan muncul di sini setelah diverifikasi.</p>
+                        </div>
                     @endif
+
+                    <!-- PANDUAN LAYER -->
+                    <div class="bg-white p-8 md:p-12 rounded-[3rem] md:rounded-[3.5rem] border border-slate-100 shadow-sm relative overflow-hidden animate-gemay">
+                        <div class="absolute -right-10 -bottom-10 opacity-[0.03] text-blue-900 rotate-12"><i class="fas fa-info-circle text-[12rem]"></i></div>
+                        
+                        <h4 class="font-extrabold text-slate-800 mb-8 flex items-center gap-3 uppercase tracking-widest text-[10px]">
+                            <div class="w-8 h-8 bg-blue-50 text-blue-600 rounded-lg flex items-center justify-center shrink-0">
+                                <i class="fas fa-shield-alt"></i>
+                            </div>
+                            Panduan Akses Dokumen
+                        </h4>
+                        
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-8 relative z-10">
+                            <div class="flex gap-4">
+                                <div class="w-10 h-10 rounded-2xl bg-slate-50 text-slate-400 border border-slate-100 flex items-center justify-center shrink-0 font-bold text-sm shadow-inner">01</div>
+                                <div class="space-y-1">
+                                    <p class="text-sm font-extrabold text-slate-700">Multi-Dokumen</p>
+                                    <p class="text-xs text-slate-500 leading-relaxed">Jika ada perubahan atau amandemen, dokumen terbaru akan muncul di panel atas secara otomatis.</p>
+                                </div>
+                            </div>
+                            <div class="flex gap-4">
+                                <div class="w-10 h-10 rounded-2xl bg-slate-50 text-slate-400 border border-slate-100 flex items-center justify-center shrink-0 font-bold text-sm shadow-inner">02</div>
+                                <div class="space-y-1">
+                                    <p class="text-sm font-extrabold text-slate-700">Akses Mandiri</p>
+                                    <p class="text-xs text-slate-500 leading-relaxed">Setiap paket dokumen memiliki status survey masing-masing. Pastikan semua paket terkonfirmasi.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
-                <div class="mt-8 text-center text-xs text-slate-400">
-                    &copy; 2026 Sistem Informasi Jaminan Mutu Ketenaganukliran
+                <div class="text-center pb-10">
+                    <p class="text-[10px] text-slate-300 font-bold uppercase tracking-[0.3em]">SI-MUTU DKKN BAPETEN &copy; 2026</p>
                 </div>
+
             </main>
         </div>
     </div>
 
-    <!-- SUCCESS MODAL DENGAN TIMER -->
+    <!-- MODAL BERHASIL (Centered & Bouncy) -->
     @if (session('success'))
     <div id="successPopup" class="fixed inset-0 z-[300] flex items-center justify-center p-6 bg-slate-900/60 backdrop-blur-xl transition-all duration-300">
-        <div class="bg-white rounded-[3.5rem] p-12 max-w-sm w-full shadow-2xl text-center animate-gemay border-4 border-white">
-            <div class="w-24 h-24 bg-emerald-50 text-emerald-500 rounded-full flex items-center justify-center mx-auto mb-8 border-4 border-emerald-100">
-                <i class="fas fa-check-circle text-5xl"></i>
+        <div class="absolute inset-0" onclick="closeSuccessModal()"></div>
+        <div class="relative bg-white rounded-[3.5rem] md:rounded-[4rem] p-12 md:p-16 max-w-sm w-full shadow-[0_50px_100px_-20px_rgba(0,0,0,0.4)] text-center animate-gemay border-4 border-white">
+            <div class="w-24 h-24 bg-emerald-50 text-emerald-500 rounded-full flex items-center justify-center mx-auto mb-8 border-4 border-emerald-100 relative">
+                <div class="absolute inset-0 bg-emerald-400 rounded-full animate-ping opacity-10"></div>
+                <i class="fas fa-check-circle text-5xl relative z-10"></i>
             </div>
             <h3 class="text-2xl font-extrabold text-slate-800 mb-4 tracking-tight uppercase">Yuhuu, Terbuka!</h3>
-            <p class="text-slate-500 text-sm font-medium mb-6">{{ session('success') }}</p>
-            
-            <div class="mb-8">
-                <span class="text-[10px] font-black uppercase tracking-widest text-slate-400 bg-slate-50 px-4 py-1.5 rounded-full border border-slate-100">
-                    Menutup dalam <span id="successCountdown" class="text-emerald-600">5</span> detik
-                </span>
-            </div>
-
-            <button onclick="closeSuccessModal()" class="w-full bg-slate-900 text-white font-extrabold py-5 rounded-[1.8rem] hover:bg-emerald-600 transition-all text-[10px] tracking-[0.2em] uppercase">
+            <p class="text-slate-500 text-sm font-medium leading-relaxed px-2 mb-10">
+                Akses paket dokumen KTUN Anda sekarang telah terbuka sepenuhnya. Silakan unduh berkas aslinya.
+            </p>
+            <button onclick="closeSuccessModal()" class="w-full bg-slate-900 text-white font-extrabold py-5 rounded-[1.8rem] hover:bg-emerald-600 transition-all shadow-xl active:scale-95 text-[10px] tracking-[0.2em] uppercase">
                 OKE, MENGERTI
             </button>
         </div>
     </div>
     @endif
 
-    <!-- MODAL SURVEY -->
+    <!-- MODAL SURVEY G-FORM (PUFFY) -->
     <div id="surveyModal" class="fixed inset-0 z-[250] hidden flex items-center justify-center p-6 bg-slate-900/60 backdrop-blur-xl">
         <div class="absolute inset-0" onclick="closeSurveyModal()"></div>
-        <div class="relative bg-white rounded-[3.5rem] p-10 max-w-md w-full shadow-2xl text-center animate-gemay border-4 border-white">
-            <div class="w-20 h-20 bg-blue-50 text-blue-600 rounded-full flex items-center justify-center mx-auto mb-10 border-4 border-blue-100">
+        <div class="relative bg-white rounded-[3.5rem] md:rounded-[4rem] p-10 md:p-14 max-w-md w-full shadow-[0_50px_100px_-20px_rgba(0,0,0,0.4)] text-center animate-gemay border-4 border-white">
+            
+            <div class="w-20 h-20 bg-blue-50 text-blue-600 rounded-full flex items-center justify-center mx-auto mb-10 border-4 border-blue-100 relative">
                 <i class="fab fa-google text-3xl"></i>
+                <div class="absolute -bottom-2 -right-2 w-10 h-10 bg-emerald-500 text-white rounded-full flex items-center justify-center border-4 border-white">
+                    <i class="fas fa-pen text-[10px]"></i>
+                </div>
             </div>
             
-            <h3 class="text-2xl font-extrabold text-slate-800 mb-4 uppercase">Survey Layanan</h3>
-            <p class="text-slate-500 text-sm mb-12">Mohon isi survey kepuasan pada link Google Form, lalu klik konfirmasi untuk membuka dokumen.</p>
+            <h3 class="text-2xl font-extrabold text-slate-800 mb-4 tracking-tight uppercase">Survey Layanan</h3>
+            <p class="text-slate-500 text-sm mb-12 font-medium leading-relaxed">
+                Mohon isi survey kepuasan pada link Google Form, lalu klik konfirmasi untuk membuka dokumen.
+            </p>
             
             <div class="space-y-4">
-                <a href="https://docs.google.com/forms/d/e/1FAIpQLSeW6FwPyZMMGtdAMBPCJPHNpyfBgj12iI4_V_ZeXddE6G8kkg/viewform" target="_blank" class="w-full inline-flex items-center justify-center gap-3 bg-blue-600 text-white font-extrabold py-5 rounded-[2rem] hover:bg-blue-700 transition-all text-xs tracking-widest uppercase">
+                <a href="https://docs.google.com/forms/d/e/1FAIpQLSeW6FwPyZMMGtdAMBPCJPHNpyfBgj12iI4_V_ZeXddE6G8kkg/viewform" target="_blank" class="w-full inline-flex items-center justify-center gap-3 bg-blue-600 text-white font-extrabold py-5 rounded-[2rem] hover:bg-blue-700 transition-all shadow-xl shadow-blue-200 active:scale-95 text-xs tracking-widest uppercase">
                     <span>BUKA GOOGLE FORM</span>
                     <i class="fas fa-external-link-alt text-[10px]"></i>
                 </a>
 
                 <form id="surveyForm" method="POST" action="">
                     @csrf
-                    <button type="submit" class="w-full bg-slate-900 text-white font-extrabold py-5 rounded-[2rem] hover:bg-emerald-600 transition-all text-xs tracking-widest uppercase">
+                    <button type="submit" class="w-full bg-slate-900 text-white font-extrabold py-4 md:py-5 rounded-[1.8rem] md:rounded-[2rem] hover:bg-emerald-600 transition-all shadow-xl active:scale-95 text-xs tracking-widest uppercase">
                         SAYA SUDAH MENGISI
                     </button>
                 </form>
                 
-                <button onclick="closeSurveyModal()" class="text-[10px] font-extrabold text-slate-300 hover:text-slate-500 uppercase tracking-[0.2em] pt-4">NANTI SAJA</button>
+                <button onclick="closeSurveyModal()" class="text-[10px] font-extrabold text-slate-300 hover:text-slate-500 uppercase tracking-[0.2em] transition-colors pt-4">NANTI SAJA</button>
             </div>
         </div>
     </div>
 
     <script>
         function toggleSidebar() {
-            document.getElementById('mobileSidebar').classList.toggle('hidden');
+            const sidebar = document.getElementById('mobileSidebar');
+            sidebar.classList.toggle('hidden');
         }
 
         function openSurveyModal(id) {
             const m = document.getElementById('surveyModal');
-            // PERBAIKAN: Menambahkan /unlock/ agar sesuai dengan Route web.php
-            document.getElementById('surveyForm').action = "/ktun/survey/unlock/" + id;
+
+            document.getElementById('surveyForm').action = "/ktun/survey/unlock/" + id; 
             m.classList.remove('hidden');
         }
 
@@ -277,27 +333,7 @@
         
         function closeSuccessModal() {
             const m = document.getElementById('successPopup');
-            if (m) {
-                m.style.opacity = '0';
-                setTimeout(() => m.remove(), 300);
-            }
-        }
-
-        window.onload = () => {
-            const successModal = document.getElementById('successPopup');
-            const countdownEl = document.getElementById('successCountdown');
-            
-            if(successModal && countdownEl) {
-                let seconds = 5;
-                const timer = setInterval(() => {
-                    seconds--;
-                    if (seconds >= 0) countdownEl.innerText = seconds;
-                    if (seconds <= 0) {
-                        clearInterval(timer);
-                        closeSuccessModal();
-                    }
-                }, 1000);
-            }
+            if (m) m.remove();
         }
     </script>
 </body>

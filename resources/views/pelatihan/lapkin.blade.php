@@ -468,7 +468,7 @@
 
                             <!-- File Upload Area -->
                             <div class="space-y-1">
-                                <label class="block text-xs font-bold text-slate-500 uppercase tracking-wide">File PDF (Max 10MB)</label>
+                                <label class="block text-xs font-bold text-slate-500 uppercase tracking-wide">File PDF (Max 2MB)</label>
                                 <div class="mt-1 flex justify-center rounded-xl border-2 border-dashed border-slate-300 px-6 py-8 hover:bg-slate-50 hover:border-teal-400 transition-colors group relative cursor-pointer">
                                     <div class="text-center">
                                         <div class="mx-auto h-12 w-12 text-slate-300 group-hover:text-teal-500 transition-colors">
@@ -481,7 +481,7 @@
                                             </label>
                                             <p class="pl-1">atau drag and drop</p>
                                         </div>
-                                        <p class="text-xs leading-5 text-slate-500">PDF hingga 10MB</p>
+                                        <p class="text-xs leading-5 text-slate-500">PDF hingga 2MB</p>
                                         <p id="fileNameDisplay" class="mt-2 text-sm font-bold text-slate-800 hidden"></p>
                                     </div>
                                 </div>
