@@ -68,7 +68,6 @@
             backdrop-filter: blur(4px);
         }
 
-        /* Fix for mobile responsiveness */
         @media (max-width: 1024px) {
             .content-area { width: 100vw !important; }
         }
@@ -80,17 +79,52 @@
         $status = $activeSubmission ? $activeSubmission->status : 'none'; 
         
         $components = [
-            'file_legalitas' => ['label' => 'Aspek Legalitas & Perizinan', 'bobot' => '10%', 'icon' => 'fa-building'],
-            'file_mutu'      => ['label' => 'Sistem Manajemen Mutu (SMM)', 'bobot' => '20%', 'icon' => 'fa-check-double'],
-            'file_rekaman'   => ['label' => 'Rekaman & Laporan Implementasi', 'bobot' => '20%', 'icon' => 'fa-history'],
-            'file_kinerja'   => ['label' => 'Laporan Kinerja & KAK', 'bobot' => '5%', 'icon' => 'fa-chart-line'],
-            'file_sdm'       => ['label' => 'Sumber Daya Manusia (SDM)', 'bobot' => '10%', 'icon' => 'fa-users'],
-            'file_sarpras'   => ['label' => 'Sarana & Prasarana Penunjang', 'bobot' => '15%', 'icon' => 'fa-tools'],
-            'file_kurikulum' => ['label' => 'Kurikulum, Modul & Bahan Ajar', 'bobot' => '20%', 'icon' => 'fa-book-open'],
+            'file_legalitas' => [
+                'label' => 'Aspek Legalitas & Perizinan', 
+                'bobot' => '10%', 
+                'icon' => 'fa-building',
+                'hint'  => 'Izin OSS/NIB , Akta Pendirian, MOU & Surat Izin Operasional.'
+            ],
+            'file_mutu'      => [
+                'label' => 'Sistem Manajemen Mutu (SMM)', 
+                'bobot' => '20%', 
+                'icon' => 'fa-check-double',
+                'hint'  => 'Manual Mutu, Kebijakan Mutu, & Prosedur Instruksi Kerja.'
+            ],
+            'file_rekaman'   => [
+                'label' => 'Rekaman & Laporan Implementasi', 
+                'bobot' => '20%', 
+                'icon' => 'fa-history',
+                'hint'  => 'Laporan Tahunan, Rekaman Teknis dan Rekaman Mutu.'
+            ],
+            'file_kinerja'   => [
+                'label' => 'Laporan Kinerja & KAK', 
+                'bobot' => '5%', 
+                'icon' => 'fa-chart-line',
+                'hint'  => 'Laporan Kinerja Tahunan & KAK program terbaru.'
+            ],
+            'file_sdm'       => [
+                'label' => 'Sumber Daya Manusia (SDM)', 
+                'bobot' => '10%', 
+                'icon' => 'fa-users',
+                'hint'  => 'Data Personil (KTP, Sertifikat Pelatihan/Kompetensi) dan SK Personil.'
+            ],
+            'file_sarpras'   => [
+                'label' => 'Sarana & Prasarana Penunjang', 
+                'bobot' => '15%', 
+                'icon' => 'fa-tools',
+                'hint'  => 'Daftar Inventaris, Foto Sarpras, Denah Lokasi, dan Sertifikat Kalibrasi Alat.'
+            ],
+            'file_kurikulum' => [
+                'label' => 'Kurikulum, Modul & Bahan Ajar', 
+                'bobot' => '20%', 
+                'icon' => 'fa-book-open',
+                'hint'  => 'Silabus, Kurikulum, Modul Pelatihan, Bahan Tayang, dan Acu Silang.'
+            ],
         ];
     @endphp
 
-    {{-- Notifikasi Berhasil (Tengah Layar) --}}
+    {{-- Notifikasi Berhasil --}}
     @if(session('success'))
     <div id="successToast" class="fixed inset-0 z-[500] flex items-center justify-center p-4 animate-pop-in">
         <div class="absolute inset-0 bg-primary-900/20 backdrop-blur-sm" onclick="document.getElementById('successToast').remove()"></div>
@@ -113,7 +147,7 @@
         <!-- === MOBILE OVERLAY === -->
         <div id="sidebarOverlay" onclick="toggleSidebar()" class="fixed inset-0 z-40 hidden lg:hidden glass-overlay transition-opacity duration-300"></div>
 
-        <!-- === SIDEBAR WRAPPER (Responsive) === -->
+        <!-- === SIDEBAR WRAPPER === -->
         <aside id="sidebar" class="fixed inset-y-0 left-0 z-50 w-64 bg-white shadow-2xl lg:shadow-none transform -translate-x-full transition-transform duration-300 ease-in-out lg:translate-x-0 lg:static lg:inset-auto flex flex-col h-full border-r border-slate-200">
             @include('components.pelatihan-sidebar')
         </aside>
@@ -158,11 +192,56 @@
                         </div>
 
                         <div id="assessmentSection" class="hidden bg-white rounded-[2rem] p-5 md:p-12 shadow-2xl border border-blue-50 animate-fade-in-up">
-                            <div class="mb-10 flex flex-col md:flex-row md:items-center gap-5 border-b border-slate-100 pb-8">
-                                <div class="w-16 h-16 bg-primary-600 text-white rounded-2xl flex items-center justify-center text-2xl shadow-lg shadow-primary-200"><i class="fas fa-tasks"></i></div>
-                                <div class="text-left">
-                                    <h3 class="text-xl md:text-2xl font-extrabold text-primary-900 uppercase tracking-tight">1. Penilaian Mandiri</h3>
-                                    <p class="text-[10px] text-slate-400 font-bold uppercase tracking-widest mt-1">Berikan estimasi skor sesuai kondisi lembaga saat ini</p>
+                            <div class="mb-10 flex flex-col md:flex-row md:items-center justify-between gap-5 border-b border-slate-100 pb-8">
+                                <div class="flex items-center gap-5">
+                                    <div class="w-16 h-16 bg-primary-600 text-white rounded-2xl flex items-center justify-center text-2xl shadow-lg shadow-primary-200"><i class="fas fa-tasks"></i></div>
+                                    <div class="text-left">
+                                        <h3 class="text-xl md:text-2xl font-extrabold text-primary-900 uppercase tracking-tight">1. Penilaian Mandiri</h3>
+                                        <p class="text-[10px] text-slate-400 font-bold uppercase tracking-widest mt-1">Berikan estimasi skor sesuai kondisi lembaga saat ini</p>
+                                    </div>
+                                </div>
+                                <!-- Button Toggle Guide -->
+                                <button type="button" onclick="toggleScoreGuide()" class="flex items-center gap-3 px-6 py-3 rounded-xl bg-slate-50 border border-slate-200 text-slate-600 hover:bg-primary-50 hover:border-primary-200 hover:text-primary-700 transition-all group shrink-0">
+                                    <i id="guideIcon" class="fas fa-info-circle text-primary-500 group-hover:scale-110 transition-transform"></i>
+                                    <span class="text-xs font-black uppercase tracking-widest">Lihat Panduan Skor</span>
+                                </button>
+                            </div>
+
+                            <!-- === SKEMA SKOR LEGEND (COLLAPSIBLE - PERSINGKAT) === -->
+                            <div id="scoreGuide" class="hidden overflow-hidden mb-10 p-6 bg-slate-50/50 rounded-[2rem] border border-slate-100 animate-fade-in-up">
+                                <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
+                                    <!-- Skor 4 -->
+                                    <div class="bg-white p-5 rounded-2xl border-l-4 border-emerald-500 shadow-sm">
+                                        <div class="flex items-center gap-3 mb-2">
+                                            <span class="w-8 h-8 flex items-center justify-center bg-emerald-100 text-emerald-700 rounded-lg font-black text-sm">4</span>
+                                            <span class="text-xs font-black text-emerald-600 uppercase tracking-tight">Sangat Memenuhi</span>
+                                        </div>
+                                        <p class="text-[11px] text-slate-500 leading-snug font-semibold uppercase tracking-tight">Bukti sangat kuat & lengkap.</p>
+                                    </div>
+                                    <!-- Skor 3 -->
+                                    <div class="bg-white p-5 rounded-2xl border-l-4 border-blue-500 shadow-sm">
+                                        <div class="flex items-center gap-3 mb-2">
+                                            <span class="w-8 h-8 flex items-center justify-center bg-blue-100 text-blue-700 rounded-lg font-black text-sm">3</span>
+                                            <span class="text-xs font-black text-blue-600 uppercase tracking-tight">Memenuhi</span>
+                                        </div>
+                                        <p class="text-[11px] text-slate-500 leading-snug font-semibold uppercase tracking-tight">Bukti memadai & sesuai.</p>
+                                    </div>
+                                    <!-- Skor 2 -->
+                                    <div class="bg-white p-5 rounded-2xl border-l-4 border-amber-500 shadow-sm">
+                                        <div class="flex items-center gap-3 mb-2">
+                                            <span class="w-8 h-8 flex items-center justify-center bg-amber-100 text-amber-700 rounded-lg font-black text-sm">2</span>
+                                            <span class="text-xs font-black text-amber-600 uppercase tracking-tight">Cukup Memenuhi</span>
+                                        </div>
+                                        <p class="text-[11px] text-slate-500 leading-snug font-semibold uppercase tracking-tight">Bukti kurang / sebagian.</p>
+                                    </div>
+                                    <!-- Skor 1 -->
+                                    <div class="bg-white p-5 rounded-2xl border-l-4 border-rose-500 shadow-sm">
+                                        <div class="flex items-center gap-3 mb-2">
+                                            <span class="w-8 h-8 flex items-center justify-center bg-rose-100 text-rose-700 rounded-lg font-black text-sm">1</span>
+                                            <span class="text-xs font-black text-rose-600 uppercase tracking-tight">Kurang Memenuhi</span>
+                                        </div>
+                                        <p class="text-[11px] text-slate-500 leading-snug font-semibold uppercase tracking-tight">Bukti tidak ada / minim.</p>
+                                    </div>
                                 </div>
                             </div>
 
@@ -177,8 +256,8 @@
                                             <div class="hidden md:flex w-10 h-10 bg-white rounded-xl items-center justify-center text-primary-600 shadow-sm group-hover:bg-primary-600 group-hover:text-white transition-colors">
                                                 <i class="fas {{ $data['icon'] }} text-sm"></i>
                                             </div>
-                                            <div>
-                                                <span class="block font-bold text-slate-800 text-sm md:text-base tracking-tight group-hover:text-primary-700">{{ $data['label'] }}</span>
+                                            <div class="text-left">
+                                                <span class="block font-bold text-slate-800 text-sm md:text-base tracking-tight group-hover:text-primary-700 text-left">{{ $data['label'] }}</span>
                                                 <span class="text-[10px] font-bold text-primary-500 uppercase tracking-widest mt-0.5 inline-block">Bobot: {{ $data['bobot'] }}</span>
                                             </div>
                                         </div>
@@ -221,11 +300,19 @@
                                         <div class="file-card bg-slate-50 border-2 border-dashed border-slate-200 rounded-3xl p-5 flex items-center justify-between">
                                             <div class="flex items-center gap-4 overflow-hidden">
                                                 <div class="w-10 h-10 md:w-12 h-12 bg-white rounded-xl md:rounded-2xl flex items-center justify-center text-primary-500 shadow-sm shrink-0 border border-slate-100 group-hover:rotate-12 transition-transform">
-                                                    <i class="fas fa-folder-open text-base md:text-lg"></i>
+                                                    <i class="fas {{ $data['icon'] }} text-base md:text-lg"></i>
                                                 </div>
-                                                <div class="overflow-hidden">
-                                                    <p id="label_{{ $key }}" class="text-[10px] md:text-xs font-bold text-slate-700 uppercase truncate pr-4">{{ $data['label'] }}</p>
-                                                    <p id="count_{{ $key }}" class="text-[9px] md:text-[10px] font-bold text-slate-400 uppercase mt-1 tracking-wider">Pilih Berkas PDF...</p>
+                                                <div class="overflow-hidden flex flex-col">
+                                                    <p id="label_{{ $key }}" class="text-[10px] md:text-xs font-bold text-slate-700 uppercase truncate pr-4 text-left">{{ $data['label'] }}</p>
+                                                    
+                                                    <!-- Hint yang muncul saat hover kartu -->
+                                                    <div class="h-0 group-hover:h-auto overflow-hidden opacity-0 group-hover:opacity-100 transform translate-y-1 group-hover:translate-y-0 transition-all duration-300">
+                                                        <p class="text-[9px] text-primary-600 font-bold mt-1 leading-tight italic text-left uppercase tracking-tight">
+                                                            <i class="fas fa-info-circle mr-1"></i> {{ $data['hint'] }}
+                                                        </p>
+                                                    </div>
+                                                    
+                                                    <p id="count_{{ $key }}" class="text-[9px] md:text-[10px] font-bold text-slate-400 uppercase mt-1 tracking-wider text-left">Pilih Berkas PDF...</p>
                                                 </div>
                                             </div>
                                             <div class="w-8 h-8 md:w-9 h-9 rounded-xl bg-primary-900 text-white flex items-center justify-center text-[10px] shrink-0 shadow-lg group-hover:bg-primary-600 transition-colors">
@@ -351,10 +438,7 @@
             </div>
             
             <div class="flex-1 overflow-y-auto p-5 md:p-8 space-y-6 no-scrollbar text-left">
-                {{-- Bagian Dokumen --}}
-                <div id="modalFilesContainer" class="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-4 hidden">
-                    <!-- Dinamis via JS -->
-                </div>
+                <div id="modalFilesContainer" class="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-4 hidden"></div>
 
                 <div class="bg-white rounded-[1.5rem] md:rounded-[2rem] border border-slate-100 shadow-sm overflow-hidden">
                     <div class="overflow-x-auto">
@@ -373,12 +457,9 @@
 
                 <div class="bg-primary-600 p-6 md:p-10 rounded-[1.5rem] md:rounded-[2.5rem] text-white flex flex-col items-center justify-center text-center shadow-xl shadow-primary-100 relative overflow-hidden">
                     <div class="absolute top-0 right-0 p-4 opacity-5 pointer-events-none"><i class="fas fa-check-double text-7xl md:text-9xl"></i></div>
-                    
                     <p class="text-[9px] font-bold uppercase tracking-[0.2em] opacity-70 mb-1">Skor Akhir Akumulasi</p>
                     <h4 id="modalScoreDisplay" class="text-2xl md:text-4xl font-black leading-none tracking-tight">0%</h4>
                     <div id="modalPredikatDisplay" class="bg-white/20 backdrop-blur-md text-white px-5 py-1.5 rounded-full text-[10px] font-bold uppercase mt-3 tracking-widest border border-white/20">-</div>
-                    
-                    {{-- Container Catatan Admin --}}
                     <div id="modalAdminNoteContainer" class="mt-6 w-full max-w-lg border-t border-white/20 pt-5 hidden">
                         <p class="text-[9px] font-bold uppercase tracking-[0.3em] opacity-60 mb-2">Catatan Verifikator</p>
                         <p id="modalAdminNoteDisplay" class="text-[11px] md:text-xs italic leading-relaxed text-blue-50 bg-white/5 p-4 rounded-xl border border-white/10 text-left"></p>
@@ -395,12 +476,20 @@
         function toggleSidebar() {
             const sidebar = document.getElementById('sidebar');
             const overlay = document.getElementById('sidebarOverlay');
-            if (sidebar.classList.contains('-translate-x-full')) {
-                sidebar.classList.remove('-translate-x-full');
-                overlay.classList.remove('hidden');
+            sidebar.classList.toggle('-translate-x-full');
+            overlay.classList.toggle('hidden');
+        }
+
+        function toggleScoreGuide() {
+            const guide = document.getElementById('scoreGuide');
+            const icon = document.getElementById('guideIcon');
+            const isHidden = guide.classList.toggle('hidden');
+            
+            if (!isHidden) {
+                guide.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                icon.classList.replace('fa-info-circle', 'fa-times-circle');
             } else {
-                sidebar.classList.add('-translate-x-full');
-                overlay.classList.add('hidden');
+                icon.classList.replace('fa-times-circle', 'fa-info-circle');
             }
         }
 

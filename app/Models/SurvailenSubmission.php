@@ -14,7 +14,7 @@ class SurvailenSubmission extends Model
     protected $fillable = [
         'user_id', 'category', 'scope', 'title', 'status',
         'self_assessment_scores', 'evaluator_scores', 'evaluator_comments',
-        'final_score', 'predikat', 'admin_note', 'admin_file', 'certificate_file'
+        'final_score', 'predikat', 'admin_note', 'admin_file', 'certificate_file', 'is_published','chairman_name', 'chairman_nip'
     ];
 
     public function user()

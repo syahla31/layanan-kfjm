@@ -3,30 +3,46 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>SI-MUTU DKKN | Portal Layanan</title>
+    <title>SI-MUTU DKKN | BAPETEN</title>
     
-    <!-- 1. Tailwind CDN -->
+    <!-- Tailwind CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     
-    <!-- 2. Load Tailwind Config (Inline) -->
     <script>
         tailwind.config = {
             darkMode: 'class',
             theme: {
                 extend: {
+                    colors: {
+                        bapeten: {
+                            blue: '#0054a6',
+                            gold: '#c9a050',
+                            dark: '#003366'
+                        }
+                    },
                     animation: {
                         'float': 'float 6s ease-in-out infinite',
-                        'spin-slow': 'spin 12s linear infinite',
-                        'fade-in-up': 'fadeInUp 0.8s ease-out forwards',
+                        'pulse-slow': 'pulse 10s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                        'fade-in': 'fadeIn 1s ease-out forwards',
+                        'slide-up': 'slideUp 0.8s ease-out forwards',
+                        'slow-pan': 'slowPan 30s linear infinite',
                     },
                     keyframes: {
                         float: {
                             '0%, 100%': { transform: 'translateY(0)' },
                             '50%': { transform: 'translateY(-20px)' },
                         },
-                        fadeInUp: {
-                            '0%': { opacity: '0', transform: 'translateY(20px)' },
+                        fadeIn: {
+                            '0%': { opacity: '0' },
+                            '100%': { opacity: '1' },
+                        },
+                        slideUp: {
+                            '0%': { opacity: '0', transform: 'translateY(30px)' },
                             '100%': { opacity: '1', transform: 'translateY(0)' },
+                        },
+                        slowPan: {
+                            '0%': { backgroundPosition: '0% 0%' },
+                            '100%': { backgroundPosition: '100% 100%' },
                         }
                     }
                 }
@@ -34,158 +50,330 @@
         }
     </script>
 
-    <!-- 3. Font Awesome -->
+    <!-- Preload Fonts & Font Awesome -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     
     <style>
-        /* Custom scrollbar untuk mobile feel yang lebih bersih */
-        ::-webkit-scrollbar { width: 0px; background: transparent; }
-    </style>
-</head>
-<body class="bg-slate-50 dark:bg-slate-900 font-sans text-gray-800 dark:text-gray-100 min-h-[100dvh] flex flex-col">
+        body { 
+            font-family: 'Plus Jakarta Sans', sans-serif; 
+            opacity: 0; 
+            transition: opacity 0.8s ease-in-out; 
+        }
+        body.is-ready { opacity: 1; }
 
-    <!-- THEME TOGGLE BUTTON -->
-    <button onclick="toggleTheme()" class="fixed top-4 right-4 z-50 p-2.5 rounded-full bg-white/80 dark:bg-slate-800/80 backdrop-blur shadow-lg border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-yellow-400 hover:scale-110 active:scale-95 transition-all focus:outline-none">
-        <i id="theme-icon" class="fas fa-moon text-lg w-5 h-5 flex items-center justify-center"></i>
+        ::-webkit-scrollbar { width: 0px; }
+        
+        .glass-card {
+            background: rgba(255, 255, 255, 0.75);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            box-shadow: inset 0 0 20px rgba(255, 255, 255, 0.2);
+        }
+        .dark .glass-card {
+            background: rgba(15, 23, 42, 0.65);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            box-shadow: inset 0 0 20px rgba(255, 255, 255, 0.02);
+        }
+
+        /* Subtle Blueprint Grid */
+        .bg-pattern {
+            background-image: radial-gradient(circle at 1px 1px, currentColor 1px, transparent 1px);
+            background-size: 40px 40px;
+        }
+
+        .menu-gradient-1 { background: linear-gradient(135deg, #3b82f6 0%, #1e40af 100%); }
+        .menu-gradient-2 { background: linear-gradient(135deg, #10b981 0%, #065f46 100%); }
+        .menu-gradient-3 { background: linear-gradient(135deg, #8b5cf6 0%, #5b21b6 100%); }
+        .menu-gradient-4 { background: linear-gradient(135deg, #f59e0b 0%, #b45309 100%); }
+        
+        .carousel-item {
+            display: none;
+            animation: fadeIn 0.5s ease-in-out;
+        }
+        .carousel-item.active {
+            display: block;
+        }
+    </style>
+
+    <script>
+        (function() {
+            const savedTheme = localStorage.getItem('theme');
+            if (savedTheme === 'dark' || (!savedTheme && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+                document.documentElement.classList.add('dark');
+            }
+        })();
+    </script>
+</head>
+<body class="bg-[#fcfdfe] dark:bg-[#020617] text-slate-900 dark:text-slate-100 transition-colors duration-500 overflow-x-hidden">
+
+    <!-- THEME TOGGLE -->
+    <button onclick="toggleTheme()" class="fixed top-6 right-6 z-50 p-3 rounded-2xl bg-white dark:bg-slate-800 shadow-xl border border-slate-200 dark:border-slate-700 hover:scale-110 active:scale-95 transition-all group">
+        <i id="theme-icon" class="fas fa-moon text-xl text-slate-600 dark:text-yellow-400"></i>
     </button>
 
-    <!-- BAGIAN 1: PORTAL HALAMAN DEPAN -->
-    <!-- Changed min-h-screen to min-h-[100dvh] for mobile browsers -->
-    <div id="landing-portal" class="flex-grow flex flex-col justify-between bg-gradient-to-br from-blue-50 via-white to-indigo-50 dark:from-slate-950 dark:via-slate-900 dark:to-blue-950 text-slate-800 dark:text-slate-100 relative overflow-hidden">
+    <!-- CLEAN PROFESSIONAL BACKGROUND -->
+    <div class="fixed inset-0 pointer-events-none z-0">
+        <!-- Grid Pattern -->
+        <div class="absolute inset-0 bg-pattern text-slate-200 dark:text-slate-800/40 opacity-40"></div>
         
-        <!-- Background Pattern (Adjusted size for mobile) -->
-        <div class="absolute top-0 left-0 w-full h-full pointer-events-none overflow-hidden">
-            <div class="absolute top-[-10%] left-[-5%] w-[300px] md:w-[500px] h-[300px] md:h-[500px] bg-blue-200 dark:bg-blue-900 rounded-full mix-blend-multiply dark:mix-blend-color-dodge filter blur-3xl opacity-30 animate-float"></div>
-            <div class="absolute bottom-[-10%] right-[-5%] w-[300px] md:w-[600px] h-[300px] md:h-[600px] bg-purple-200 dark:bg-indigo-900 rounded-full mix-blend-multiply dark:mix-blend-color-dodge filter blur-3xl opacity-30 animate-float" style="animation-delay: 2s"></div>
-            
-            <!-- Floating Icons - Responsive Sizes -->
-            <i class="fas fa-atom absolute top-10 left-10 text-6xl md:text-8xl text-blue-300 dark:text-slate-600 opacity-20 dark:opacity-20 animate-spin-slow"></i>
-            <i class="fas fa-microscope absolute bottom-24 left-1/4 text-4xl md:text-6xl text-indigo-300 dark:text-slate-600 opacity-20 dark:opacity-20 animate-float"></i>
-            <i class="fas fa-file-contract absolute top-1/3 right-10 text-5xl md:text-7xl text-teal-300 dark:text-slate-600 opacity-20 dark:opacity-20 animate-float" style="animation-delay: 1s"></i>
-        </div>
+        <!-- Subtle Glow Blobs (Not Weird) -->
+        <div class="absolute top-[-10%] left-[-5%] w-[40%] h-[40%] bg-blue-500/10 dark:bg-blue-600/10 rounded-full blur-[120px]"></div>
+        <div class="absolute bottom-[-10%] right-[-5%] w-[40%] h-[40%] bg-indigo-500/10 dark:bg-indigo-600/10 rounded-full blur-[120px]"></div>
+        <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full bg-gradient-to-tr from-transparent via-blue-50/20 dark:via-transparent to-transparent"></div>
 
-        <!-- Wrapper Konten Utama -->
-        <div class="z-10 flex-grow flex flex-col items-center justify-center px-4 w-full max-w-7xl mx-auto py-8 md:py-10">
-            
-            <!-- Header Section -->
-            <div class="mb-8 md:mb-16 opacity-0 animate-fade-in-up text-center w-full">
-                <div class="inline-flex items-center justify-center p-2 md:p-3 rounded-2xl bg-white dark:bg-slate-800 shadow-xl shadow-blue-100/50 dark:shadow-none mb-4 md:mb-6 border border-blue-50 dark:border-slate-700">
-                     <div class="bg-gradient-to-br from-blue-600 to-indigo-700 w-12 h-12 md:w-16 md:h-16 rounded-xl flex items-center justify-center text-white shadow-inner">
-                        <i class="fas fa-shield-alt text-2xl md:text-3xl"></i>
-                     </div>
-                </div>
-                <!-- Responsive Text Sizes -->
-                <h1 class="text-3xl md:text-6xl font-extrabold tracking-tight mb-2 md:mb-3 text-slate-900 dark:text-white drop-shadow-sm">
-                    SI-MUTU <span class="text-blue-600 dark:text-blue-400">DKKN</span>
-                </h1>
-                <p class="text-slate-500 dark:text-slate-400 text-sm md:text-2xl font-medium tracking-wide px-4">
-                    Sistem Informasi Jaminan Mutu Ketenaganukliran
-                </p>
-                
-                <div class="flex justify-center mt-6 md:mt-8">
-                    <span class="px-4 py-1.5 md:px-5 md:py-2 rounded-full bg-blue-50 dark:bg-slate-800 text-blue-700 dark:text-blue-300 text-xs md:text-base font-bold border border-blue-100 dark:border-slate-700 flex items-center gap-2 shadow-sm">
-                        <span class="relative flex h-2.5 w-2.5 md:h-3 md:w-3">
-                          <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
-                          <span class="relative inline-flex rounded-full h-2.5 w-2.5 md:h-3 md:w-3 bg-blue-600 dark:bg-blue-400"></span>
-                        </span>
-                        Silakan Pilih Layanan
-                    </span>
-                </div>
+        <!-- Decorative Tech Lines -->
+        <div class="absolute top-20 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-slate-200 dark:via-slate-800 to-transparent"></div>
+        <div class="absolute bottom-40 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-slate-200 dark:via-slate-800 to-transparent"></div>
+    </div>
+
+    <!-- MODAL DOCUMENTATION -->
+    <div id="docModal" class="fixed inset-0 z-[60] hidden opacity-0 transition-opacity duration-300">
+        <div class="absolute inset-0 bg-slate-950/80 backdrop-blur-md" onclick="toggleModal()"></div>
+        <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[90%] max-w-4xl glass-card rounded-[2.5rem] p-6 md:p-10 shadow-2xl overflow-hidden">
+            <button onclick="toggleModal()" class="absolute top-6 right-6 text-slate-400 hover:text-red-500 transition-colors z-30">
+                <i class="fas fa-times text-2xl"></i>
+            </button>
+            <div class="mb-8 text-left">
+                <h2 class="text-2xl md:text-3xl font-black text-slate-900 dark:text-white mb-2 italic">Gallery Dokumentasi KFJM</h2>
+                <div class="h-1.5 w-24 bg-blue-600 rounded-full"></div>
             </div>
-
-            <!-- GRID MENU - Optimized for Mobile -->
-            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-16 justify-items-center relative z-20 w-full max-w-5xl px-2 md:px-0">
-                
-                <!-- Menu 1 -->
-                <a href="{{ route('login.pelatihan') }}" class="menu-card group flex flex-col items-center w-full opacity-0 animate-fade-in-up delay-100 active:scale-95 transition-transform duration-200">
-                    <!-- Ukuran lingkaran disesuaikan: w-24 (mobile) w-48 (desktop) -->
-                    <div class="w-24 h-24 sm:w-32 sm:h-32 md:w-48 md:h-48 rounded-full bg-gradient-to-br from-blue-500 to-blue-700 shadow-lg md:shadow-xl shadow-blue-200 dark:shadow-none flex items-center justify-center border-[3px] md:border-4 border-white dark:border-slate-800 ring-2 md:ring-4 ring-blue-50 dark:ring-slate-700 group-hover:ring-blue-200 dark:group-hover:ring-blue-900 group-hover:scale-105 transition-all duration-300 relative overflow-hidden">
-                        <div class="absolute inset-0 bg-white opacity-0 group-hover:opacity-10 transition-opacity"></div>
-                        <i class="fas fa-chalkboard-teacher text-3xl sm:text-4xl md:text-6xl text-white drop-shadow-md group-hover:rotate-3 transition-transform"></i>
+            <div class="relative rounded-3xl overflow-hidden aspect-video bg-slate-200 dark:bg-slate-800 shadow-inner group/carousel">
+                <div id="carousel-content" class="h-full">
+                    <div class="carousel-item active h-full relative">
+                        <img src="image/foto1.jpeg" class="absolute inset-0 w-full h-full object-cover" alt="Dokumentasi 1">
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent z-10"></div>
+                        <div class="absolute bottom-8 left-8 right-8 z-20 text-white text-left">
+                            <span class="px-3 py-1 bg-blue-600 rounded-full text-[10px] font-bold uppercase tracking-wider mb-2 inline-block">Survailen Lapangan</span>
+                            <h4 class="text-xl md:text-2xl font-bold">Kegiatan Verifikasi Lapangan Tahunan</h4>
+                            <p class="text-sm text-slate-300 mt-1">Audit kesesuaian infrastruktur keselamatan radiasi pada Lembaga Pelatihan.</p>
+                        </div>
                     </div>
-                    <div class="mt-3 md:mt-6 text-center w-full">
-                        <h3 class="text-sm md:text-xl font-bold text-slate-800 dark:text-slate-100 group-hover:text-blue-700 dark:group-hover:text-blue-400 transition-colors leading-tight">Lembaga Pelatihan</h3>
-                        <p class="text-[10px] md:text-sm text-slate-500 dark:text-slate-400 mt-1 md:mt-2 font-medium leading-tight">Survailen & Laporan</p>
+                    <div class="carousel-item h-full relative">
+                        <img src="image/foto2.jpeg" class="absolute inset-0 w-full h-full object-cover" alt="Dokumentasi 2">
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent z-10"></div>
+                        <div class="absolute bottom-8 left-8 right-8 z-20 text-white text-left">
+                            <span class="px-3 py-1 bg-emerald-600 rounded-full text-[10px] font-bold uppercase tracking-wider mb-2 inline-block">Workshop Internal</span>
+                            <h4 class="text-xl md:text-2xl font-bold">Penyusunan Amandemen KT Sinar-X</h4>
+                            <p class="text-sm text-slate-300 mt-1">Diskusi panel tenaga ahli dalam menyempurnakan regulasi teknis terbaru.</p>
+                        </div>
                     </div>
-                </a>
-
-                <!-- Menu 2 -->
-                <a href="{{ route('login.uji') }}" class="menu-card group flex flex-col items-center w-full opacity-0 animate-fade-in-up delay-200 active:scale-95 transition-transform duration-200">
-                    <div class="w-24 h-24 sm:w-32 sm:h-32 md:w-48 md:h-48 rounded-full bg-gradient-to-br from-teal-500 to-teal-700 shadow-lg md:shadow-xl shadow-teal-200 dark:shadow-none flex items-center justify-center border-[3px] md:border-4 border-white dark:border-slate-800 ring-2 md:ring-4 ring-teal-50 dark:ring-slate-700 group-hover:ring-teal-200 dark:group-hover:ring-teal-900 group-hover:scale-105 transition-all duration-300 relative overflow-hidden">
-                        <div class="absolute inset-0 bg-white opacity-0 group-hover:opacity-10 transition-opacity"></div>
-                        <i class="fas fa-flask text-3xl sm:text-4xl md:text-6xl text-white drop-shadow-md group-hover:rotate-3 transition-transform"></i>
+                    <div class="carousel-item h-full relative">
+                        <img src="image/foto3.jpeg" class="absolute inset-0 w-full h-full object-cover" alt="Dokumentasi 3">
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent z-10"></div>
+                        <div class="absolute bottom-8 left-8 right-8 z-20 text-white text-left">
+                            <span class="px-3 py-1 bg-purple-600 rounded-full text-[10px] font-bold uppercase tracking-wider mb-2 inline-block">Rapat Koordinasi</span>
+                            <h4 class="text-xl md:text-2xl font-bold">Sinkronisasi Data Sertifikasi Personel</h4>
+                            <p class="text-sm text-slate-300 mt-1">Integrasi database antara DKKN dan sistem perizinan terpadu BAPETEN.</p>
+                        </div>
                     </div>
-                    <div class="mt-3 md:mt-6 text-center w-full">
-                        <h3 class="text-sm md:text-xl font-bold text-slate-800 dark:text-slate-100 group-hover:text-teal-700 dark:group-hover:text-teal-400 transition-colors leading-tight">Lembaga Uji</h3>
-                        <p class="text-[10px] md:text-sm text-slate-500 dark:text-slate-400 mt-1 md:mt-2 font-medium leading-tight">LUK & Dosimetri</p>
-                    </div>
-                </a>
-
-                <!-- Menu 3 -->
-                <a href="{{ route('sertifikasi.index') }}" class="menu-card group flex flex-col items-center w-full opacity-0 animate-fade-in-up delay-300 active:scale-95 transition-transform duration-200">
-                    <div class="w-24 h-24 sm:w-32 sm:h-32 md:w-48 md:h-48 rounded-full bg-gradient-to-br from-purple-600 to-purple-800 shadow-lg md:shadow-xl shadow-purple-200 dark:shadow-none flex items-center justify-center border-[3px] md:border-4 border-white dark:border-slate-800 ring-2 md:ring-4 ring-purple-50 dark:ring-slate-700 group-hover:ring-purple-200 dark:group-hover:ring-purple-900 group-hover:scale-105 transition-all duration-300 relative overflow-hidden">
-                        <div class="absolute inset-0 bg-white opacity-0 group-hover:opacity-10 transition-opacity"></div>
-                        <i class="fas fa-certificate text-3xl sm:text-4xl md:text-6xl text-white drop-shadow-md group-hover:rotate-3 transition-transform"></i>
-                    </div>
-                    <div class="mt-3 md:mt-6 text-center w-full">
-                        <h3 class="text-sm md:text-xl font-bold text-slate-800 dark:text-slate-100 group-hover:text-purple-700 dark:group-hover:text-purple-400 transition-colors leading-tight">Sertifikasi</h3>
-                        <p class="text-[10px] md:text-sm text-slate-500 dark:text-slate-400 mt-1 md:mt-2 font-medium leading-tight">Jadwal & Integrasi</p>
-                    </div>
-                </a>
-
-                <!-- Menu 4 -->
-                <a href="{{ route('login.sinarx') }}" class="menu-card group flex flex-col items-center w-full opacity-0 animate-fade-in-up delay-400 active:scale-95 transition-transform duration-200">
-                    <div class="w-24 h-24 sm:w-32 sm:h-32 md:w-48 md:h-48 rounded-full bg-gradient-to-br from-orange-500 to-orange-700 shadow-lg md:shadow-xl shadow-orange-200 dark:shadow-none flex items-center justify-center border-[3px] md:border-4 border-white dark:border-slate-800 ring-2 md:ring-4 ring-orange-50 dark:ring-slate-700 group-hover:ring-orange-200 dark:group-hover:ring-orange-900 group-hover:scale-105 transition-all duration-300 relative overflow-hidden">
-                        <div class="absolute inset-0 bg-white opacity-0 group-hover:opacity-10 transition-opacity"></div>
-                        <i class="fas fa-radiation text-3xl sm:text-4xl md:text-6xl text-white drop-shadow-md group-hover:rotate-3 transition-transform"></i>
-                    </div>
-                    <div class="mt-3 md:mt-6 text-center w-full">
-                        <h3 class="text-sm md:text-xl font-bold text-slate-800 dark:text-slate-100 group-hover:text-orange-700 dark:group-hover:text-orange-400 transition-colors leading-tight">Uji Kesesuaian</h3>
-                        <p class="text-[10px] md:text-sm text-slate-500 dark:text-slate-400 mt-1 md:mt-2 font-medium leading-tight">Amandemen KT</p>
-                    </div>
-                </a>
-
+                </div>
+                <button onclick="prevSlide()" class="absolute left-4 top-1/2 -translate-y-1/2 z-30 w-12 h-12 rounded-full bg-black/40 backdrop-blur-sm text-white hover:bg-white hover:text-blue-600 transition-all opacity-0 group-hover/carousel:opacity-100">
+                    <i class="fas fa-chevron-left"></i>
+                </button>
+                <button onclick="nextSlide()" class="absolute right-4 top-1/2 -translate-y-1/2 z-30 w-12 h-12 rounded-full bg-black/40 backdrop-blur-sm text-white hover:bg-white hover:text-blue-600 transition-all opacity-0 group-hover/carousel:opacity-100">
+                    <i class="fas fa-chevron-right"></i>
+                </button>
             </div>
-        </div>
-
-        <!-- Footer Section -->
-        <div class="z-10 w-full text-center py-4 md:py-6 text-[10px] md:text-sm text-slate-400 dark:text-slate-500 border-t border-slate-200/50 dark:border-slate-800 bg-white/50 dark:bg-slate-900/50 backdrop-blur-sm">
-            &copy; 2026 Direktorat Keteknikan dan Kesiapsiagaan Nuklir - BAPETEN
-            <br>
-            <a href="{{ route('login.internal') }}" class="text-[10px] md:text-xs text-slate-300 hover:text-slate-500 mt-1 md:mt-2 inline-block p-2">Login Internal</a>
+            <div class="flex justify-center gap-2 mt-6">
+                <div class="carousel-dot w-8 h-2 rounded-full bg-blue-600 transition-all duration-300"></div>
+                <div class="carousel-dot w-2 h-2 rounded-full bg-slate-300 dark:bg-slate-700 transition-all duration-300"></div>
+                <div class="carousel-dot w-2 h-2 rounded-full bg-slate-300 dark:bg-slate-700 transition-all duration-300"></div>
+            </div>
         </div>
     </div>
 
+    <!-- MAIN WRAPPER -->
+    <main class="relative z-10 min-h-screen flex flex-col items-center px-4 pt-12 pb-8">
+        
+        <!-- LOGO BAPETEN & HEADER -->
+        <header class="w-full max-w-4xl flex flex-col items-center mb-12 text-center animate-fade-in">
+            <div class="flex flex-col items-center mb-10 group/logo">
+                <div class="relative w-24 h-24 md:w-32 md:h-32 mb-6 drop-shadow-2xl animate-float cursor-help transition-all duration-700 group-hover/logo:scale-105">
+                    <div class="absolute inset-0 bg-blue-500/20 rounded-full blur-2xl scale-75 group-hover/logo:scale-125 transition-transform duration-700"></div>
+                    <img src="image/logo.svg" alt="Logo BAPETEN" class="relative z-10 w-full h-full object-contain">
+                </div>
+                <div class="space-y-1 text-center">
+                    <h2 class="text-sm md:text-base font-bold tracking-[0.3em] text-slate-500 dark:text-slate-400 uppercase">Badan Pengawas Tenaga Nuklir</h2>
+                    <h1 class="text-5xl md:text-7xl font-black tracking-tight text-slate-900 dark:text-white leading-tight">
+                        SI-MUTU <span class="bg-gradient-to-r from-blue-600 via-indigo-500 to-blue-600 bg-clip-text text-transparent">DKKN</span>
+                    </h1>
+                </div>
+            </div>
+
+            <p class="max-w-2xl text-base md:text-xl text-slate-600 dark:text-slate-400 font-medium leading-relaxed mb-12">
+                Sistem Informasi Jaminan Mutu Ketenaganukliran untuk standar keselamatan radiasi nasional.
+            </p>
+
+            <!-- COMMAND BAR -->
+            <div class="w-full max-w-4xl glass-card rounded-3xl p-1 md:p-2 border border-white/50 dark:border-white/5 shadow-2xl animate-slide-up flex flex-col md:flex-row items-center divide-y md:divide-y-0 md:divide-x divide-slate-200 dark:divide-slate-700/50">
+                
+                <div class="w-full md:w-auto px-6 py-3 flex items-center gap-4 justify-center md:justify-start">
+                    <div class="w-10 h-10 rounded-2xl bg-blue-600/10 text-blue-600 flex items-center justify-center">
+                        <i class="fas fa-clock"></i>
+                    </div>
+                    <div class="text-left">
+                        <div id="realtime-clock" class="text-lg font-black tracking-tight tabular-nums text-slate-800 dark:text-slate-100">00:00:00</div>
+                        <div class="text-[10px] font-bold text-slate-400 uppercase">Waktu Indonesia</div>
+                    </div>
+                </div>
+
+                <div class="w-full md:flex-1 px-6 py-3 flex items-center gap-4 justify-center md:justify-start">
+                    <div class="relative flex h-3 w-3">
+                        <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                        <span class="relative inline-flex rounded-full h-3 w-3 bg-emerald-500"></span>
+                    </div>
+                    <div class="text-left">
+                        <div class="text-sm font-black text-slate-700 dark:text-slate-200 uppercase tracking-tight">Sistem Operasional</div>
+                        <div class="text-[10px] font-bold text-emerald-500 uppercase flex items-center gap-1">
+                             Pemantauan Aktif <i class="fas fa-shield-alt"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <button onclick="toggleModal()" class="w-full md:w-auto group/doc px-8 py-4 bg-transparent hover:bg-slate-50 dark:hover:bg-white/5 transition-colors flex items-center gap-4 justify-center rounded-b-3xl md:rounded-r-3xl md:rounded-bl-none">
+                    <div class="text-right hidden md:block">
+                        <div class="text-sm font-black text-blue-600 dark:text-blue-400 tracking-tight group-hover/doc:translate-x-[-4px] transition-transform">Dokumentasi KFJM</div>
+                        <div class="text-[10px] font-bold text-slate-400 group-hover/doc:translate-x-[-4px] transition-transform uppercase">Lihat Galeri</div>
+                    </div>
+                    <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-blue-500 to-indigo-600 text-white flex items-center justify-center shadow-lg shadow-blue-500/30 group-hover/doc:scale-110 transition-transform">
+                        <i class="fas fa-camera-retro"></i>
+                    </div>
+                    <span class="md:hidden font-black text-blue-600">Dokumentasi KFJM</span>
+                </button>
+            </div>
+        </header>
+
+        <!-- SERVICES GRID -->
+        <section class="w-full max-w-6xl grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8 mb-20 animate-slide-up" style="animation-delay: 200ms">
+            
+            <a href="{{ route('login.pelatihan') }}" class="group relative flex flex-col items-center p-8 rounded-[2.5rem] glass-card hover:shadow-2xl hover:shadow-blue-500/10 hover:-translate-y-2 transition-all duration-500 overflow-hidden text-center">
+                <div class="w-20 h-20 rounded-3xl menu-gradient-1 flex items-center justify-center text-white text-3xl mb-6 shadow-lg shadow-blue-500/30 group-hover:scale-110 group-hover:rotate-3 transition-transform duration-500">
+                    <i class="fas fa-chalkboard-teacher"></i>
+                </div>
+                <h3 class="text-xl font-bold mb-2 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors tracking-tight">Lembaga Pelatihan</h3>
+                <p class="text-sm text-slate-500 dark:text-slate-400 font-medium leading-relaxed">Survailen & Pelaporan Kegiatan Pelatihan</p>
+                <div class="mt-8 flex items-center text-blue-600 font-bold text-xs gap-2 opacity-0 group-hover:opacity-100 transition-all translate-y-2 group-hover:translate-y-0 duration-300 uppercase tracking-widest">
+                    Masuk Lembaga Pelatihan <i class="fas fa-arrow-right"></i>
+                </div>
+            </a>
+
+            <a href="{{ route('login.uji') }}" class="group relative flex flex-col items-center p-8 rounded-[2.5rem] glass-card hover:shadow-2xl hover:shadow-emerald-500/10 hover:-translate-y-2 transition-all duration-500 overflow-hidden text-center">
+                <div class="w-20 h-20 rounded-3xl menu-gradient-2 flex items-center justify-center text-white text-3xl mb-6 shadow-lg shadow-emerald-500/30 group-hover:scale-110 group-hover:rotate-3 transition-transform duration-500">
+                    <i class="fas fa-flask"></i>
+                </div>
+                <h3 class="text-xl font-bold mb-2 group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors tracking-tight">Lembaga Uji</h3>
+                <p class="text-sm text-slate-500 dark:text-slate-400 font-medium leading-relaxed">LUK & Monitoring Dosis Dosimetri</p>
+                <div class="mt-8 flex items-center text-emerald-600 font-bold text-xs gap-2 opacity-0 group-hover:opacity-100 transition-all translate-y-2 group-hover:translate-y-0 duration-300 uppercase tracking-widest">
+                    Masuk Lembaga Uji <i class="fas fa-arrow-right"></i>
+                </div>
+            </a>
+
+            <a href="{{ route('sertifikasi.index') }}" class="group relative flex flex-col items-center p-8 rounded-[2.5rem] glass-card hover:shadow-2xl hover:shadow-purple-500/10 hover:-translate-y-2 transition-all duration-500 overflow-hidden text-center">
+                <div class="w-20 h-20 rounded-3xl menu-gradient-3 flex items-center justify-center text-white text-3xl mb-6 shadow-lg shadow-purple-500/30 group-hover:scale-110 group-hover:rotate-3 transition-transform duration-500">
+                    <i class="fas fa-award"></i>
+                </div>
+                <h3 class="text-xl font-bold mb-2 group-hover:text-purple-600 dark:group-hover:text-purple-400 transition-colors tracking-tight">Sertifikasi</h3>
+                <p class="text-sm text-slate-500 dark:text-slate-400 font-medium leading-relaxed">Personel & Integrasi Database Jadwal</p>
+                <div class="mt-8 flex items-center text-purple-600 font-bold text-xs gap-2 opacity-0 group-hover:opacity-100 transition-all translate-y-2 group-hover:translate-y-0 duration-300 uppercase tracking-widest">
+                    Masuk Sertifikasi <i class="fas fa-arrow-right"></i>
+                </div>
+            </a>
+
+            <a href="{{ route('login.sinarx') }}" class="group relative flex flex-col items-center p-8 rounded-[2.5rem] glass-card hover:shadow-2xl hover:shadow-orange-500/10 hover:-translate-y-2 transition-all duration-500 overflow-hidden text-center">
+                <div class="w-20 h-20 rounded-3xl menu-gradient-4 flex items-center justify-center text-white text-3xl mb-6 shadow-lg shadow-orange-500/30 group-hover:scale-110 group-hover:rotate-3 transition-transform duration-500">
+                    <i class="fas fa-microscope"></i>
+                </div>
+                <h3 class="text-xl font-bold mb-2 group-hover:text-orange-600 dark:group-hover:text-orange-400 transition-colors tracking-tight">Uji Kesesuaian</h3>
+                <p class="text-sm text-slate-500 dark:text-slate-400 font-medium leading-relaxed">Amandemen Ketentuan Teknis Sinar-X</p>
+                <div class="mt-8 flex items-center text-orange-600 font-bold text-xs gap-2 opacity-0 group-hover:opacity-100 transition-all translate-y-2 group-hover:translate-y-0 duration-300 uppercase tracking-widest">
+                    Masuk Uji Kesesuaian <i class="fas fa-arrow-right"></i>
+                </div>
+            </a>
+
+        </section>
+
+        <!-- FOOTER -->
+        <footer class="w-full max-w-4xl flex flex-col items-center text-center space-y-8 animate-fade-in delay-500">
+            <div class="text-xs md:text-sm text-slate-500 dark:text-slate-400 font-medium space-y-4">
+                <p>&copy; 2026 <strong>BAPETEN</strong> - Direktorat Keteknikan dan Kesiapsiagaan Nuklir</p>
+                <div class="flex flex-wrap justify-center gap-4 text-[10px] md:text-xs">
+                    <a href="#" class="px-4 py-2 bg-white/40 dark:bg-slate-800/40 rounded-xl hover:bg-white dark:hover:bg-slate-700 transition-colors border border-slate-200 dark:border-slate-700 shadow-sm font-bold">Kebijakan Privasi</a>
+                    <a href="#" class="px-4 py-2 bg-white/40 dark:bg-slate-800/40 rounded-xl hover:bg-white dark:hover:bg-slate-700 transition-colors border border-slate-200 dark:border-slate-700 shadow-sm font-bold">Bantuan Layanan</a>
+                    <a href="{{ route('login.internal') }}" class="px-4 py-2 bg-blue-600 text-white rounded-xl font-black hover:bg-blue-700 transition-all shadow-lg shadow-blue-500/20 uppercase tracking-tighter">Login  Internal</a>
+                </div>
+            </div>
+        </footer>
+    </main>
+
     <!-- Script Logic -->
     <script>
+        window.addEventListener('load', () => {
+            document.body.classList.add('is-ready');
+        });
+
+        function updateClock() {
+            const now = new Date();
+            const clockEl = document.getElementById('realtime-clock');
+            if(clockEl) clockEl.textContent = now.toLocaleTimeString('id-ID', { hour12: false });
+        }
+        setInterval(updateClock, 1000);
+        updateClock();
+
         function toggleTheme() {
             const html = document.documentElement;
             const icon = document.getElementById('theme-icon');
-            
             if (html.classList.contains('dark')) {
                 html.classList.remove('dark');
-                icon.classList.remove('fa-sun');
-                icon.classList.add('fa-moon');
+                if(icon) icon.classList.replace('fa-sun', 'fa-moon');
                 localStorage.setItem('theme', 'light');
             } else {
                 html.classList.add('dark');
-                icon.classList.remove('fa-moon');
-                icon.classList.add('fa-sun');
+                if(icon) icon.classList.replace('fa-moon', 'fa-sun');
                 localStorage.setItem('theme', 'dark');
             }
         }
         
-        // Init Theme
-        (function initTheme() {
-            const savedTheme = localStorage.getItem('theme');
-            const systemDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-            if (savedTheme === 'dark' || (!savedTheme && systemDark)) {
-                document.documentElement.classList.add('dark');
-                const icon = document.getElementById('theme-icon');
-                if(icon) {
-                    icon.classList.remove('fa-moon');
-                    icon.classList.add('fa-sun');
-                }
+        function toggleModal() {
+            const modal = document.getElementById('docModal');
+            if (modal.classList.contains('hidden')) {
+                modal.classList.remove('hidden');
+                setTimeout(() => modal.classList.add('opacity-100'), 10);
+                startCarousel();
+            } else {
+                modal.classList.remove('opacity-100');
+                setTimeout(() => modal.classList.add('hidden'), 300);
+                stopCarousel();
+            }
+        }
+
+        let currentSlide = 0;
+        let slideInterval;
+        const slides = document.querySelectorAll('.carousel-item');
+        const dots = document.querySelectorAll('.carousel-dot');
+
+        function showSlide(index) {
+            if(!slides.length) return;
+            slides.forEach(s => s.classList.remove('active'));
+            dots.forEach(d => {
+                d.classList.remove('bg-blue-600', 'w-8');
+                d.classList.add('bg-slate-300', 'dark:bg-slate-700', 'w-2');
+            });
+            currentSlide = (index + slides.length) % slides.length;
+            slides[currentSlide].classList.add('active');
+            dots[currentSlide].classList.remove('bg-slate-300', 'dark:bg-slate-700', 'w-2');
+            dots[currentSlide].classList.add('bg-blue-600', 'w-8');
+        }
+
+        function nextSlide() { showSlide(currentSlide + 1); }
+        function prevSlide() { showSlide(currentSlide - 1); }
+        function startCarousel() { stopCarousel(); slideInterval = setInterval(nextSlide, 5000); }
+        function stopCarousel() { clearInterval(slideInterval); }
+
+        (function init() {
+            const icon = document.getElementById('theme-icon');
+            if(icon && document.documentElement.classList.contains('dark')) {
+                icon.classList.replace('fa-moon', 'fa-sun');
             }
         })();
     </script>

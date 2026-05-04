@@ -115,7 +115,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/survailen/manage', [SurvailenController::class, 'adminIndex'])->name('survailen.admin');
         Route::post('/survailen/evaluate/{id}', [SurvailenController::class, 'evaluate'])->name('survailen.evaluate');
         Route::get('/survailen/sertifikat/{id}', [SurvailenController::class, 'generateSertifikat'])->name('survailen.generate-sertifikat');
-
+        Route::post('/survailen/publish/{id}', [SurvailenController::class, 'publish'])->name('survailen.publish');
+        
         // Verifikasi Pelatihan
         Route::get('/verifikasi', [VerifikasiController::class, 'index'])->name('verifikasi.index');
         Route::get('/verifikasi/manage', [VerifikasiController::class, 'adminIndex'])->name('verifikasi.admin');

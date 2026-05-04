@@ -133,17 +133,18 @@ class SurvailenController extends Controller
      */
     public function evaluate(Request $request, $id)
     {
-        $submission = SurvailenSubmission::findOrFail($id);
+        $submission = SurvailenSubmission::with('user')->findOrFail($id);
 
         $request->validate([
-            'scores'           => 'required|array',
-            'comments'         => 'nullable|array',
-            'admin_note'       => 'required|string',
-            'admin_file'       => 'nullable|mimes:pdf|max:5120',
-            'certificate_file' => 'nullable|mimes:pdf|max:5120',
+            'scores'   => 'required|array',
+            'comments' => 'nullable|array',
+            'admin_note' => 'required|string',
+            'chairman_name' => 'nullable|string',
+            'chairman_nip' => 'nullable|string',
         ]);
 
         try {
+            // 1. Kalkulasi Skor (Sesuai logic Anda sebelumnya)
             $weights = [
                 'file_legalitas' => 10, 'file_mutu' => 20, 'file_rekaman' => 20,
                 'file_kinerja' => 5, 'file_sdm' => 10, 'file_sarpras' => 15, 'file_kurikulum' => 20
@@ -157,62 +158,84 @@ class SurvailenController extends Controller
             }
 
             $percentage = ($totalWeightedScore / 400) * 100;
-            
             if ($percentage >= 85) $predikat = 'A';
             elseif ($percentage >= 70) $predikat = 'B';
             elseif ($percentage >= 55) $predikat = 'C';
             else $predikat = 'D';
 
-            $updateData = [
-                'evaluator_scores'   => json_encode($request->scores),
-                'evaluator_comments' => json_encode(array_filter($request->comments ?? [])), // Menghapus nilai null/kosong
-                'final_score'        => $percentage,
-                'predikat'           => $predikat,
-                'status'             => 'completed',
-                'admin_note'         => $request->admin_note,
+            $signatureFileName = Str::slug($request->chairman_name) . '.png';
+            $signaturePathOnDisk = public_path('image/signatures/' . $signatureFileName);
+            
+            // Cek apakah file fisik tanda tangan ada di server
+            $signaturePathForPdf = file_exists($signaturePathOnDisk) ? $signaturePathOnDisk : null;
+            // 2. GENERATE LAPORAN (LHS) OTOMATIS
+            $dataLhs = [
+                'nama_perusahaan' => $submission->user->name,
+                'tgl_buat'        => $submission->created_at->isoFormat('D MMMM Y'),
+                'tgl_tanggapan'   => Carbon::now()->isoFormat('D MMMM Y'),
+                'category'        => $submission->category,
+                'scores'          => $request->scores,
+                'comments'        => $request->comments,
+                'final_score'     => $percentage,
+                'predikat'        => $predikat,
+                'admin_note'      => $request->admin_note,
+                'chairman_name'   => $request->chairman_name,
+                'chairman_nip'    => $request->chairman_nip,
+                'signature_path'  => $signaturePathForPdf
             ];
 
-            $evalFolder = 'survailen/evaluasi/' . $submission->id;
-            if ($request->hasFile('admin_file')) {
-                $updateData['admin_file'] = $request->file('admin_file')->store($evalFolder, 'public');
-            }
-            if ($request->hasFile('certificate_file')) {
-                $updateData['certificate_file'] = $request->file('certificate_file')->store($evalFolder, 'public');
-            }
+            $pdfLhs = Pdf::loadView('pelatihan.lhs_pdf', $dataLhs);
+            $lhsPath = 'survailen/evaluasi/' . $submission->id . '/LHS_' . Str::slug($submission->user->name) . '.pdf';
+            Storage::disk('public')->put($lhsPath, $pdfLhs->output());
 
-            $submission = SurvailenSubmission::with('user')->findOrFail($id);
-            $submission->update($updateData);
+            // 3. GENERATE SERTIFIKAT (Draft)
+            $viewSertifikat = $submission->category == 'uji' ? 'uji.sertifikat_template' : 'pelatihan.sertifikat_template';
+            $pdfSertifikat = Pdf::loadView($viewSertifikat, [
+                'nama_user' => $submission->user->name,
+                'predikat'  => $predikat,
+                'tanggal'   => Carbon::now()->isoFormat('D MMMM Y'),
+                'category'  => $submission->category
+            ])->setPaper('A4', 'landscape');
 
-            // --- DEBUGGING: CEK APAKAH INI BERJALAN ---
-            try {
-                $data = [
-                    'nama_user' => $submission->user->name,
-                    'predikat'  => $submission->predikat,
-                    'tanggal'   => Carbon::now('Asia/Jakarta')->isoFormat('D MMMM Y'),
-                    'category'  => $submission->category // Tambahkan ini agar di view bisa dicek
-                ];
+            $sertifikatPath = 'survailen/evaluasi/' . $submission->id . '/Sertifikat_' . Str::slug($submission->user->name) . '.pdf';
+            Storage::disk('public')->put($sertifikatPath, $pdfSertifikat->output());
 
-                // DINAMIS: Cek kategori, jika 'uji' panggil view uji, jika 'pelatihan' panggil pelatihan
-                $viewPath = $submission->category == 'uji' ? 'uji.sertifikat_template' : 'pelatihan.sertifikat_template';
-                
-                $pdf = Pdf::loadView($viewPath, $data)
-                        ->setPaper('A4', 'landscape');
-                
-                $sertifikatPath = 'survailen/evaluasi/' . $submission->id . '/Sertifikat_' . Str::slug($submission->user->name) . '.pdf';
-                
-                Storage::disk('public')->put($sertifikatPath, $pdf->output());
+            // 4. UPDATE DATA (Status tetap 'verification', is_published = false)
+            $submission->update([
+                'evaluator_scores'   => json_encode($request->scores),
+                'evaluator_comments' => json_encode(array_filter($request->comments ?? [])),
+                'final_score'        => $percentage,
+                'predikat'           => $predikat,
+                'admin_note'         => $request->admin_note,
+                'admin_file'         => $lhsPath, // Laporan otomatis masuk sini
+                'certificate_file'   => $sertifikatPath,
+                'is_published'       => false, // MASIH DRAFT
+                'chairman_name'      => $request->chairman_name,
+                'chairman_nip'       => $request->chairman_nip,
+                'status'             => 'verification' // Tetap di antrean admin
+            ]);
 
-                $submission->update(['certificate_file' => $sertifikatPath]);
+            return back()->with('success', 'Draft laporan & sertifikat berhasil dibuat. Silakan tinjau kembali sebelum dikirim.');
 
-            } catch (\Exception $e) {
-                dd($e->getMessage()); 
-            }
-
-            return back()->with('success', 'Penilaian & Sertifikat berhasil dipublikasikan!');
         } catch (\Exception $e) {
-            Log::error("Gagal simpan evaluasi: " . $e->getMessage());
-            return back()->withErrors(['error' => 'Gagal menyimpan hasil penilaian: ' . $e->getMessage()]);
+            return back()->withErrors(['error' => 'Gagal membuat draft: ' . $e->getMessage()]);
         }
+    }
+
+     /**
+     * TAHAP 4 - ADMIN: Publish Laporan & Sertifikat ke User
+     */
+
+    public function publish($id)
+    {
+        $submission = SurvailenSubmission::findOrFail($id);
+        
+        $submission->update([
+            'is_published' => true,
+            'status'       => 'completed' // Pindah ke riwayat selesai
+        ]);
+
+        return back()->with('success', 'Laporan berhasil dikirim ke user!');
     }
 
     /**

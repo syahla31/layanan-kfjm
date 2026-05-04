@@ -15,16 +15,16 @@
                     fontFamily: { sans: ['Outfit', 'sans-serif'] },
                     colors: {
                         primary: {
-                            50: '#f0fdf4',   // emerald-50
-                            100: '#dcfce7',  // emerald-100
-                            200: '#bbf7d0',  // emerald-200
-                            300: '#86efac',
-                            400: '#4ade80',
-                            500: '#22c55e',
-                            600: '#16a34a',  // emerald-600 (Main)
-                            700: '#15803d',  // emerald-700
-                            800: '#166534',  // emerald-800
-                            900: '#14532d',  // emerald-900
+                            50: '#f0f7f4',
+                            100: '#e1efea',
+                            200: '#c2dfd5',
+                            300: '#95c6b6',
+                            400: '#64a38f',
+                            500: '#428671', // Hijau natural, tidak neon
+                            600: '#336b5a', // Main: Elegant Forest
+                            700: '#2a574a',
+                            800: '#23463d',
+                            900: '#1e3b33',
                         }
                     },
                     animation: { 
@@ -49,14 +49,14 @@
     <style>
         ::-webkit-scrollbar { width: 5px; height: 5px; }
         ::-webkit-scrollbar-track { background: #f8fafc; }
-        ::-webkit-scrollbar-thumb { background: #86efac; border-radius: 10px; } /* hijau */
+        ::-webkit-scrollbar-thumb { background: #86efac; border-radius: 10px; }
 
         .score-radio:checked + label {
-            background-color: #16a34a; /* hijau utama */
+            background-color: #16a34a; 
             color: white;
             border-color: #16a34a;
             transform: translateY(-2px);
-            box-shadow: 0 8px 15px -3px rgba(22, 163, 74, 0.3); /* shadow hijau */
+            box-shadow: 0 8px 15px -3px rgba(22, 163, 74, 0.3);
         }
 
         .score-label { 
@@ -65,7 +65,7 @@
 
         .modal-backdrop { 
             backdrop-filter: blur(12px); 
-            background-color: rgba(21, 128, 61, 0.4); /* hijau gelap transparan */
+            background-color: rgba(21, 128, 61, 0.4); 
         }
 
         .no-scrollbar::-webkit-scrollbar { display: none; }
@@ -75,17 +75,16 @@
         }
 
         .file-card:hover { 
-            border-color: #22c55e; /* hijau terang */
-            background-color: #f0fdf4; /* background hijau soft */
+            border-color: #22c55e;
+            background-color: #f0fdf4;
             transform: translateY(-2px); 
         }
 
         .glass-overlay {
-            background: rgba(20, 83, 45, 0.6); /* hijau gelap */
+            background: rgba(20, 83, 45, 0.6);
             backdrop-filter: blur(4px);
         }
 
-        /* Fix for mobile responsiveness */
         @media (max-width: 1024px) {
             .content-area { width: 100vw !important; }
         }
@@ -97,17 +96,52 @@
         $status = $activeSubmission ? $activeSubmission->status : 'none'; 
         
         $components = [
-            'file_legalitas' => ['label' => 'Aspek Legalitas & Perizinan', 'bobot' => '10%', 'icon' => 'fa-building'],
-            'file_mutu'      => ['label' => 'Sistem Manajemen Mutu (SMM)', 'bobot' => '20%', 'icon' => 'fa-check-double'],
-            'file_rekaman'   => ['label' => 'Rekaman & Laporan Implementasi', 'bobot' => '20%', 'icon' => 'fa-history'],
-            'file_kinerja'   => ['label' => 'Laporan Kinerja & KAK', 'bobot' => '5%', 'icon' => 'fa-chart-line'],
-            'file_sdm'       => ['label' => 'Sumber Daya Manusia (SDM)', 'bobot' => '10%', 'icon' => 'fa-users'],
-            'file_sarpras'   => ['label' => 'Sarana & Prasarana Penunjang', 'bobot' => '15%', 'icon' => 'fa-tools'],
-            'file_kurikulum' => ['label' => 'Bahan Uji', 'bobot' => '20%', 'icon' => 'fa-book-open'],
+            'file_legalitas' => [
+                'label' => 'Aspek Legalitas & Perizinan', 
+                'bobot' => '10%', 
+                'icon' => 'fa-building',
+                'hint'  => 'Izin OSS/NIB , Akta Pendirian, MOU & Surat Izin Operasional.'
+            ],
+            'file_mutu'      => [
+                'label' => 'Sistem Manajemen Mutu (SMM)', 
+                'bobot' => '20%', 
+                'icon' => 'fa-check-double',
+                'hint'  => 'Manual Mutu, Kebijakan Mutu, & Prosedur Instruksi Kerja.'
+            ],
+            'file_rekaman'   => [
+                'label' => 'Rekaman & Laporan Implementasi', 
+                'bobot' => '20%', 
+                'icon' => 'fa-history',
+                'hint'  => 'Laporan Tahunan, Rekaman Teknis dan Rekaman Mutu.'
+            ],
+            'file_kinerja'   => [
+                'label' => 'Laporan Kinerja & KAK', 
+                'bobot' => '5%', 
+                'icon' => 'fa-chart-line',
+                'hint'  => 'Laporan Kinerja Tahunan & KAK program terbaru.'
+            ],
+            'file_sdm'       => [
+                'label' => 'Sumber Daya Manusia (SDM)', 
+                'bobot' => '10%', 
+                'icon' => 'fa-users',
+                'hint'  => 'Data Personil (KTP, Sertifikat Pelatihan/Kompetensi) dan SK Personil.'
+            ],
+            'file_sarpras'   => [
+                'label' => 'Sarana & Prasarana Penunjang', 
+                'bobot' => '15%', 
+                'icon' => 'fa-tools',
+                'hint'  => 'Daftar Inventaris, Foto Sarpras, Denah Lokasi, dan Sertifikat Kalibrasi Alat.'
+            ],
+            'file_kurikulum' => [
+                'label' => 'Metode Uji', 
+                'bobot' => '20%', 
+                'icon' => 'fa-book-open',
+                'hint'  => 'Lembar Kerja & SOP/Metode Pengujian.'
+            ],
         ];
     @endphp
 
-    {{-- Notifikasi Berhasil (Tengah Layar) --}}
+    {{-- Notifikasi Berhasil --}}
     @if(session('success'))
     <div id="successToast" class="fixed inset-0 z-[500] flex items-center justify-center p-4 animate-pop-in">
         <div class="absolute inset-0 bg-primary-900/20 backdrop-blur-sm" onclick="document.getElementById('successToast').remove()"></div>
@@ -127,17 +161,14 @@
 
     <div class="flex h-screen overflow-hidden w-full">
         
-        <!-- === MOBILE OVERLAY === -->
         <div id="sidebarOverlay" onclick="toggleSidebar()" class="fixed inset-0 z-40 hidden lg:hidden glass-overlay transition-opacity duration-300"></div>
 
-        <!-- === SIDEBAR WRAPPER (Responsive) === -->
         <aside id="sidebar" class="fixed inset-y-0 left-0 z-50 w-64 bg-white shadow-2xl lg:shadow-none transform -translate-x-full transition-transform duration-300 ease-in-out lg:translate-x-0 lg:static lg:inset-auto flex flex-col h-full border-r border-slate-200">
             @include('components.uji-sidebar')
         </aside>
 
         <div class="flex-1 flex flex-col h-screen overflow-hidden relative min-w-0 content-area">
             
-            <!-- === MOBILE HEADER BAR === -->
             <div class="lg:hidden bg-white border-b border-slate-200 px-4 py-3 flex items-center justify-between sticky top-0 z-30 shadow-sm shrink-0">
                 <div class="flex items-center gap-3">
                     <button onclick="toggleSidebar()" class="p-2 text-slate-600 hover:text-primary-600 hover:bg-slate-100 rounded-lg transition-colors">
@@ -150,7 +181,6 @@
                 </div>
             </div>
 
-            <!-- Header Desktop -->
             <div class="hidden lg:block shrink-0">
                 @include('components.uji-header', ['title' => 'Survailen Berkala', 'subtitle' => 'Audit Mutu & Akreditasi'])
             </div>
@@ -160,7 +190,7 @@
 
                     {{-- === 1. TAMPILAN UTAMA (STATUS: NONE) === --}}
                     @if($status == 'none')
-                        <div id="welcomeCard" class="bg-white rounded-[2rem] p-8 md:p-16 text-center border border-emerald-100 shadow-xl shadow-emerald-900/5 animate-fade-in-up">
+                        <div id="welcomeCard" class="bg-white rounded-[2rem] p-8 md:p-16 text-center border border-blue-100 shadow-xl shadow-blue-900/5 animate-fade-in-up">
                             <div class="w-20 h-20 md:w-32 md:h-32 bg-primary-50 text-primary-600 rounded-[2rem] flex items-center justify-center mx-auto mb-8 text-4xl md:text-6xl border border-primary-100 shadow-inner">
                                 <i class="fas fa-file-signature"></i>
                             </div>
@@ -174,12 +204,57 @@
                             </button>
                         </div>
 
-                        <div id="assessmentSection" class="hidden bg-white rounded-[2rem] p-5 md:p-12 shadow-2xl border border-emerald-50 animate-fade-in-up">
-                            <div class="mb-10 flex flex-col md:flex-row md:items-center gap-5 border-b border-slate-100 pb-8">
-                                <div class="w-16 h-16 bg-primary-600 text-white rounded-2xl flex items-center justify-center text-2xl shadow-lg shadow-primary-200"><i class="fas fa-tasks"></i></div>
-                                <div class="text-left">
-                                    <h3 class="text-xl md:text-2xl font-extrabold text-primary-900 uppercase tracking-tight">1. Penilaian Mandiri</h3>
-                                    <p class="text-[10px] text-slate-400 font-bold uppercase tracking-widest mt-1">Berikan estimasi skor sesuai kondisi lembaga saat ini</p>
+                        <div id="assessmentSection" class="hidden bg-white rounded-[2rem] p-5 md:p-12 shadow-2xl border border-blue-50 animate-fade-in-up">
+                            <div class="mb-10 flex flex-col md:flex-row md:items-center justify-between gap-5 border-b border-slate-100 pb-8">
+                                <div class="flex items-center gap-5">
+                                    <div class="w-16 h-16 bg-primary-600 text-white rounded-2xl flex items-center justify-center text-2xl shadow-lg shadow-primary-200"><i class="fas fa-tasks"></i></div>
+                                    <div class="text-left">
+                                        <h3 class="text-xl md:text-2xl font-extrabold text-primary-900 uppercase tracking-tight">1. Penilaian Mandiri</h3>
+                                        <p class="text-[10px] text-slate-400 font-bold uppercase tracking-widest mt-1">Berikan estimasi skor sesuai kondisi lembaga saat ini</p>
+                                    </div>
+                                </div>
+                                <!-- Button Toggle Guide -->
+                                <button type="button" onclick="toggleScoreGuide()" class="flex items-center gap-3 px-6 py-3 rounded-xl bg-slate-50 border border-slate-200 text-slate-600 hover:bg-primary-50 hover:border-primary-200 hover:text-primary-700 transition-all group shrink-0">
+                                    <i id="guideIcon" class="fas fa-info-circle text-primary-500 group-hover:scale-110 transition-transform"></i>
+                                    <span class="text-xs font-black uppercase tracking-widest">Lihat Panduan Skor</span>
+                                </button>
+                            </div>
+
+                            <!-- === SKEMA SKOR LEGEND (COLLAPSIBLE - PERSINGKAT) === -->
+                            <div id="scoreGuide" class="hidden overflow-hidden mb-10 p-6 bg-slate-50/50 rounded-[2rem] border border-slate-100 animate-fade-in-up">
+                                <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
+                                    <!-- Skor 4 -->
+                                    <div class="bg-white p-5 rounded-2xl border-l-4 border-emerald-500 shadow-sm">
+                                        <div class="flex items-center gap-3 mb-2">
+                                            <span class="w-8 h-8 flex items-center justify-center bg-emerald-100 text-emerald-700 rounded-lg font-black text-sm">4</span>
+                                            <span class="text-xs font-black text-emerald-600 uppercase tracking-tight">Sangat Memenuhi</span>
+                                        </div>
+                                        <p class="text-[11px] text-slate-500 leading-snug font-semibold uppercase tracking-tight">Bukti sangat kuat & lengkap.</p>
+                                    </div>
+                                    <!-- Skor 3 -->
+                                    <div class="bg-white p-5 rounded-2xl border-l-4 border-blue-500 shadow-sm">
+                                        <div class="flex items-center gap-3 mb-2">
+                                            <span class="w-8 h-8 flex items-center justify-center bg-blue-100 text-blue-700 rounded-lg font-black text-sm">3</span>
+                                            <span class="text-xs font-black text-blue-600 uppercase tracking-tight">Memenuhi</span>
+                                        </div>
+                                        <p class="text-[11px] text-slate-500 leading-snug font-semibold uppercase tracking-tight">Bukti memadai & sesuai.</p>
+                                    </div>
+                                    <!-- Skor 2 -->
+                                    <div class="bg-white p-5 rounded-2xl border-l-4 border-amber-500 shadow-sm">
+                                        <div class="flex items-center gap-3 mb-2">
+                                            <span class="w-8 h-8 flex items-center justify-center bg-amber-100 text-amber-700 rounded-lg font-black text-sm">2</span>
+                                            <span class="text-xs font-black text-amber-600 uppercase tracking-tight">Cukup Memenuhi</span>
+                                        </div>
+                                        <p class="text-[11px] text-slate-500 leading-snug font-semibold uppercase tracking-tight">Bukti kurang / sebagian.</p>
+                                    </div>
+                                    <!-- Skor 1 -->
+                                    <div class="bg-white p-5 rounded-2xl border-l-4 border-rose-500 shadow-sm">
+                                        <div class="flex items-center gap-3 mb-2">
+                                            <span class="w-8 h-8 flex items-center justify-center bg-rose-100 text-rose-700 rounded-lg font-black text-sm">1</span>
+                                            <span class="text-xs font-black text-rose-600 uppercase tracking-tight">Kurang Memenuhi</span>
+                                        </div>
+                                        <p class="text-[11px] text-slate-500 leading-snug font-semibold uppercase tracking-tight">Bukti tidak ada / minim.</p>
+                                    </div>
                                 </div>
                             </div>
 
@@ -194,8 +269,8 @@
                                             <div class="hidden md:flex w-10 h-10 bg-white rounded-xl items-center justify-center text-primary-600 shadow-sm group-hover:bg-primary-600 group-hover:text-white transition-colors">
                                                 <i class="fas {{ $data['icon'] }} text-sm"></i>
                                             </div>
-                                            <div>
-                                                <span class="block font-bold text-slate-800 text-sm md:text-base tracking-tight group-hover:text-primary-700">{{ $data['label'] }}</span>
+                                            <div class="text-left">
+                                                <span class="block font-bold text-slate-800 text-sm md:text-base tracking-tight group-hover:text-primary-700 text-left">{{ $data['label'] }}</span>
                                                 <span class="text-[10px] font-bold text-primary-500 uppercase tracking-widest mt-0.5 inline-block">Bobot: {{ $data['bobot'] }}</span>
                                             </div>
                                         </div>
@@ -219,7 +294,7 @@
 
                     {{-- === 2. TAMPILAN UPLOAD (STATUS: UPLOADING) === --}}
                     @elseif($status == 'uploading')
-                        <div class="bg-white rounded-[2.5rem] p-6 md:p-12 shadow-xl border border-emerald-50 animate-fade-in-up">
+                        <div class="bg-white rounded-[2.5rem] p-6 md:p-12 shadow-xl border border-blue-50 animate-fade-in-up">
                             <div class="mb-10 text-left">
                                 <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary-600 text-white text-[10px] font-bold uppercase tracking-widest mb-6 shadow-md shadow-primary-200">
                                     <i class="fas fa-file-upload"></i> Unggah Dokumen
@@ -238,11 +313,19 @@
                                         <div class="file-card bg-slate-50 border-2 border-dashed border-slate-200 rounded-3xl p-5 flex items-center justify-between">
                                             <div class="flex items-center gap-4 overflow-hidden">
                                                 <div class="w-10 h-10 md:w-12 h-12 bg-white rounded-xl md:rounded-2xl flex items-center justify-center text-primary-500 shadow-sm shrink-0 border border-slate-100 group-hover:rotate-12 transition-transform">
-                                                    <i class="fas fa-folder-open text-base md:text-lg"></i>
+                                                    <i class="fas {{ $data['icon'] }} text-base md:text-lg"></i>
                                                 </div>
-                                                <div class="overflow-hidden">
-                                                    <p id="label_{{ $key }}" class="text-[10px] md:text-xs font-bold text-slate-700 uppercase truncate pr-4">{{ $data['label'] }}</p>
-                                                    <p id="count_{{ $key }}" class="text-[9px] md:text-[10px] font-bold text-slate-400 uppercase mt-1 tracking-wider">Pilih Berkas PDF...</p>
+                                                <div class="overflow-hidden flex flex-col">
+                                                    <p id="label_{{ $key }}" class="text-[10px] md:text-xs font-bold text-slate-700 uppercase truncate pr-4 text-left">{{ $data['label'] }}</p>
+                                                    
+                                                    <!-- Hint yang muncul saat hover kartu -->
+                                                    <div class="h-0 group-hover:h-auto overflow-hidden opacity-0 group-hover:opacity-100 transform translate-y-1 group-hover:translate-y-0 transition-all duration-300">
+                                                        <p class="text-[9px] text-primary-600 font-bold mt-1 leading-tight italic text-left uppercase tracking-tight">
+                                                            <i class="fas fa-info-circle mr-1"></i> {{ $data['hint'] }}
+                                                        </p>
+                                                    </div>
+                                                    
+                                                    <p id="count_{{ $key }}" class="text-[9px] md:text-[10px] font-bold text-slate-400 uppercase mt-1 tracking-wider text-left">Pilih Berkas PDF...</p>
                                                 </div>
                                             </div>
                                             <div class="w-8 h-8 md:w-9 h-9 rounded-xl bg-primary-900 text-white flex items-center justify-center text-[10px] shrink-0 shadow-lg group-hover:bg-primary-600 transition-colors">
@@ -266,7 +349,7 @@
 
                     {{-- === 3. TAMPILAN VERIFIKASI (STATUS: VERIFICATION) === --}}
                     @elseif($status == 'verification')
-                        <div class="bg-white rounded-[2.5rem] md:rounded-[3rem] p-10 md:p-24 text-center shadow-2xl shadow-emerald-900/5 border border-emerald-50 animate-fade-in-up">
+                        <div class="bg-white rounded-[2.5rem] md:rounded-[3rem] p-10 md:p-24 text-center shadow-2xl shadow-blue-900/5 border border-blue-50 animate-fade-in-up">
                             <div class="relative inline-block mb-10">
                                 <div class="absolute inset-0 bg-primary-400 rounded-full animate-ping opacity-10"></div>
                                 <div class="relative w-24 h-24 md:w-32 md:h-32 bg-primary-50 rounded-[2.5rem] md:rounded-[3rem] flex items-center justify-center border border-primary-100 shadow-inner">
@@ -291,10 +374,10 @@
                                 <div class="mt-10 flex flex-wrap justify-center gap-4">
                                     <div class="bg-white/10 backdrop-blur-md px-6 md:px-8 py-4 md:py-5 rounded-3xl border border-white/20 shadow-xl">
                                         <p class="text-[9px] md:text-[10px] font-bold uppercase opacity-60 tracking-wider">Skor Akhir</p>
-                                        <p class="text-2xl md:text-3xl font-black text-emerald-100">{{ number_format($activeSubmission->final_score, 2) }}%</p>
+                                        <p class="text-2xl md:text-3xl font-black text-blue-100">{{ number_format($activeSubmission->final_score, 2) }}%</p>
                                     </div>
                                     <button type="button" data-submission='@json($activeSubmission)' onclick='showDetailModal(this)' 
-                                            class="bg-white text-primary-900 px-8 md:px-10 py-4 md:py-5 rounded-3xl font-bold text-[10px] md:text-xs uppercase tracking-widest hover:bg-emerald-50 transition-all shadow-xl flex items-center gap-3">
+                                            class="bg-white text-primary-900 px-8 md:px-10 py-4 md:py-5 rounded-3xl font-bold text-[10px] md:text-xs uppercase tracking-widest hover:bg-blue-50 transition-all shadow-xl flex items-center gap-3">
                                         <i class="fas fa-chart-pie"></i> Rincian Nilai
                                     </button>
                                 </div>
@@ -362,16 +445,13 @@
             <div class="bg-primary-900 p-6 md:p-8 text-white flex justify-between items-center shrink-0">
                 <div class="text-left">
                     <h3 class="text-xl md:text-2xl font-black uppercase tracking-tight text-left">Detail Hasil Penilaian</h3>
-                    <p id="modalTitleDisplay" class="text-[10px] md:text-[11px] text-emerald-300 font-bold uppercase tracking-widest mt-1 italic text-left"></p>
+                    <p id="modalTitleDisplay" class="text-[10px] md:text-[11px] text-blue-300 font-bold uppercase tracking-widest mt-1 italic text-left"></p>
                 </div>
                 <button onclick="closeDetailModal()" class="w-10 h-10 md:w-12 md:h-12 bg-white/10 rounded-xl md:rounded-2xl flex items-center justify-center hover:bg-white text-white hover:text-primary-900 transition-all"><i class="fas fa-times"></i></button>
             </div>
             
             <div class="flex-1 overflow-y-auto p-5 md:p-8 space-y-6 no-scrollbar text-left">
-                {{-- Bagian Dokumen --}}
-                <div id="modalFilesContainer" class="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-4 hidden">
-                    <!-- Dinamis via JS -->
-                </div>
+                <div id="modalFilesContainer" class="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-4 hidden"></div>
 
                 <div class="bg-white rounded-[1.5rem] md:rounded-[2rem] border border-slate-100 shadow-sm overflow-hidden">
                     <div class="overflow-x-auto">
@@ -390,15 +470,12 @@
 
                 <div class="bg-primary-600 p-6 md:p-10 rounded-[1.5rem] md:rounded-[2.5rem] text-white flex flex-col items-center justify-center text-center shadow-xl shadow-primary-100 relative overflow-hidden">
                     <div class="absolute top-0 right-0 p-4 opacity-5 pointer-events-none"><i class="fas fa-check-double text-7xl md:text-9xl"></i></div>
-                    
                     <p class="text-[9px] font-bold uppercase tracking-[0.2em] opacity-70 mb-1">Skor Akhir Akumulasi</p>
                     <h4 id="modalScoreDisplay" class="text-2xl md:text-4xl font-black leading-none tracking-tight">0%</h4>
                     <div id="modalPredikatDisplay" class="bg-white/20 backdrop-blur-md text-white px-5 py-1.5 rounded-full text-[10px] font-bold uppercase mt-3 tracking-widest border border-white/20">-</div>
-                    
-                    {{-- Container Catatan Admin --}}
                     <div id="modalAdminNoteContainer" class="mt-6 w-full max-w-lg border-t border-white/20 pt-5 hidden">
                         <p class="text-[9px] font-bold uppercase tracking-[0.3em] opacity-60 mb-2">Catatan Verifikator</p>
-                        <p id="modalAdminNoteDisplay" class="text-[11px] md:text-xs italic leading-relaxed text-emerald-50 bg-white/5 p-4 rounded-xl border border-white/10 text-left"></p>
+                        <p id="modalAdminNoteDisplay" class="text-[11px] md:text-xs italic leading-relaxed text-blue-50 bg-white/5 p-4 rounded-xl border border-white/10 text-left"></p>
                     </div>
                 </div>
             </div>
@@ -412,12 +489,20 @@
         function toggleSidebar() {
             const sidebar = document.getElementById('sidebar');
             const overlay = document.getElementById('sidebarOverlay');
-            if (sidebar.classList.contains('-translate-x-full')) {
-                sidebar.classList.remove('-translate-x-full');
-                overlay.classList.remove('hidden');
+            sidebar.classList.toggle('-translate-x-full');
+            overlay.classList.toggle('hidden');
+        }
+
+        function toggleScoreGuide() {
+            const guide = document.getElementById('scoreGuide');
+            const icon = document.getElementById('guideIcon');
+            const isHidden = guide.classList.toggle('hidden');
+            
+            if (!isHidden) {
+                guide.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                icon.classList.replace('fa-info-circle', 'fa-times-circle');
             } else {
-                sidebar.classList.add('-translate-x-full');
-                overlay.classList.add('hidden');
+                icon.classList.replace('fa-times-circle', 'fa-info-circle');
             }
         }
 
@@ -475,7 +560,7 @@
             if (data.admin_file) {
                 hasFiles = true;
                 filesContainer.innerHTML += `
-                    <a href="${storageBaseUrl}${data.admin_file}" target="_blank" class="bg-emerald-50 p-4 rounded-2xl border border-emerald-100 flex items-center justify-between group hover:bg-primary-600 hover:text-white transition-all shadow-sm">
+                    <a href="${storageBaseUrl}${data.admin_file}" target="_blank" class="bg-blue-50 p-4 rounded-2xl border border-blue-100 flex items-center justify-between group hover:bg-primary-600 hover:text-white transition-all shadow-sm">
                         <div class="flex items-center gap-3">
                             <i class="fas fa-file-medical text-lg"></i>
                             <span class="text-[10px] font-bold uppercase tracking-tight">Laporan Hasil Survailen</span>
