@@ -144,27 +144,33 @@
                         <img src="image/foto1.jpeg" class="absolute inset-0 w-full h-full object-cover" alt="Dokumentasi 1">
                         <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent z-10"></div>
                         <div class="absolute bottom-8 left-8 right-8 z-20 text-white text-left">
-                            <span class="px-3 py-1 bg-blue-600 rounded-full text-[10px] font-bold uppercase tracking-wider mb-2 inline-block">Survailen Lapangan</span>
-                            <h4 class="text-xl md:text-2xl font-bold">Kegiatan Verifikasi Lapangan Tahunan</h4>
-                            <p class="text-sm text-slate-300 mt-1">Audit kesesuaian infrastruktur keselamatan radiasi pada Lembaga Pelatihan.</p>
+                            <span class="px-3 py-1 bg-blue-600 rounded-full text-[10px] font-bold uppercase tracking-wider mb-2 inline-block">Konsinyering Evaluasi</span>
+                            <h4 class="text-xl md:text-2xl font-bold">Kegiatan Konsinyering Evaluasi LHU</h4>
+                            <p class="text-sm text-slate-300 mt-1">
+                                Koordinasi dan pembahasan evaluasi Laporan Hasil Uji (LHU) guna mendukung percepatan penyelesaian proses evaluasi dan penerbitan sertifikat uji kesesuaian.
+                            </p>
                         </div>
                     </div>
                     <div class="carousel-item h-full relative">
                         <img src="image/foto2.jpeg" class="absolute inset-0 w-full h-full object-cover" alt="Dokumentasi 2">
                         <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent z-10"></div>
                         <div class="absolute bottom-8 left-8 right-8 z-20 text-white text-left">
-                            <span class="px-3 py-1 bg-emerald-600 rounded-full text-[10px] font-bold uppercase tracking-wider mb-2 inline-block">Workshop Internal</span>
-                            <h4 class="text-xl md:text-2xl font-bold">Penyusunan Amandemen KT Sinar-X</h4>
-                            <p class="text-sm text-slate-300 mt-1">Diskusi panel tenaga ahli dalam menyempurnakan regulasi teknis terbaru.</p>
+                            <span class="px-3 py-1 bg-blue-600 rounded-full text-[10px] font-bold uppercase tracking-wider mb-2 inline-block">Sertifikasi</span>
+                            <h4 class="text-xl md:text-2xl font-bold">Pengujian Praktik Penguji Berkualifikasi</h4>
+                            <p class="text-sm text-slate-300 mt-1">
+                                Pelaksanaan pengujian praktik guna memastikan kompetensi dan kualifikasi penguji sesuai dengan ketentuan yang berlaku.
+                            </p>
                         </div>
                     </div>
                     <div class="carousel-item h-full relative">
                         <img src="image/foto3.jpeg" class="absolute inset-0 w-full h-full object-cover" alt="Dokumentasi 3">
                         <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent z-10"></div>
                         <div class="absolute bottom-8 left-8 right-8 z-20 text-white text-left">
-                            <span class="px-3 py-1 bg-purple-600 rounded-full text-[10px] font-bold uppercase tracking-wider mb-2 inline-block">Rapat Koordinasi</span>
-                            <h4 class="text-xl md:text-2xl font-bold">Sinkronisasi Data Sertifikasi Personel</h4>
-                            <p class="text-sm text-slate-300 mt-1">Integrasi database antara DKKN dan sistem perizinan terpadu BAPETEN.</p>
+                            <span class="px-3 py-1 bg-blue-600 rounded-full text-[10px] font-bold uppercase tracking-wider mb-2 inline-block">Verifikasi</span>
+                            <h4 class="text-xl md:text-2xl font-bold">Kegiatan Verifikasi</h4>
+                            <p class="text-sm text-slate-300 mt-1">
+                                Pelaksanaan kegiatan verifikasi untuk memastikan kesesuaian dokumen, data, dan persyaratan sesuai ketentuan yang berlaku.
+                            </p>
                         </div>
                     </div>
                 </div>
@@ -284,10 +290,10 @@
                 <div class="w-20 h-20 rounded-3xl menu-gradient-4 flex items-center justify-center text-white text-3xl mb-6 shadow-lg shadow-orange-500/30 group-hover:scale-110 group-hover:rotate-3 transition-transform duration-500">
                     <i class="fas fa-microscope"></i>
                 </div>
-                <h3 class="text-xl font-bold mb-2 group-hover:text-orange-600 dark:group-hover:text-orange-400 transition-colors tracking-tight">Uji Kesesuaian</h3>
-                <p class="text-sm text-slate-500 dark:text-slate-400 font-medium leading-relaxed">Amandemen Ketentuan Teknis Sinar-X</p>
+                <h3 class="text-xl font-bold mb-2 group-hover:text-orange-600 dark:group-hover:text-orange-400 transition-colors tracking-tight">Amandemen Sertifikat</h3>
+                <p class="text-sm text-slate-500 dark:text-slate-400 font-medium leading-relaxed">Perubahan Data & Ketentuan Teknis Sinar-X</p>
                 <div class="mt-8 flex items-center text-orange-600 font-bold text-xs gap-2 opacity-0 group-hover:opacity-100 transition-all translate-y-2 group-hover:translate-y-0 duration-300 uppercase tracking-widest">
-                    Masuk Uji Kesesuaian <i class="fas fa-arrow-right"></i>
+                    Ajukan Amandemen <i class="fas fa-arrow-right"></i>
                 </div>
             </a>
 

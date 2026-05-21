@@ -269,7 +269,7 @@
                 </div>
 
                 <!-- Call to Action Upload (Gradient Emerald) -->
-                <div class="bg-gradient-to-r from-teal-600 to-emerald-600 rounded-2xl p-6 mb-8 text-white shadow-lg shadow-teal-200 flex flex-col md:flex-row justify-between items-center gap-4 relative overflow-hidden group hover:shadow-xl transition-shadow">
+                <div class="bg-gradient-to-r from-indigo-600 to-blue-700 rounded-2xl p-6 mb-8 text-white shadow-lg shadow-indigo-200 flex flex-col md:flex-row justify-between items-center gap-4 relative overflow-hidden group hover:shadow-xl transition-shadow">
                     <div class="absolute top-0 right-0 -mr-10 -mt-10 w-40 h-40 bg-white opacity-10 rounded-full blur-2xl group-hover:scale-110 transition-transform duration-700"></div>
                     <div class="absolute bottom-0 left-0 -ml-10 -mb-10 w-40 h-40 bg-white opacity-10 rounded-full blur-2xl"></div>
 
@@ -425,7 +425,7 @@
                 <div class="relative transform overflow-hidden rounded-2xl bg-white text-left shadow-2xl transition-all w-full sm:max-w-md border border-slate-100 animate-pop-in">
                     
                     <!-- Header Modal Emerald -->
-                    <div class="bg-gradient-to-r from-teal-600 to-emerald-600 px-6 py-4 flex justify-between items-center">
+                    <div class="bg-gradient-to-r from-indigo-600 to-indigo-700 px-6 py-4 flex justify-between items-center">
                         <h3 class="text-lg font-bold text-white flex items-center gap-2" id="modalTitle">
                             Upload Laporan
                         </h3>
@@ -493,7 +493,7 @@
 
                         <!-- Footer -->
                         <div class="bg-slate-50 px-6 py-4 flex flex-col gap-2 border-t border-slate-100 sm:flex-row-reverse">
-                            <button type="submit" class="inline-flex w-full sm:w-auto justify-center items-center rounded-xl bg-emerald-600 px-5 py-2.5 text-sm font-bold text-white shadow-md hover:bg-emerald-700 active:scale-95 transition-all gap-2">
+                            <button type="submit" class="inline-flex w-full sm:w-auto justify-center items-center rounded-xl bg-blue-600 px-5 py-2.5 text-sm font-bold text-white shadow-md hover:bg-emerald-700 active:scale-95 transition-all gap-2">
                                 <i class="fas fa-save text-xs"></i> Simpan Laporan                            </button>
                             <button type="button" onclick="closeModal()" class="inline-flex w-full sm:w-auto justify-center items-center rounded-xl bg-white px-5 py-2.5 text-sm font-bold text-slate-500 border border-slate-200 hover:bg-slate-100 transition-all">
                                 Batal

@@ -45,47 +45,57 @@ class VerifikasiController extends Controller
     /**
      * ADMIN: Simpan Data Verifikasi Baru (Pelatihan)
      */
+    /**
+ * ADMIN: Simpan Data Verifikasi Baru (Dinamis untuk Pelatihan & Lembaga Uji)
+ */
     public function store(Request $request)
     {
+        // 1. Validasi kiriman data (Sekarang menyertakan aturan untuk category)
         $request->validate([
-            'user_id' => 'required|exists:users,id',
-            'title' => 'required|string|max:255',
+            'user_id'    => 'required|exists:users,id',
+            'title'      => 'required|string|max:255',
             'admin_file' => 'required|mimes:pdf|max:2048', // Max 2MB
+            'category'   => 'required|in:pelatihan,uji',  // <── Memastikan isi hanya antara 'pelatihan' atau 'uji'
         ]);
 
+        // 2. Handle upload file PDF secara dinamis berdasarkan folder kategori
         $adminFilePath = null;
         if ($request->hasFile('admin_file')) {
             $file = $request->file('admin_file');
+            
+            // Memisahkan folder penyimpanan sesuai kategori agar rapi
+            $folderTarget = $request->category === 'uji' ? 'verifikasi/admin' : 'submissions/verifikasi/admin';
+            
             $adminFilePath = $file->storeAs(
-                'submissions/verifikasi/admin', 
+                $folderTarget, 
                 'VERIFIKASI_' . time() . '_' . $file->getClientOriginalName(), 
                 'public'
             );
         }
 
-        // 1. Simpan Parent
+        // 3. Simpan ke table Submissions (Menggunakan category dari form input)
         $submission = Submission::create([
-            'user_id' => $request->user_id,
-            'category' => 'pelatihan',
-            'type' => 'Verifikasi',
-            'title' => $request->title,
+            'user_id'    => $request->user_id,
+            'category'   => $request->category, // <── SEKARANG DINAMIS (Membaca dari form)
+            'type'       => 'Verifikasi',
+            'title'      => $request->title,
             'admin_file' => $adminFilePath,
             'admin_note' => $request->admin_note,
-            'file_path' => '-', // Placeholder agar tidak error SQL 1364
-            'status' => 'pending',
+            'file_path'  => '-', 
+            'status'     => 'pending',
         ]);
 
-        // 2. Simpan History Awal (Inisiasi Admin)
+        // 4. Simpan Riwayat Versi 0 ke table SubmissionFile
         SubmissionFile::create([
             'submission_id' => $submission->id,
-            'version' => 0,
-            'file_path' => '-', // Placeholder agar tidak error SQL 1364
-            'file_name' => '-',
-            'admin_file' => $adminFilePath,
-            'admin_note' => $request->admin_note,
+            'version'       => 0,
+            'file_path'     => '-', 
+            'file_name'     => '-',
+            'admin_file'    => $adminFilePath,
+            'admin_note'    => $request->admin_note,
         ]);
 
-        return redirect()->back()->with('success', 'Dokumen Verifikasi Pelatihan berhasil dikirim.');
+        return redirect()->back()->with('success', 'Dokumen Verifikasi ' . ucfirst($request->category) . ' berhasil dikirim.');
     }
 
     /**
@@ -117,48 +127,6 @@ class VerifikasiController extends Controller
         $users = User::where('role', 'user')->where('category', 'uji')->get();
 
         return view('uji.verifikasi_admin', compact('verifikasis', 'users'));
-    }
-
-    /**
-     * ADMIN: Simpan Data Verifikasi Baru (Lembaga Uji)
-     */
-    public function storeAdmin(Request $request)
-    {
-        $request->validate([
-            'user_id' => 'required|exists:users,id',
-            'title' => 'required|string|max:255',
-            'admin_file' => 'required|mimes:pdf|max:2048', // Max 2MB
-            'category' => 'required|in:pelatihan,uji',
-        ]);
-
-        $filePath = null;
-        if ($request->hasFile('admin_file')) {
-            $filePath = $request->file('admin_file')->store('verifikasi/admin', 'public');
-        }
-
-        // 1. Simpan Header Utama
-        $submission = Submission::create([
-            'user_id' => $request->user_id,
-            'category' => $request->category,
-            'type' => 'Verifikasi',
-            'title' => $request->title,
-            'status' => 'pending',
-            'file_path' => '-', // Placeholder agar tidak error SQL 1364
-            'admin_file' => $filePath,
-            'admin_note' => $request->admin_note,
-        ]);
-
-        // 2. Simpan Riwayat Versi 0
-        SubmissionFile::create([
-            'submission_id' => $submission->id,
-            'version' => 0,
-            'file_path' => '-', // Placeholder agar tidak error SQL 1364
-            'file_name' => '-',
-            'admin_file' => $filePath,
-            'admin_note' => $request->admin_note,
-        ]);
-
-        return back()->with('success', 'Instruksi verifikasi berhasil dikirim.');
     }
 
     /**

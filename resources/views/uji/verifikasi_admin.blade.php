@@ -456,7 +456,8 @@
     <!-- ============================================================
          2. MODAL CREATE VERIFIKASI (dengan Custom Dropdown)
     ============================================================ -->
-    <div id="createModal" class="fixed inset-0 z-50 hidden" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+    {{-- MODIFIKASI: Ditambahkan pengecekan @if($errors->any()) agar modal otomatis terbuka kembali jika validasi gagal --}}
+    <div id="createModal" class="fixed inset-0 z-50 @if($errors->any()) block @else hidden @endif" aria-labelledby="modal-title" role="dialog" aria-modal="true">
         <div class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm transition-opacity" onclick="closeCreateModal()"></div>
         <div class="fixed inset-0 z-10 overflow-y-auto">
             <div class="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
@@ -468,12 +469,27 @@
                         <button onclick="closeCreateModal()" class="text-teal-100 hover:text-white bg-white/10 p-2 rounded-lg transition-colors"><i class="fas fa-times"></i></button>
                     </div>
 
-                    <form action="{{ route('uji.verifikasi_admin.store') }}" method="POST" enctype="multipart/form-data">
+                    <form action="{{ route('uji.verifikasi_admin.store') }}" method="POST" enctype="multipart/form-data" id="createVerifikasiForm">
                         @csrf
                         <input type="hidden" name="category" value="uji">
 
                         {{-- Hidden input yang dikirim ke server --}}
-                        <input type="hidden" name="user_id" id="cs_hidden_user_id" required>
+                        <input type="hidden" name="user_id" id="cs_hidden_user_id" value="{{ old('user_id') }}" required>
+
+                        {{-- MODIFIKASI: Banner Alert Error Global Laravel --}}
+                        @if ($errors->any())
+                            <div class="mx-6 mt-4 p-4 bg-rose-50 border border-rose-200 rounded-xl flex items-start gap-3 text-rose-600 text-xs">
+                                <i class="fas fa-exclamation-circle mt-0.5 shrink-0 text-sm"></i>
+                                <div>
+                                    <span class="font-bold block mb-1">Penerbitan Gagal:</span>
+                                    <ul class="list-disc list-inside space-y-0.5 font-medium">
+                                        @foreach ($errors->all() as $error)
+                                            <li>{{ $error }}</li>
+                                        @endforeach
+                                    </ul>
+                                </div>
+                            </div>
+                        @endif
 
                         <div class="px-6 py-6 space-y-5">
 
@@ -485,7 +501,7 @@
 
                                 <div class="cs-wrap" id="csWrap">
                                     <!-- Trigger -->
-                                    <div class="cs-trigger" id="csTrigger" onclick="csToggle()">
+                                    <div class="cs-trigger @error('user_id') border-rose-300 bg-rose-50/20 @enderror" id="csTrigger" onclick="csToggle()">
                                         <div class="cs-trigger-left">
                                             <div class="cs-avatar" id="csAvatar">
                                                 <i class="fas fa-flask text-xs"></i>
@@ -515,6 +531,9 @@
                                         <div class="cs-options" id="csOptionsList"></div>
                                     </div>
                                 </div>
+                                @error('user_id')
+                                    <p class="text-rose-600 text-[11px] font-semibold mt-1"><i class="fas fa-info-circle"></i> Lembaga tujuan wajib dipilih.</p>
+                                @enderror
                             </div>
                             <!-- END CUSTOM DROPDOWN -->
 
@@ -524,25 +543,44 @@
                                 <input
                                     type="text"
                                     name="title"
-                                    class="block w-full rounded-xl border-slate-300 bg-white p-3 text-sm focus:border-teal-500 focus:ring-teal-500"
+                                    class="block w-full rounded-xl @error('title') border-rose-300 bg-rose-50/20 @else border-slate-300 @enderror bg-white p-3 text-sm focus:border-teal-500 focus:ring-teal-500"
                                     placeholder="Contoh: Surat Hasil Verifikasi Akreditasi..."
+                                    value="{{ old('title') }}"
                                     required
                                 >
+                                @error('title')
+                                    <p class="text-rose-600 text-[11px] font-semibold mt-1"><i class="fas fa-info-circle"></i> {{ $message }}</p>
+                                @enderror
                             </div>
 
                             <!-- Upload File -->
-                            <div class="space-y-2 bg-slate-50 p-4 rounded-xl border border-slate-200">
+                            {{-- MODIFIKASI: Border akan otomatis berwarna merah jika ada error dari Laravel --}}
+                            <div class="space-y-2 bg-slate-50 p-4 rounded-xl border @error('admin_file') border-rose-300 bg-rose-50/30 @else border-slate-200 @enderror">
                                 <label class="block text-xs font-bold text-slate-700 uppercase flex justify-between">
                                     <span>Upload Surat (PDF)</span>
-                                    <span class="text-[10px] bg-red-100 text-red-600 px-1.5 py-0.5 rounded">Wajib</span>
+                                    <span class="text-[10px] bg-red-100 text-red-600 px-1.5 py-0.5 rounded font-bold">Maks 2MB</span>
                                 </label>
                                 <input
                                     type="file"
                                     name="admin_file"
+                                    id="admin_file_input"
+                                    onchange="validateAdminFile(this)"
                                     class="block w-full text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-xs file:font-bold file:bg-teal-600 file:text-white hover:file:bg-teal-700 border border-slate-300 rounded-lg cursor-pointer bg-white"
                                     accept=".pdf"
                                     required
                                 >
+                                
+                                {{-- Penanganan Error Backend (Laravel) --}}
+                                @error('admin_file')
+                                    <p class="text-rose-600 text-[11px] font-semibold mt-1.5 flex items-center gap-1">
+                                        <i class="fas fa-info-circle"></i> {{ $message }}
+                                    </p>
+                                @enderror
+
+                                {{-- Penanganan Error Frontend Instan (JS) --}}
+                                <p id="js_file_error" class="hidden text-rose-600 text-[11px] font-semibold mt-1.5 flex items-center gap-1">
+                                    <i class="fas fa-info-circle"></i> <span id="js_file_error_text"></span>
+                                </p>
                             </div>
 
                             <!-- Instruksi Tambahan -->
@@ -553,7 +591,7 @@
                                     rows="2"
                                     class="block w-full rounded-xl border-slate-300 bg-white p-3 text-sm focus:border-teal-500 focus:ring-teal-500"
                                     placeholder="Pesan instruksi untuk laboratorium..."
-                                ></textarea>
+                                >{{ old('admin_note') }}</textarea>
                             </div>
                         </div>
 
@@ -612,11 +650,34 @@
         // =============================================
         function openCreateModal() {
             document.getElementById('createModal').classList.remove('hidden');
+            document.getElementById('createModal').classList.add('block');
             csReset();
         }
         function closeCreateModal() {
             document.getElementById('createModal').classList.add('hidden');
+            document.getElementById('createModal').classList.remove('block');
             csClose();
+        }
+
+        // =============================================
+        // JS VALIDASI UKURAN FILE (PRE-UPLOAD CHECK)
+        // =============================================
+        function validateAdminFile(input) {
+            const file = input.files[0];
+            const errorElement = document.getElementById('js_file_error');
+            const errorText = document.getElementById('js_file_error_text');
+            
+            if (file) {
+                const limitInBytes = 2 * 1024 * 1024; // 2MB
+                if (file.size > limitInBytes) {
+                    const sizeInMb = (file.size / (1024 * 1024)).toFixed(2);
+                    errorText.innerText = "Ukuran file " + sizeInMb + "MB melebihi batas maksimal 2.00MB.";
+                    errorElement.classList.remove('hidden');
+                    input.value = ""; // Reset form input file
+                } else {
+                    errorElement.classList.add('hidden');
+                }
+            }
         }
 
         // =============================================
@@ -732,6 +793,14 @@
             trigKode.textContent = '';
             csClose();
         }
+
+        // Auto-select laboratorium jika session old() terisi setelah validasi gagal
+        document.addEventListener('DOMContentLoaded', function() {
+            const oldUserId = "{{ old('user_id') }}";
+            if(oldUserId) {
+                csSelect(oldUserId);
+            }
+        });
 
         // Close dropdown when clicking outside
         document.addEventListener('click', function(e) {

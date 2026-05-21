@@ -159,7 +159,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/verifikasi', [VerifikasiController::class, 'ujiIndex'])->name('uji.verifikasi');
         Route::get('/verifikasi/respon/{id}', [VerifikasiController::class, 'ujiRespon'])->name('uji.verifikasi.respon');
         Route::get('/verifikasiAdmin', [VerifikasiController::class, 'adminUjiIndex'])->name('uji.verifikasi_admin');
-        Route::post('/verifikasiAdmin/store', [VerifikasiController::class, 'storeAdmin'])->name('uji.verifikasi_admin.store');
+        Route::post('/verifikasiAdmin/store', [VerifikasiController::class, 'store'])->name('uji.verifikasi_admin.store');
 
         // Master Data Uji
         Route::get('/lembaga', function () {
