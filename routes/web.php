@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Models\User;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\Auth\CustomLoginController;
 use App\Http\Controllers\Auth\CustomRegisterController;
@@ -27,7 +28,10 @@ use App\Http\Controllers\SinarxSubmissionController;
 // 1. HALAMAN PUBLIK / PORTAL DEPAN
 // =========================================================================
 Route::get('/', function () {
-    return view('welcome');
+    // Mengambil jumlah total user rill langsung dari database
+    $totalUsers = User::count();
+
+    return view('welcome')->with('totalUsers', $totalUsers);
 })->name('portal');
 
 Route::get('/sertifikasi', function () {

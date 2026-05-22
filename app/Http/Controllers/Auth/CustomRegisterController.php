@@ -38,7 +38,7 @@ class CustomRegisterController extends Controller
     {
         return view('auth.custom-register', [
             'type' => 'sinarx',
-            'title' => 'Daftar Akun Rumah Sakit',
+            'title' => 'Daftar Akun Pemohon Amandemen Sertifikat',
             'desc' => 'Registrasi pemohon untuk amandemen sertifikat Sinar-X.',
             'color_theme' => 'orange',
             'icon' => 'fa-radiation'

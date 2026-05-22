@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>SI-MUTU DKKN | BAPETEN</title>
     
-    <!-- Tailwind CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     
     <script>
@@ -50,7 +49,6 @@
         }
     </script>
 
-    <!-- Preload Fonts & Font Awesome -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     
@@ -107,27 +105,21 @@
 </head>
 <body class="bg-[#fcfdfe] dark:bg-[#020617] text-slate-900 dark:text-slate-100 transition-colors duration-500 overflow-x-hidden">
 
-    <!-- THEME TOGGLE -->
     <button onclick="toggleTheme()" class="fixed top-6 right-6 z-50 p-3 rounded-2xl bg-white dark:bg-slate-800 shadow-xl border border-slate-200 dark:border-slate-700 hover:scale-110 active:scale-95 transition-all group">
         <i id="theme-icon" class="fas fa-moon text-xl text-slate-600 dark:text-yellow-400"></i>
     </button>
 
-    <!-- CLEAN PROFESSIONAL BACKGROUND -->
     <div class="fixed inset-0 pointer-events-none z-0">
-        <!-- Grid Pattern -->
         <div class="absolute inset-0 bg-pattern text-slate-200 dark:text-slate-800/40 opacity-40"></div>
         
-        <!-- Subtle Glow Blobs (Not Weird) -->
         <div class="absolute top-[-10%] left-[-5%] w-[40%] h-[40%] bg-blue-500/10 dark:bg-blue-600/10 rounded-full blur-[120px]"></div>
         <div class="absolute bottom-[-10%] right-[-5%] w-[40%] h-[40%] bg-indigo-500/10 dark:bg-indigo-600/10 rounded-full blur-[120px]"></div>
         <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full bg-gradient-to-tr from-transparent via-blue-50/20 dark:via-transparent to-transparent"></div>
 
-        <!-- Decorative Tech Lines -->
         <div class="absolute top-20 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-slate-200 dark:via-slate-800 to-transparent"></div>
         <div class="absolute bottom-40 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-slate-200 dark:via-slate-800 to-transparent"></div>
     </div>
 
-    <!-- MODAL DOCUMENTATION -->
     <div id="docModal" class="fixed inset-0 z-[60] hidden opacity-0 transition-opacity duration-300">
         <div class="absolute inset-0 bg-slate-950/80 backdrop-blur-md" onclick="toggleModal()"></div>
         <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[90%] max-w-4xl glass-card rounded-[2.5rem] p-6 md:p-10 shadow-2xl overflow-hidden">
@@ -169,7 +161,7 @@
                             <span class="px-3 py-1 bg-blue-600 rounded-full text-[10px] font-bold uppercase tracking-wider mb-2 inline-block">Verifikasi</span>
                             <h4 class="text-xl md:text-2xl font-bold">Kegiatan Verifikasi</h4>
                             <p class="text-sm text-slate-300 mt-1">
-                                Pelaksanaan kegiatan verifikasi untuk memastikan kesesuaian dokumen, data, dan persyaratan sesuai ketentuan yang berlaku.
+                                Pelaksanaan kegiatan verifikasi untuk memastikan kesesuaian dokumen, data, and persyaratan sesuai ketentuan yang berlaku.
                             </p>
                         </div>
                     </div>
@@ -189,10 +181,50 @@
         </div>
     </div>
 
-    <!-- MAIN WRAPPER -->
+    <!-- Modal Kebijakan Privasi -->
+    <div id="privacyModal" class="fixed inset-0 z-[60] hidden opacity-0 transition-opacity duration-300">
+        <div class="absolute inset-0 bg-slate-950/80 backdrop-blur-md" onclick="togglePrivacyModal()"></div>
+        <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[90%] max-w-2xl glass-card rounded-[2.5rem] p-6 md:p-8 shadow-2xl overflow-hidden max-h-[85vh] flex flex-col">
+            <button onclick="togglePrivacyModal()" class="absolute top-6 right-6 text-slate-400 hover:text-red-500 transition-colors z-30">
+                <i class="fas fa-times text-2xl"></i>
+            </button>
+            <div class="mb-6 text-left shrink-0">
+                <h2 class="text-2xl font-black text-slate-900 dark:text-white mb-2 italic">Kebijakan Privasi SI-MUTU</h2>
+                <div class="h-1.5 w-16 bg-blue-600 rounded-full"></div>
+            </div>
+            <div class="overflow-y-auto pr-2 text-left text-sm text-slate-600 dark:text-slate-300 space-y-4 leading-relaxed">
+                <p>Direktorat Keteknikan dan Kesiapsiagaan Nuklir (DKKN) BAPETEN berkomitmen penuh untuk melindungi data dan informasi digital milik seluruh pengguna aplikasi SI-MUTU DKKN.</p>
+                
+                <div class="space-y-1">
+                    <h4 class="font-bold text-slate-800 dark:text-white flex items-center gap-2">
+                        <i class="fas fa-database text-blue-500 text-xs"></i> 1. Pengumpulan Data
+                    </h4>
+                    <p class="pl-5 text-slate-500 dark:text-slate-400 text-xs">Sistem mengumpulkan informasi kelembagaan, berkas legalitas, sertifikasi personel, data teknis Sinar-X, serta data Laporan Hasil Uji (LHU) yang diunggah secara sadar oleh pengguna terdaftar.</p>
+                </div>
+
+                <div class="space-y-1">
+                    <h4 class="font-bold text-slate-800 dark:text-white flex items-center gap-2">
+                        <i class="fas fa-shield-alt text-blue-500 text-xs"></i> 2. Keamanan & Perlindungan
+                    </h4>
+                    <p class="pl-5 text-slate-500 dark:text-slate-400 text-xs">Seluruh data yang tersimpan dalam sistem dilindungi menggunakan protokol enkripsi standar dan hanya digunakan untuk kepentingan pengawasan, validasi jaminan mutu, serta standar keselamatan radiasi nasional.</p>
+                </div>
+
+                <div class="space-y-1">
+                    <h4 class="font-bold text-slate-800 dark:text-white flex items-center gap-2">
+                        <i class="fas fa-handshake text-blue-500 text-xs"></i> 3. Pengungkapan Pihak Ketiga
+                    </h4>
+                    <p class="pl-5 text-slate-500 dark:text-slate-400 text-xs">BAPETEN tidak akan menjual, menyewakan, atau membocorkan data spesifik lembaga/personel kepada pihak luar tanpa persetujuan tertulis atau di luar koridor hukum pengawasan ketenaganukliran Indonesia.</p>
+                </div>
+                
+                <blockquote class="border-l-4 border-blue-600 bg-blue-50/50 dark:bg-blue-950/30 p-3 rounded-r-xl text-xs text-slate-500 dark:text-slate-400">
+                    Dengan menggunakan sistem informasi ini, Anda menyatakan setuju atas ketentuan pengolahan data demi mendukung integrasi keselamatan nuklir nasional.
+                </blockquote>
+            </div>
+        </div>
+    </div>
+
     <main class="relative z-10 min-h-screen flex flex-col items-center px-4 pt-12 pb-8">
         
-        <!-- LOGO BAPETEN & HEADER -->
         <header class="w-full max-w-4xl flex flex-col items-center mb-12 text-center animate-fade-in">
             <div class="flex flex-col items-center mb-10 group/logo">
                 <div class="relative w-24 h-24 md:w-32 md:h-32 mb-6 drop-shadow-2xl animate-float cursor-help transition-all duration-700 group-hover/logo:scale-105">
@@ -211,7 +243,6 @@
                 Sistem Informasi Jaminan Mutu Ketenaganukliran untuk standar keselamatan radiasi nasional.
             </p>
 
-            <!-- COMMAND BAR -->
             <div class="w-full max-w-4xl glass-card rounded-3xl p-1 md:p-2 border border-white/50 dark:border-white/5 shadow-2xl animate-slide-up flex flex-col md:flex-row items-center divide-y md:divide-y-0 md:divide-x divide-slate-200 dark:divide-slate-700/50">
                 
                 <div class="w-full md:w-auto px-6 py-3 flex items-center gap-4 justify-center md:justify-start">
@@ -225,14 +256,15 @@
                 </div>
 
                 <div class="w-full md:flex-1 px-6 py-3 flex items-center gap-4 justify-center md:justify-start">
-                    <div class="relative flex h-3 w-3">
-                        <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-                        <span class="relative inline-flex rounded-full h-3 w-3 bg-emerald-500"></span>
+                    <div class="w-10 h-10 rounded-2xl bg-emerald-600/10 text-emerald-600 flex items-center justify-center">
+                        <i class="fas fa-users"></i>
                     </div>
                     <div class="text-left">
-                        <div class="text-sm font-black text-slate-700 dark:text-slate-200 uppercase tracking-tight">Sistem Operasional</div>
+                        <div class="text-lg font-black tracking-tight tabular-nums text-slate-800 dark:text-slate-100">
+                            {{ $totalUsers ?? 0 }} <span class="text-xs font-normal text-slate-500 dark:text-slate-400">Pengguna</span>
+                        </div>
                         <div class="text-[10px] font-bold text-emerald-500 uppercase flex items-center gap-1">
-                             Pemantauan Aktif <i class="fas fa-shield-alt"></i>
+                            Akun Terdaftar <i class="fas fa-check-circle"></i>
                         </div>
                     </div>
                 </div>
@@ -250,7 +282,6 @@
             </div>
         </header>
 
-        <!-- SERVICES GRID -->
         <section class="w-full max-w-6xl grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8 mb-20 animate-slide-up" style="animation-delay: 200ms">
             
             <a href="{{ route('login.pelatihan') }}" class="group relative flex flex-col items-center p-8 rounded-[2.5rem] glass-card hover:shadow-2xl hover:shadow-blue-500/10 hover:-translate-y-2 transition-all duration-500 overflow-hidden text-center">
@@ -299,20 +330,31 @@
 
         </section>
 
-        <!-- FOOTER -->
         <footer class="w-full max-w-4xl flex flex-col items-center text-center space-y-8 animate-fade-in delay-500">
-            <div class="text-xs md:text-sm text-slate-500 dark:text-slate-400 font-medium space-y-4">
-                <p>&copy; 2026 <strong>BAPETEN</strong> - Direktorat Keteknikan dan Kesiapsiagaan Nuklir</p>
-                <div class="flex flex-wrap justify-center gap-4 text-[10px] md:text-xs">
-                    <a href="#" class="px-4 py-2 bg-white/40 dark:bg-slate-800/40 rounded-xl hover:bg-white dark:hover:bg-slate-700 transition-colors border border-slate-200 dark:border-slate-700 shadow-sm font-bold">Kebijakan Privasi</a>
-                    <a href="#" class="px-4 py-2 bg-white/40 dark:bg-slate-800/40 rounded-xl hover:bg-white dark:hover:bg-slate-700 transition-colors border border-slate-200 dark:border-slate-700 shadow-sm font-bold">Bantuan Layanan</a>
-                    <a href="{{ route('login.internal') }}" class="px-4 py-2 bg-blue-600 text-white rounded-xl font-black hover:bg-blue-700 transition-all shadow-lg shadow-blue-500/20 uppercase tracking-tighter">Login  Internal</a>
-                </div>
+        <div class="text-xs md:text-sm text-slate-500 dark:text-slate-400 font-medium space-y-4">
+            <div class="flex flex-wrap justify-center items-center gap-4 text-[11px] md:text-xs">
+                
+                <button type="button" onclick="togglePrivacyModal()" class="px-4 py-2 bg-slate-500/5 hover:bg-blue-600/10 text-slate-400 hover:text-blue-400 rounded-xl border border-slate-700/40 hover:border-blue-500/30 transition-all font-bold flex items-center gap-1.5 uppercase tracking-tighter">
+                    <i class="fas fa-shield-alt text-[10px]"></i> Kebijakan Privasi
+                </button>
+                
+                <a href="https://wa.me/6281288463770?text=Halo%2C%20saya%20ingin%20menanyakan%20mengenai%20sistem%20informasi%20jaminan%20mutu" target="_blank" class="px-4 py-2 bg-slate-500/5 hover:bg-emerald-600/10 text-slate-400 hover:text-emerald-400 rounded-xl border border-slate-700/40 hover:border-emerald-500/30 transition-all font-bold flex items-center gap-1.5 uppercase tracking-tighter">
+                    <i class="fab fa-whatsapp text-[12px]"></i> Bantuan Layanan
+                </a>
+                
+                <a href="{{ asset('manual-book.pdf') }}" target="_blank" class="px-4 py-2 bg-slate-500/5 hover:bg-amber-500/10 text-slate-400 hover:text-[#c9a050] rounded-xl border border-slate-700/40 hover:border-amber-500/40 transition-all font-bold flex items-center gap-1.5 uppercase tracking-tighter hover:shadow-[0_0_15px_rgba(201,160,80,0.3)]">
+                    <i class="fas fa-book-open text-[10px]"></i> Buku Panduan
+                </a>
+                                
+                <a href="{{ route('login.internal') }}" class="px-4 py-2 bg-slate-500/5 hover:bg-blue-600/15 text-slate-400 hover:text-blue-400 rounded-xl border border-slate-700/40 hover:border-blue-500/50 transition-all font-bold flex items-center gap-1.5 uppercase tracking-tighter hover:shadow-[0_0_15px_rgba(37,99,235,0.4)]">
+                    <i class="fas fa-user-lock text-[10px]"></i> Login Internal
+                </a>
+                <p>&copy; 2026 <strong>BAPETEN</strong> - Direktorat Keteknikan dan Kesiapsiagaan Nuklir - Kelompok Fungsi Jaminan Mutu</p>
             </div>
-        </footer>
+        </div>
+    </footer>
     </main>
 
-    <!-- Script Logic -->
     <script>
         window.addEventListener('load', () => {
             document.body.classList.add('is-ready');
@@ -350,6 +392,17 @@
                 modal.classList.remove('opacity-100');
                 setTimeout(() => modal.classList.add('hidden'), 300);
                 stopCarousel();
+            }
+        }
+
+        function togglePrivacyModal() {
+            const modal = document.getElementById('privacyModal');
+            if (modal.classList.contains('hidden')) {
+                modal.classList.remove('hidden');
+                setTimeout(() => modal.classList.add('opacity-100'), 10);
+            } else {
+                modal.classList.remove('opacity-100');
+                setTimeout(() => modal.classList.add('hidden'), 300);
             }
         }
 
