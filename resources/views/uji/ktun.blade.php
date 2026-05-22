@@ -35,8 +35,6 @@
 <body class="bg-[#fcfcfd] text-slate-800 antialiased overflow-hidden">
 
     @php
-        // Simulasi mengambil semua data delivery untuk user ini
-        // Di aplikasi nyata, ini dikirim dari KtunDeliveryController
         $deliveries = \App\Models\KtunDelivery::where('user_id', Auth::id())->latest()->get();
         $latestDelivery = $deliveries->first();
         $previousDeliveries = $deliveries->skip(1);
@@ -44,12 +42,10 @@
 
     <div class="flex h-screen overflow-hidden">
         
-        <!-- SIDEBAR DESKTOP -->
         <div class="hidden md:block shrink-0">
             @include('components.uji-sidebar')
         </div>
 
-        <!-- MOBILE SIDEBAR DRAWER -->
         <div id="mobileSidebar" class="fixed inset-0 z-[60] hidden">
             <div class="absolute inset-0 bg-slate-900/60 backdrop-blur-sm" onclick="toggleSidebar()"></div>
             <div class="absolute left-0 top-0 bottom-0 w-64 bg-teal-900 shadow-2xl transform transition-transform duration-300">
@@ -59,7 +55,6 @@
 
         <div class="flex-1 flex flex-col h-screen overflow-hidden relative w-full">
             
-            <!-- HEADER MOBILE (Sticky with Hamburger) -->
             <div class="md:hidden bg-white border-b border-slate-100 px-5 py-3.5 flex items-center justify-between z-30 sticky top-0 shadow-sm">
                 <div class="flex items-center gap-3">
                     <button onclick="toggleSidebar()" class="w-10 h-10 flex items-center justify-center text-slate-500 hover:text-teal-600 hover:bg-teal-50 rounded-2xl transition-all active:scale-90">
@@ -77,7 +72,6 @@
                 </div>
             </div>
 
-            <!-- HEADER DESKTOP -->
             <div class="hidden md:block">
                 @include('components.uji-header', [
                     'title' => 'Penetapan Dokumen',
@@ -90,14 +84,13 @@
                 <div class="max-w-5xl mx-auto space-y-10">
                     
                     @if($latestDelivery)
-                        <!-- PANEL DOKUMEN TERBARU (GIFT BOX STYLE) -->
                         <div class="bg-white rounded-[3rem] md:rounded-[4rem] p-8 md:p-14 shadow-[0_40px_100px_-25px_rgba(0,0,0,0.06)] border border-slate-50 relative overflow-hidden animate-gemay">
                             <div class="absolute top-0 right-0 w-80 h-80 bg-teal-50 rounded-full blur-3xl opacity-50 -mr-32 -mt-32"></div>
                             <div class="absolute bottom-0 left-0 w-60 h-60 bg-teal-50 rounded-full blur-2xl opacity-40 -ml-20 -mb-20"></div>
                             
                             <div class="relative z-10 flex flex-col items-center text-center">
                                 <div class="mb-8 relative">
-                                    <div class="w-20 h-20 md:w-28 md:h-28 bg-gradient-to-br {{ $latestDelivery->is_survey_filled ? 'from-teal-400 to-teal-600' : 'from-teal-400 to-teal-600' }} rounded-[2rem] md:rounded-[2.5rem] flex items-center justify-center shadow-2xl {{ $latestDelivery->is_survey_filled ? 'shadow-teal-100' : 'shadow-teal-100' }} animate-float border-4 border-white">
+                                    <div class="w-20 h-20 md:w-28 md:h-28 bg-gradient-to-br from-teal-400 to-teal-600 rounded-[2rem] md:rounded-[2.5rem] flex items-center justify-center shadow-2xl shadow-teal-100 animate-float border-4 border-white">
                                         <i class="fas {{ $latestDelivery->is_survey_filled ? 'fa-envelope-open-text' : 'fa-box-open' }} text-3xl md:text-5xl text-white"></i>
                                     </div>
                                     @if(!$latestDelivery->is_survey_filled)
@@ -125,7 +118,6 @@
                                         <span>BUKA PAKET DOKUMEN</span>
                                     </button>
                                 @else
-                                    <!-- DOCUMENT CARDS -->
                                     <div class="grid grid-cols-1 sm:grid-cols-3 gap-5 w-full">
                                         @foreach([
                                             ['path' => $latestDelivery->file_surat_pengantar, 'label' => 'Surat Pengantar', 'icon' => 'fa-file-alt'],
@@ -147,7 +139,6 @@
                             </div>
                         </div>
 
-                        <!-- BAGIAN RIWAYAT DOKUMEN (ARSIP) -->
                         <div class="bg-white rounded-[3rem] p-8 md:p-12 shadow-sm border border-slate-100 relative overflow-hidden animate-gemay">
                             <h3 class="text-xl font-extrabold text-slate-800 mb-8 flex items-center gap-3">
                                 <div class="w-10 h-10 bg-slate-50 text-slate-400 rounded-2xl flex items-center justify-center shadow-inner border border-slate-100">
@@ -185,9 +176,8 @@
                                             </td>
                                             <td class="py-5 text-right">
                                                 @if($item->is_survey_filled)
-                                                    <!-- PERBAIKAN: Menambahkan ikon Surat Pengantar agar lengkap (3 file) -->
                                                     <div class="flex justify-end gap-2">
-                                                        <a href="{{ asset('storage/'.$item->file_surat_pengantar) }}" target="_blank" class="w-9 h-9 flex items-center justify-center bg-white border border-slate-200 text-slate-400 hover:text-blue-600 hover:border-blue-200 rounded-xl transition-all shadow-sm" title="Unduh Surat Pengantar">
+                                                        <a href="{{ asset('storage/'.$item->file_surat_pengantar) }}" target="_blank" class="w-9 h-9 flex items-center justify-center bg-white border border-slate-200 text-slate-400 hover:text-teal-600 hover:border-teal-200 rounded-xl transition-all shadow-sm" title="Unduh Surat Pengantar">
                                                             <i class="fas fa-file-alt text-xs"></i>
                                                         </a>
                                                         <a href="{{ asset('storage/'.$item->file_ktun) }}" target="_blank" class="w-9 h-9 flex items-center justify-center bg-white border border-slate-200 text-slate-400 hover:text-teal-600 hover:border-teal-200 rounded-xl transition-all shadow-sm" title="Unduh KTUN">
@@ -213,7 +203,6 @@
                         </div>
 
                     @else
-                        <!-- EMPTY STATE -->
                         <div class="bg-white rounded-[3.5rem] p-16 md:p-24 text-center shadow-sm border border-slate-100 animate-gemay">
                             <div class="w-20 h-20 bg-slate-50 rounded-full flex items-center justify-center mx-auto mb-6 text-slate-200">
                                 <i class="fas fa-ghost text-4xl"></i>
@@ -223,7 +212,6 @@
                         </div>
                     @endif
 
-                    <!-- PANDUAN LAYER -->
                     <div class="bg-white p-8 md:p-12 rounded-[3rem] md:rounded-[3.5rem] border border-slate-100 shadow-sm relative overflow-hidden animate-gemay">
                         <div class="absolute -right-10 -bottom-10 opacity-[0.03] text-teal-900 rotate-12"><i class="fas fa-info-circle text-[12rem]"></i></div>
                         
@@ -261,7 +249,6 @@
         </div>
     </div>
 
-    <!-- MODAL BERHASIL (Centered & Bouncy) -->
     @if (session('success'))
     <div id="successPopup" class="fixed inset-0 z-[300] flex items-center justify-center p-6 bg-slate-900/60 backdrop-blur-xl transition-all duration-300">
         <div class="absolute inset-0" onclick="closeSuccessModal()"></div>
@@ -281,7 +268,6 @@
     </div>
     @endif
 
-    <!-- MODAL SURVEY G-FORM (PUFFY) -->
     <div id="surveyModal" class="fixed inset-0 z-[250] hidden flex items-center justify-center p-6 bg-slate-900/60 backdrop-blur-xl">
         <div class="absolute inset-0" onclick="closeSurveyModal()"></div>
         <div class="relative bg-white rounded-[3.5rem] md:rounded-[4rem] p-10 md:p-14 max-w-md w-full shadow-[0_50px_100px_-20px_rgba(0,0,0,0.4)] text-center animate-gemay border-4 border-white">
@@ -294,21 +280,24 @@
             </div>
             
             <h3 class="text-2xl font-extrabold text-slate-800 mb-4 tracking-tight uppercase">Survey Layanan</h3>
-            <p class="text-slate-500 text-sm mb-12 font-medium leading-relaxed">
-                Mohon isi survey kepuasan pada link Google Form, lalu klik konfirmasi untuk membuka dokumen.
+            
+            <p id="surveyInstruction" class="text-slate-500 text-sm mb-12 font-medium leading-relaxed px-2">
+                Mohon klik tombol di bawah untuk mengisi survey kepuasan. Dokumen akan terbuka otomatis setelah Anda selesai mengisi.
             </p>
             
+            <div id="surveyLoading" class="hidden flex-col items-center gap-3 mb-12">
+                <div class="w-10 h-10 border-4 border-slate-200 border-t-teal-600 rounded-full animate-spin"></div>
+                <p class="text-xs font-bold text-teal-600 uppercase tracking-widest">Menunggu Anda Kembali...</p>
+            </div>
+            
             <div class="space-y-4">
-                <a href="https://docs.google.com/forms/d/e/1FAIpQLSeW6FwPyZMMGtdAMBPCJPHNpyfBgj12iI4_V_ZeXddE6G8kkg/viewform" target="_blank" class="w-full inline-flex items-center justify-center gap-3 bg-blue-600 text-white font-extrabold py-5 rounded-[2rem] hover:bg-blue-700 transition-all shadow-xl shadow-blue-200 active:scale-95 text-xs tracking-widest uppercase">
+                <a id="btnGform" href="https://docs.google.com/forms/d/e/1FAIpQLSeW6FwPyZMMGtdAMBPCJPHNpyfBgj12iI4_V_ZeXddE6G8kkg/viewform" target="_blank" onclick="startSurveyRedirect()" class="w-full inline-flex items-center justify-center gap-3 bg-blue-600 text-white font-extrabold py-5 rounded-[2rem] hover:bg-blue-700 transition-all shadow-xl shadow-blue-200 active:scale-95 text-xs tracking-widest uppercase">
                     <span>BUKA GOOGLE FORM</span>
                     <i class="fas fa-external-link-alt text-[10px]"></i>
                 </a>
 
-                <form id="surveyForm" method="POST" action="">
+                <form id="surveyForm" method="POST" action="" class="hidden">
                     @csrf
-                    <button type="submit" class="w-full bg-slate-900 text-white font-extrabold py-4 md:py-5 rounded-[1.8rem] md:rounded-[2rem] hover:bg-emerald-600 transition-all shadow-xl active:scale-95 text-xs tracking-widest uppercase">
-                        SAYA SUDAH MENGISI
-                    </button>
                 </form>
                 
                 <button onclick="closeSurveyModal()" class="text-[10px] font-extrabold text-slate-300 hover:text-slate-500 uppercase tracking-[0.2em] transition-colors pt-4">NANTI SAJA</button>
@@ -317,6 +306,8 @@
     </div>
 
     <script>
+        let isFormClicked = false;
+
         function toggleSidebar() {
             const sidebar = document.getElementById('mobileSidebar');
             sidebar.classList.toggle('hidden');
@@ -324,17 +315,42 @@
 
         function openSurveyModal(id) {
             const m = document.getElementById('surveyModal');
-
             document.getElementById('surveyForm').action = "/ktun/survey/unlock/" + id; 
+            
+            isFormClicked = false;
+            document.getElementById('surveyInstruction').classList.remove('hidden');
+            document.getElementById('surveyLoading').classList.add('hidden');
+            document.getElementById('btnGform').classList.remove('opacity-50', 'pointer-events-none');
+            
             m.classList.remove('hidden');
         }
 
-        function closeSurveyModal() { document.getElementById('surveyModal').classList.add('hidden'); }
+        function closeSurveyModal() { 
+            document.getElementById('surveyModal').classList.add('hidden'); 
+            isFormClicked = false;
+        }
         
         function closeSuccessModal() {
             const m = document.getElementById('successPopup');
             if (m) m.remove();
         }
+
+        // --- MANAJEMEN OTOMATISASI SURVEY ---
+        function startSurveyRedirect() {
+            isFormClicked = true;
+            
+            document.getElementById('surveyInstruction').classList.add('hidden');
+            document.getElementById('surveyLoading').classList.remove('hidden');
+            document.getElementById('btnGform').classList.add('opacity-50', 'pointer-events-none');
+        }
+
+        // Jalankan submit form otomatis ketika tab aplikasi kembali difokuskan oleh user
+        window.addEventListener('focus', function() {
+            if (isFormClicked) {
+                isFormClicked = false; 
+                document.getElementById('surveyForm').submit();
+            }
+        });
     </script>
 </body>
 </html>

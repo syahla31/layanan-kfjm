@@ -349,7 +349,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <!-- Card Proses -->
+                            <!-- Card Process -->
                             <div
                                 class="stat-card bg-white p-5 rounded-[2rem] border border-slate-200 group cursor-default">
                                 <div
@@ -404,7 +404,7 @@
                             </div>
                         </div>
 
-                        <!-- GRAFIK (Visualisasi Diperbagus) -->
+                        <!-- GRAFIK -->
                         <div class="bg-white p-8 rounded-[2.5rem] border border-slate-200 shadow-sm text-left">
                             <div
                                 class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8 text-left">
@@ -425,7 +425,7 @@
                                     </div>
                                     <div class="h-8 w-[1px] bg-slate-100 mx-1"></div>
                                     <span
-                                        class="bg-emerald-50 text-emerald-600 px-3 py-1.5 rounded-xl text-[10px] font-black uppercase border border-emerald-100 flex items-center gap-2">
+                                        class="bg-emerald-50 text-emerald-600 px-3 py-1.5 rounded-xl text-[10px] font-black uppercase tracking-widest border border-emerald-100 flex items-center gap-2">
                                         <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
                                         Sinkron BALIS
                                     </span>
@@ -530,7 +530,7 @@
                                                     class="bg-slate-900 text-white text-[10px] font-black px-2.5 py-1 rounded-lg w-fit text-left">SER:
                                                     {{ $item->no_sertifikat }}</span>
                                                 <span
-                                                    class="bg-slate-50 text-slate-500 text-[10px] font-black px-2.5 py-1 rounded-lg border border-slate-200 w-fit tracking-tighter text-left text-left">REG:
+                                                    class="bg-slate-50 text-slate-500 text-[10px] font-black px-2.5 py-1 rounded-lg border border-slate-200 w-fit tracking-tighter text-left">REG:
                                                     {{ $item->no_registrasi }}</span>
                                             </div>
                                         </td>
@@ -567,7 +567,7 @@
                                                             class="fas fa-cloud-upload-alt text-[7px] text-center"></i>
                                                         Updated BALIS</span>
                                                 </div>
-                                            @else
+                                            @define
                                                 <div
                                                     class="inline-flex items-center gap-1.5 bg-rose-50 text-rose-600 text-[10px] font-black px-4 py-1.5 rounded-full border border-rose-100 uppercase tracking-tighter text-center">
                                                     <i class="fas fa-times text-center"></i> REVISI</div>
@@ -621,7 +621,7 @@
     <div id="previewModal" class="fixed inset-0 z-[250] hidden flex items-center justify-center p-4 text-left">
         <div class="absolute inset-0 bg-slate-900/80 backdrop-blur-md" onclick="closePreviewModal()"></div>
         <div
-            class="relative bg-white rounded-[2.8rem] max-w-lg w-full shadow-2xl animate-modal overflow-hidden flex flex-col border border-white/20 text-left text-left">
+            class="relative bg-white rounded-[2.8rem] max-w-lg w-full shadow-2xl animate-modal overflow-hidden flex flex-col border border-white/20 text-left">
             <div
                 class="bg-emerald-600 px-8 py-7 flex justify-between items-center text-white shrink-0 relative z-10 text-left">
                 <div class="flex items-center gap-4 text-left">
@@ -686,7 +686,7 @@
 
             <div class="p-6 bg-white border-t border-slate-100 text-center">
                 <button onclick="closePreviewModal()"
-                    class="w-full bg-slate-900 text-white font-black py-4 rounded-2xl shadow-xl transition active:scale-95 uppercase tracking-widest text-xs text-center text-center">Tutup
+                    class="w-full bg-slate-900 text-white font-black py-4 rounded-2xl shadow-xl transition active:scale-95 uppercase tracking-widest text-xs text-center">Tutup
                     Preview</button>
             </div>
         </div>
@@ -721,14 +721,14 @@
                 @csrf
                 <div id="methodField" class="text-left"></div>
                 <div
-                    class="flex-1 overflow-y-auto p-8 md:p-10 space-y-8 no-scrollbar bg-slate-50/30 text-left text-slate-800 text-left">
+                    class="flex-1 overflow-y-auto p-8 md:p-10 space-y-8 no-scrollbar bg-slate-50/30 text-left text-slate-800">
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6 text-left">
                         <div class="space-y-2 text-left">
                             <label
                                 class="text-[10px] font-black text-slate-400 uppercase tracking-widest pl-1 text-left">No.
                                 Sertifikat</label>
                             <input type="text" name="no_sertifikat" id="inputNoSertif"
-                                class="w-full bg-white border border-slate-200 rounded-2xl px-5 py-4 text-sm font-bold focus:border-orange-500 outline-none transition-all shadow-sm text-left text-left"
+                                class="w-full bg-white border border-slate-200 rounded-2xl px-5 py-4 text-sm font-bold focus:border-orange-500 outline-none transition-all shadow-sm text-left"
                                 placeholder="Contoh: 12345/UKES/..." required>
                         </div>
                         <div class="space-y-2 text-left">
@@ -736,31 +736,31 @@
                                 class="text-[10px] font-black text-slate-400 uppercase tracking-widest pl-1 text-left">No.
                                 Registrasi</label>
                             <input type="text" name="no_registrasi" id="inputNoRegistrasi"
-                                class="w-full bg-white border border-slate-200 rounded-2xl px-5 py-4 text-sm font-bold focus:border-orange-500 outline-none transition-all shadow-sm text-left text-left"
+                                class="w-full bg-white border border-slate-200 rounded-2xl px-5 py-4 text-sm font-bold focus:border-orange-500 outline-none transition-all shadow-sm text-left"
                                 placeholder="Contoh: REG-2024-..." required>
                         </div>
                     </div>
 
-                    <div class="space-y-2 text-left text-left">
+                    <div class="space-y-2 text-left">
                         <label
                             class="text-[10px] font-black text-slate-400 uppercase tracking-widest pl-1 text-left">Nomor
                             Surat Permohonan Unit</label>
                         <input type="text" name="nomor_surat" id="inputNomorSurat"
-                            class="w-full bg-white border border-slate-200 rounded-2xl px-5 py-4 text-sm font-bold focus:border-orange-500 outline-none transition-all shadow-sm text-left text-left"
+                            class="w-full bg-white border border-slate-200 rounded-2xl px-5 py-4 text-sm font-bold focus:border-orange-500 outline-none transition-all shadow-sm text-left"
                             placeholder="Contoh: 024/RS/II/2026" required>
                     </div>
 
-                    <div class="space-y-2 text-left text-left">
+                    <div class="space-y-2 text-left">
                         <label
                             class="text-[10px] font-black text-slate-400 uppercase tracking-widest pl-1 text-left">Perihal
                             / Alasan Amandemen</label>
                         <textarea name="alasan_amandemen" id="inputAlasan" rows="2"
-                            class="w-full bg-white border border-slate-200 rounded-2xl px-5 py-4 text-sm font-medium focus:border-orange-500 outline-none transition-all shadow-sm resize-none text-left text-left"
+                            class="w-full bg-white border border-slate-200 rounded-2xl px-5 py-4 text-sm font-medium focus:border-orange-500 outline-none transition-all shadow-sm resize-none text-left"
                             placeholder="Jelaskan alasan perubahan..." required></textarea>
                     </div>
 
                     <div
-                        class="p-8 bg-orange-50/50 rounded-[2.5rem] border border-orange-100 space-y-6 text-left text-left">
+                        class="p-8 bg-orange-50/50 rounded-[2.5rem] border border-orange-100 space-y-6 text-left">
                         <div class="flex items-center gap-3 mb-2 text-left">
                             <span class="w-1.5 h-4 bg-orange-500 rounded-full text-left"></span>
                             <p class="text-[10px] font-black text-orange-600 uppercase tracking-[0.2em] text-left">
@@ -771,16 +771,16 @@
                                 class="text-[10px] font-black text-slate-500 uppercase tracking-wide text-left">Bagian
                                 yang diperbaiki</label>
                             <input type="text" name="bagian_diperbaiki" id="inputBagian"
-                                class="w-full bg-white border border-slate-200 rounded-xl px-5 py-3.5 text-sm font-bold focus:border-orange-500 outline-none transition shadow-sm text-left text-left"
+                                class="w-full bg-white border border-slate-200 rounded-xl px-5 py-3.5 text-sm font-bold focus:border-orange-500 outline-none transition shadow-sm text-left"
                                 placeholder="Contoh: Nama Fasilitas">
                         </div>
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-5 text-left text-left">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-5 text-left">
                             <div class="space-y-2 text-left">
                                 <label
                                     class="text-[10px] font-black text-slate-500 uppercase tracking-wide text-rose-500 text-left">Ketidaksesuaian
                                     (Salah)</label>
                                 <textarea name="ketidaksesuaian" id="inputSalah" rows="3"
-                                    class="w-full bg-white border border-slate-200 rounded-xl px-5 py-3.5 text-sm outline-none focus:border-rose-300 transition shadow-sm text-left text-left"
+                                    class="w-full bg-white border border-slate-200 rounded-xl px-5 py-3.5 text-sm outline-none focus:border-rose-300 transition shadow-sm text-left"
                                     placeholder="Data yang salah..."></textarea>
                             </div>
                             <div class="space-y-2 text-left">
@@ -788,28 +788,34 @@
                                     class="text-[10px] font-black text-slate-500 uppercase tracking-wide text-emerald-600 text-left">Data
                                     yang Sesuai (Benar)</label>
                                 <textarea name="data_sesuai" id="inputBenar" rows="3"
-                                    class="w-full bg-white border border-slate-200 rounded-xl px-5 py-3.5 text-sm font-bold outline-none focus:border-emerald-300 transition shadow-sm text-left text-left"
+                                    class="w-full bg-white border border-slate-200 rounded-xl px-5 py-3.5 text-sm font-bold outline-none focus:border-emerald-300 transition shadow-sm text-left"
                                     placeholder="Data yang benar..."></textarea>
                             </div>
                         </div>
                     </div>
 
-                    <div class="space-y-2 pb-2 text-left text-left text-left">
+                    <div class="space-y-2 pb-2 text-left">
                         <label
                             class="text-[10px] font-black text-slate-400 uppercase tracking-widest pl-1 text-left">Bukti
-                            Dokumen PDF (Max 10MB)</label>
-                        <input type="file" name="file_upload" id="fileInput"
-                            class="w-full text-xs text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-[10px] file:font-black file:bg-orange-600 file:text-white hover:file:bg-orange-700 text-left text-left">
+                            Dokumen PDF (Max 2MB)</label>
+                        <!-- MENAMBAHKAN accept="application/pdf" -->
+                        <input type="file" name="file_upload" id="fileInput" accept="application/pdf"
+                            class="w-full text-xs text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-[10px] file:font-black file:bg-orange-600 file:text-white hover:file:bg-orange-700 text-left">
+                        
+                        <!-- ELEMEN CONTAINER ERROR FILE UNTUK VALIDASI -->
+                        <p id="errorFileInput" class="text-xs text-rose-500 font-bold mt-1 hidden animate-pulse">
+                            <i class="fas fa-exclamation-circle mr-1"></i> <span id="errorFileText"></span>
+                        </p>
                     </div>
                 </div>
 
                 <div
-                    class="p-8 md:p-10 border-t border-slate-100 bg-white shrink-0 flex flex-col sm:flex-row gap-4 text-center text-center text-center">
+                    class="p-8 md:p-10 border-t border-slate-100 bg-white shrink-0 flex flex-col sm:flex-row gap-4 text-center">
                     <button type="submit"
-                        class="flex-[2] bg-orange-600 hover:bg-orange-700 text-white font-black py-4 rounded-[1.25rem] shadow-xl shadow-orange-600/20 transition active:scale-95 uppercase tracking-widest text-xs text-center text-center">Kirim
+                        class="flex-[2] bg-orange-600 hover:bg-orange-700 text-white font-black py-4 rounded-[1.25rem] shadow-xl shadow-orange-600/20 transition active:scale-95 uppercase tracking-widest text-xs text-center">Kirim
                         Permohonan</button>
                     <button type="button" onclick="closeModal()"
-                        class="flex-1 bg-slate-100 text-slate-400 font-black py-4 rounded-[1.25rem] transition active:scale-95 uppercase tracking-widest text-xs text-center text-center">Batal</button>
+                        class="flex-1 bg-slate-100 text-slate-400 font-black py-4 rounded-[1.25rem] transition active:scale-95 uppercase tracking-widest text-xs text-center">Batal</button>
                 </div>
             </form>
         </div>
@@ -819,23 +825,23 @@
     <div id="cancelModal" class="fixed inset-0 z-[210] hidden flex items-center justify-center p-4 text-center">
         <div class="absolute inset-0 bg-slate-900/70 backdrop-blur-md text-center" onclick="closeCancelModal()"></div>
         <div
-            class="relative bg-white rounded-[2.5rem] p-10 max-w-sm w-full shadow-2xl text-center animate-modal border border-white/20 text-slate-800 text-center">
+            class="relative bg-white rounded-[2.5rem] p-10 max-w-sm w-full shadow-2xl text-center animate-modal border border-white/20 text-slate-800">
             <div
                 class="w-20 h-20 bg-rose-50 text-rose-500 rounded-3xl flex items-center justify-center mx-auto mb-6 border border-rose-100 relative shadow-inner text-center">
                 <i class="fas fa-trash-alt text-3xl text-center"></i>
             </div>
-            <h3 class="text-2xl font-black mb-3 tracking-tight text-center text-center">Batalkan Pengajuan?</h3>
-            <p class="text-slate-400 text-xs mb-10 leading-relaxed px-2 text-center text-center text-center">Data
+            <h3 class="text-2xl font-black mb-3 tracking-tight text-center">Batalkan Pengajuan?</h3>
+            <p class="text-slate-400 text-xs mb-10 leading-relaxed px-2 text-center">Data
                 pengajuan sertifikat <span id="cancelInfo"
                     class="font-black text-slate-800 underline decoration-orange-500 text-center"></span> akan dihapus
                 permanen.</p>
-            <form id="cancelForm" method="POST" class="space-y-3 text-center text-center">
+            <form id="cancelForm" method="POST" class="space-y-3 text-center">
                 @csrf @method('DELETE')
                 <button type="submit"
-                    class="w-full bg-rose-600 hover:bg-rose-700 text-white font-black py-4 rounded-2xl shadow-xl shadow-rose-600/30 transition active:scale-95 uppercase tracking-widest text-xs text-center text-center text-center">Ya,
+                    class="w-full bg-rose-600 hover:bg-rose-700 text-white font-black py-4 rounded-2xl shadow-xl shadow-rose-600/30 transition active:scale-95 uppercase tracking-widest text-xs text-center">Ya,
                     Batalkan</button>
                 <button type="button" onclick="closeCancelModal()"
-                    class="w-full text-slate-400 hover:text-slate-600 font-black py-2.5 transition text-[10px] uppercase tracking-widest text-center text-center text-center">Kembali</button>
+                    class="w-full text-slate-400 hover:text-slate-600 font-black py-2.5 transition text-[10px] uppercase tracking-widest text-center">Kembali</button>
             </form>
         </div>
     </div>
@@ -879,7 +885,7 @@
             const isHidden = d.classList.contains('hidden');
             d.classList.toggle('hidden');
             if (isHidden) {
-                markNotifRead();
+                makeNotifRead();
                 const closeHandler = (e) => {
                     const btn = document.getElementById('notifButton');
                     if (!d.contains(e.target) && btn && !btn.contains(e.target)) {
@@ -1061,12 +1067,16 @@
             new ApexCharts(document.querySelector("#performanceChart"), options).render();
         });
 
-        // ─── Modal Form ───────────────────────────────────────────────
+        // ─── Modal Form & Validation ───────────────────────────────────
         function openModal(mode, id = null, no_sertif = '', no_reg = '', alasan = '', nomor_surat = '', bagian = '', salah =
             '', benar = '') {
             const modal = document.getElementById('submissionModal');
             const form = document.getElementById('submissionForm');
             const methodField = document.getElementById('methodField');
+            
+            // Sembunyikan notifikasi error sisa validasi sebelumnya jika ada
+            document.getElementById('errorFileInput').classList.add('hidden');
+
             document.getElementById('inputNoSertif').value = no_sertif || '';
             document.getElementById('inputNoRegistrasi').value = no_reg || '';
             document.getElementById('inputAlasan').value = alasan || '';
@@ -1088,7 +1098,66 @@
 
         function closeModal() {
             document.getElementById('submissionModal').classList.add('hidden');
+            // Reset form dan pastikan error tersembunyi
+            document.getElementById('submissionForm').reset();
+            document.getElementById('errorFileInput').classList.add('hidden');
         }
+
+        // Logika Integrasi Validasi File Sisi Frontend
+        document.addEventListener('DOMContentLoaded', function() {
+            const form = document.getElementById('submissionForm');
+            const fileInput = document.getElementById('fileInput');
+            const errorMsg = document.getElementById('errorFileInput');
+            const errorText = document.getElementById('errorFileText');
+
+            if (form) {
+                form.addEventListener('submit', function(e) {
+                    errorMsg.classList.add('hidden');
+                    let hasError = false;
+
+                    const file = fileInput.files[0];
+                    const isEditMode = document.getElementById('methodField').innerHTML.includes('PUT');
+
+                    // 1. Jika mode ADD (tambah baru), wajib upload berkas bukti fisik
+                    if (!isEditMode && !file) {
+                        errorText.innerText = "Bukti dokumen PDF wajib diunggah!";
+                        errorMsg.classList.remove('hidden');
+                        hasError = true;
+                    } 
+                    
+                    // 2. Jika ada berkas dipilih, lakukan pengecekan tipe dan ukuran
+                    if (file) {
+                        // Cek Ekstensi berkas
+                        if (file.type !== 'application/pdf') {
+                            errorText.innerText = "Format tidak valid! Berkas pendukung wajib berupa berkas PDF.";
+                            errorMsg.classList.remove('hidden');
+                            hasError = true;
+                        }
+                        
+                        // Cek Ukuran berkas (Maksimal 2MB)
+                        const maxSize = 2 * 1024 * 1024; // Bytes
+                        if (file.size > maxSize) {
+                            errorText.innerText = "Ukuran file terlalu besar! Batas kapasitas unggahan maksimal 2MB.";
+                            errorMsg.classList.remove('hidden');
+                            hasError = true;
+                        }
+                    }
+
+                    // Gagalkan aksi submit form jika terdeteksi error data
+                    if (hasError) {
+                        e.preventDefault();
+                        fileInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    }
+                });
+            }
+
+            // Bersihkan indikator error saat input file dipilih ulang oleh user
+            if (fileInput) {
+                fileInput.addEventListener('change', function() {
+                    errorMsg.classList.add('hidden');
+                });
+            }
+        });
 
         function openCancelModal(id, no) {
             document.getElementById('cancelInfo').innerText = no || '';

@@ -31,19 +31,15 @@
 
     <!-- DATA FETCHING -->
     @php
-        // Filter hanya untuk Lembaga Uji
-        // Menggunakan FQCN untuk menghindari error
         $query = \App\Models\Submission::with('user')
             ->whereHas('user', function($q) {
                 $q->where('category', 'uji '); 
             });
 
-        // Ambil Antrian (Pending) - Prioritas FIFO (First In First Out)
         $submissions = (clone $query)->where('status', 'pending')
                                      ->orderBy('created_at', 'asc')
                                      ->paginate(10);
 
-        // Statistik
         $countPending = (clone $query)->where('status', 'pending')->count();
         
         $countApprovedMonth = (clone $query)->where('status', 'approved')
@@ -58,7 +54,7 @@
     <div class="flex h-screen overflow-hidden">
         
         <!-- SIDEBAR DESKTOP -->
-        <div class="hidden md:flex flex-shrink-0 w-64 h-full bg-slate-900 z-20">
+        <div class="hidden md:block flex-shrink-0 w-64 h-full bg-slate-900 z-20">
             @include('components.uji-sidebar')
         </div>
 
@@ -75,12 +71,10 @@
             <!-- MOBILE HEADER -->
             <div class="md:hidden bg-white border-b border-slate-200 px-4 py-3 flex items-center justify-between z-20 sticky top-0 shadow-sm">
                 <div class="flex items-center gap-3">
-                    <!-- Tombol Hamburger di Kiri -->
                     <button onclick="toggleSidebar()" class="p-2 text-slate-500 hover:text-teal-600 hover:bg-slate-100 rounded-lg transition-colors">
                         <i class="fas fa-bars text-xl"></i>
                     </button>
                     
-                    <!-- Logo/Brand -->
                     <div class="flex items-center gap-2">
                         <div class="w-8 h-8 rounded-lg bg-teal-600 flex items-center justify-center text-white shadow-sm">
                             <i class="fas fa-flask text-sm"></i>
@@ -89,13 +83,12 @@
                     </div>
                 </div>
 
-                <!-- Profile Icon Kanan -->
                 <div class="w-8 h-8 rounded-full bg-teal-100 flex items-center justify-center text-teal-600 text-xs font-bold border border-teal-200">
                     {{ substr(Auth::user()->name ?? 'L', 0, 1) }}
                 </div>
             </div>
 
-            <!-- HEADER DESKTOP (Simple) -->
+            <!-- HEADER DESKTOP -->
             <div class="hidden md:flex h-16 bg-white border-b border-slate-200 px-8 items-center justify-between">
                 <div>
                     <h1 class="text-lg font-bold text-slate-800">Panel Verifikasi</h1>
@@ -110,7 +103,6 @@
             <!-- MAIN CONTENT -->
             <main class="flex-1 overflow-x-hidden overflow-y-auto p-4 md:p-6 lg:p-8 space-y-6 md:space-y-8">
                 
-                <!-- ALERT SUKSES -->
                 @if (session('success'))
                     <div id="alert" class="p-4 bg-emerald-50 border border-emerald-100 text-emerald-800 rounded-xl shadow-sm flex items-center justify-between animate-fade-in-up">
                         <div class="flex items-center gap-3">
@@ -128,10 +120,8 @@
                     </div>
                 @endif
 
-                <!-- SECTION 1: STATISTIK WIDGETS -->
+                <!-- STATISTIK WIDGETS -->
                 <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4 md:gap-6">
-                    
-                    <!-- Card 1: Antrian Pending (Highlight) -->
                     <div class="relative bg-white rounded-2xl p-5 md:p-6 border border-slate-100 shadow-[0_4px_20px_-4px_rgba(0,0,0,0.05)] hover:-translate-y-1 transition-transform duration-300 group overflow-hidden">
                         <div class="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
                             <i class="fas fa-hourglass-half text-5xl md:text-6xl text-amber-500"></i>
@@ -148,14 +138,12 @@
                                 <span class="text-sm text-slate-500 mb-1.5">dokumen</span>
                             </div>
                             <p class="text-xs text-slate-400 mt-2 truncate">Menunggu verifikasi Anda saat ini</p>
-                            
                             <div class="w-full bg-slate-100 h-1.5 rounded-full mt-4 overflow-hidden">
                                 <div class="bg-amber-500 h-full rounded-full" style="width: {{ $countPending > 0 ? '100%' : '5%' }}"></div>
                             </div>
                         </div>
                     </div>
 
-                    <!-- Card 2: Disetujui Bulan Ini -->
                     <div class="relative bg-white rounded-2xl p-5 md:p-6 border border-slate-100 shadow-[0_4px_20px_-4px_rgba(0,0,0,0.05)] hover:-translate-y-1 transition-transform duration-300 group overflow-hidden">
                         <div class="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
                             <i class="fas fa-check-double text-5xl md:text-6xl text-emerald-500"></i>
@@ -175,7 +163,6 @@
                         </div>
                     </div>
 
-                    <!-- Card 3: Revisi Bulan Ini -->
                     <div class="relative bg-white rounded-2xl p-5 md:p-6 border border-slate-100 shadow-[0_4px_20px_-4px_rgba(0,0,0,0.05)] hover:-translate-y-1 transition-transform duration-300 group overflow-hidden sm:col-span-2 xl:col-span-1">
                         <div class="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
                             <i class="fas fa-undo-alt text-5xl md:text-6xl text-rose-500"></i>
@@ -196,7 +183,7 @@
                     </div>
                 </div>
 
-                <!-- SECTION 2: TABEL ANTRIAN -->
+                <!-- TABEL ANTRIAN -->
                 <div class="flex flex-col gap-4">
                     <div class="flex flex-col sm:flex-row justify-between items-start sm:items-end gap-4">
                         <div>
@@ -284,19 +271,18 @@
                                         </td>
 
                                         <td class="px-4 py-4 md:px-6 md:py-5">
-                                            <div class="flex flex-row sm:flex-row items-center justify-center gap-2">
-                                                <!-- Tombol Approve -->
+                                            <div class="flex flex-row items-center justify-center gap-2">
+                                                <!-- PERBAIKAN: Menambahkan link gdrive dan file path ke dalam attribute data button -->
                                                 <button 
-                                                    onclick="openModal('approve', '{{ $item->id }}', this.getAttribute('data-title'), '{{ $item->type }}')" 
+                                                    onclick="openModal('approve', '{{ $item->id }}', this.getAttribute('data-title'), '{{ $item->type }}', '{{ asset('storage/' . $item->file_path) }}', '{{ $item->gdrive_link ?? '' }}')" 
                                                     data-title="{{ $item->title }}"
                                                     class="bg-emerald-600 text-white p-2 md:p-2.5 rounded-lg hover:bg-emerald-700 shadow-sm hover:shadow-md transition-all active:scale-95 group/btn" 
                                                     title="Setujui">
                                                     <i class="fas fa-check text-sm w-4 h-4 md:w-5 md:h-5 flex items-center justify-center"></i>
                                                 </button>
                                                 
-                                                <!-- Tombol Reject -->
                                                 <button 
-                                                    onclick="openModal('reject', '{{ $item->id }}', this.getAttribute('data-title'), '{{ $item->type }}')" 
+                                                    onclick="openModal('reject', '{{ $item->id }}', this.getAttribute('data-title'), '{{ $item->type }}', '{{ asset('storage/' . $item->file_path) }}', '{{ $item->gdrive_link ?? '' }}')" 
                                                     data-title="{{ $item->title }}"
                                                     class="bg-white border border-rose-200 text-rose-600 p-2 md:p-2.5 rounded-lg hover:bg-rose-50 hover:border-rose-300 shadow-sm transition-all active:scale-95" 
                                                     title="Tolak / Revisi">
@@ -323,7 +309,6 @@
                         </div>
                     </div>
                     
-                    <!-- Pagination -->
                     @if($submissions->hasPages())
                         <div class="px-4">
                             {{ $submissions->links() }}
@@ -363,9 +348,42 @@
                                 <i class="fas fa-times text-lg"></i>
                             </button>
                         </div>
+
+                        <!-- BARU: SECTION PRATINJAU DATA SEBELUM DI-APPROVE / REJECT -->
+                        <div class="px-6 pt-5 pb-2">
+                            <div class="bg-slate-50 rounded-xl p-4 border border-slate-200/80 space-y-3">
+                                <div class="flex items-center gap-2 pb-2 border-b border-slate-200">
+                                    <i class="text-teal-600 fas fa-search-text text-sm"></i>
+                                    <span class="text-xs font-bold text-slate-700 uppercase tracking-wider">Pratinjau Data Dokumen</span>
+                                </div>
+                                <div class="grid grid-cols-3 gap-y-2 text-xs">
+                                    <div class="text-slate-400 font-medium">Judul Dokumen</div>
+                                    <div class="col-span-2 text-slate-800 font-semibold break-all" id="previewTitle">-</div>
+                                    
+                                    <div class="text-slate-400 font-medium">Jenis Lingkup</div>
+                                    <div class="col-span-2" id="previewType">-</div>
+                                    
+                                    <div class="text-slate-400 font-medium flex items-center">Berkas Utama</div>
+                                    <div class="col-span-2">
+                                        <a id="previewFileLink" href="#" target="_blank" class="inline-flex items-center gap-1.5 text-teal-600 hover:text-teal-800 font-bold bg-white px-2.5 py-1 rounded border border-slate-200 hover:border-teal-200 transition-colors shadow-sm">
+                                            <i class="far fa-file-pdf text-red-500"></i>
+                                            <span>Lihat Berkas Kelayakan</span>
+                                        </a>
+                                    </div>
+
+                                    <!-- DGDrive Container (Hanya muncul jika lingkup Radioterapi) -->
+                                    <div class="text-slate-400 font-medium flex items-center hidden" id="previewGDriveRowLabel">Tautan GDrive</div>
+                                    <div class="col-span-2 hidden" id="previewGDriveRowValue">
+                                        <a id="previewGDriveLink" href="#" target="_blank" class="inline-flex items-center gap-1.5 text-blue-600 hover:text-blue-800 font-bold bg-white px-2.5 py-1 rounded border border-slate-200 hover:border-blue-200 transition-colors shadow-sm">
+                                            <i class="fab fa-google-drive text-amber-500"></i>
+                                            <span>Buka Folder Radioterapi</span>
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                         
-                        <div class="px-6 py-6 space-y-5">
-                            
+                        <div class="px-6 py-4 space-y-5">
                             <div class="space-y-2 bg-slate-50 p-4 rounded-xl border border-slate-200" id="fileInputContainer">
                                 <label class="block text-xs font-bold text-slate-700 uppercase tracking-wide flex justify-between" id="fileInputLabel">
                                     <span>Upload Surat Balasan (PDF)</span>
@@ -403,14 +421,11 @@
     <script>
         function toggleSidebar() {
             const sidebar = document.getElementById('mobileSidebar');
-            if (sidebar.classList.contains('hidden')) {
-                sidebar.classList.remove('hidden');
-            } else {
-                sidebar.classList.add('hidden');
-            }
+            sidebar.classList.toggle('hidden');
         }
 
-        function openModal(action, id, title, type) {
+        // PERBAIKAN: Menambah parameter filePath dan gdriveLink pada openModal
+        function openModal(action, id, title, type, filePath, gdriveLink) {
             const modal = document.getElementById('verifyModal');
             const backdrop = document.getElementById('modalBackdrop');
             const panel = document.getElementById('modalPanel');
@@ -425,26 +440,43 @@
             const fileLabel = document.getElementById('fileInputLabel');
             const fileHelp = document.getElementById('fileInputHelp');
 
+            // BARU: Elemen pratinjau data
+            document.getElementById('previewTitle').innerText = title;
+            document.getElementById('previewType').innerText = type;
+            document.getElementById('previewFileLink').href = filePath;
+
+            // Logika Deteksi Khusus Radioterapi / Laporan Kinerja Radioterapi untuk menampilkan link GDrive
+            const isRadiotherapy = type.toLowerCase().includes('radioterapi') || title.toLowerCase().includes('radioterapi');
+            const rowLabel = document.getElementById('previewGDriveRowLabel');
+            const rowValue = document.getElementById('previewGDriveRowValue');
+            const gdriveAnchor = document.getElementById('previewGDriveLink');
+
+            if (isRadiotherapy && gdriveLink) {
+                gdriveAnchor.href = gdriveLink;
+                rowLabel.classList.remove('hidden');
+                rowValue.classList.remove('hidden');
+            } else {
+                rowLabel.classList.add('hidden');
+                rowValue.classList.add('hidden');
+            }
+
             if(action === 'approve') {
-                // Route harus sesuai: Route::post('/submission/approve/{id}')
                 form.action = "{{ url('/submission/approve') }}/" + id; 
                 titleEl.innerText = "Setujui Dokumen";
-                descEl.innerText = "Menyetujui: " + title;
+                descEl.innerText = "Menyetujui berkas pengajuan ini";
                 
                 iconBg.className = "flex-shrink-0 flex items-center justify-center h-12 w-12 rounded-full bg-emerald-100 text-emerald-600 border border-emerald-200";
                 icon.className = "fas fa-check text-xl";
                 btn.innerText = "Setujui & Kirim";
                 btn.className = "inline-flex w-full justify-center rounded-xl bg-emerald-600 px-5 py-2.5 text-sm font-bold text-white shadow-lg shadow-emerald-200 hover:shadow-none hover:bg-emerald-700 sm:w-auto transition-all active:scale-95";
                 
-                // Set wording upload file
                 fileLabel.innerHTML = `<span>Upload Surat Balasan (PDF)</span> <span class="text-[10px] bg-slate-200 px-1.5 py-0.5 rounded text-slate-500">Opsional</span>`;
                 fileHelp.innerHTML = '<i class="fas fa-info-circle"></i> <span>Dokumen SK atau surat balasan resmi.</span>';
 
             } else {
-                // Route harus sesuai: Route::post('/submission/reject/{id}')
                 form.action = "{{ url('/submission/reject') }}/" + id;
                 titleEl.innerText = "Kembalikan Revisi";
-                descEl.innerText = "Meminta revisi untuk: " + title;
+                descEl.innerText = "Meminta perbaikan berkas pengajuan";
                 
                 iconBg.className = "flex-shrink-0 flex items-center justify-center h-12 w-12 rounded-full bg-rose-100 text-rose-600 border border-rose-200";
                 icon.className = "fas fa-undo text-xl";
@@ -474,6 +506,7 @@
 
             setTimeout(() => {
                 modal.classList.add('hidden');
+                document.getElementById('verifyForm').reset();
             }, 300); 
         }
     </script>

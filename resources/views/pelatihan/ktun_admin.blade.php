@@ -42,12 +42,10 @@
 
     <div class="flex h-screen overflow-hidden">
         
-        <!-- SIDEBAR DESKTOP -->
         <div class="hidden md:block shrink-0">
             @include('components.pelatihan-sidebar')
         </div>
 
-        <!-- MOBILE SIDEBAR DRAWER -->
         <div id="mobileSidebar" class="fixed inset-0 z-[60] hidden">
             <div class="absolute inset-0 bg-slate-900/60 backdrop-blur-sm" onclick="toggleSidebar()"></div>
             <div class="absolute left-0 top-0 bottom-0 w-64 bg-blue-900 shadow-2xl transform transition-transform duration-300">
@@ -57,7 +55,6 @@
 
         <div class="flex-1 flex flex-col h-screen overflow-hidden relative w-full">
             
-            <!-- HEADER MOBILE -->
             <div class="md:hidden bg-white border-b border-slate-100 px-5 py-3.5 flex items-center justify-between z-30 sticky top-0 shadow-sm">
                 <div class="flex items-center gap-3">
                     <button onclick="toggleSidebar()" class="w-10 h-10 flex items-center justify-center text-slate-500 hover:text-blue-600 hover:bg-blue-50 rounded-2xl transition-all active:scale-90">
@@ -75,7 +72,6 @@
                 </div>
             </div>
 
-            <!-- HEADER DESKTOP -->
             <div class="hidden md:block">
                 @include('components.pelatihan-header', [
                     'title' => 'Dokumen Penetapan Dokumen',
@@ -87,7 +83,6 @@
                 
                 <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start max-w-[1600px] mx-auto">
                     
-                    <!-- KARTU INPUT -->
                     <div class="lg:col-span-5 space-y-6">
                         <div class="bg-white p-6 md:p-10 rounded-[3rem] shadow-[0_20px_60px_-20px_rgba(0,0,0,0.05)] border border-slate-100 relative overflow-hidden">
                             <div class="absolute -right-6 -top-6 w-32 h-32 bg-blue-50 rounded-full blur-3xl opacity-60"></div>
@@ -121,7 +116,7 @@
                                                         <input type="text" id="labSearch" placeholder="Cari laboratorium..." class="w-full pl-10 pr-4 py-2 bg-slate-50 border-none rounded-xl text-xs font-bold outline-none focus:ring-2 focus:ring-blue-100">
                                                     </div>
                                                 </div>
-                                                <div class="max-h-[220px] overflow-y-auto p-2 no-scrollbar" id="labList">
+                                               <div class="max-h-[220px] overflow-y-auto p-2 no-scrollbar" id="labList">
                                                     @foreach($labs as $lab)
                                                     <div onclick="selectLab('{{ $lab->id }}', '{{ $lab->name }}')" class="lab-item px-4 py-3 rounded-2xl text-sm font-bold text-slate-600 hover:bg-blue-50 hover:text-blue-600 cursor-pointer transition-colors" data-name="{{ strtolower($lab->name) }}">
                                                         {{ $lab->name }}
@@ -165,7 +160,6 @@
                         </div>
                     </div>
 
-                    <!-- TABEL RIWAYAT -->
                     <div class="lg:col-span-7">
                         <div class="bg-white rounded-[3rem] shadow-[0_20px_60px_-20px_rgba(0,0,0,0.05)] border border-slate-100 overflow-hidden">
                             <div class="px-8 py-8 border-b border-slate-50 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-white">
@@ -243,7 +237,6 @@
         </div>
     </div>
 
-    <!-- POP-UP BERHASIL DENGAN TIMER -->
     @if (session('success'))
     <div id="successPopup" class="fixed inset-0 z-[200] flex items-center justify-center p-6 bg-slate-900/40 backdrop-blur-md">
         <div class="absolute inset-0" onclick="closePopup()"></div>
@@ -257,14 +250,25 @@
             <button onclick="closePopup()" class="w-full bg-slate-900 text-white font-extrabold py-5 rounded-[2rem] hover:bg-blue-600 transition-all shadow-xl active:scale-95 uppercase text-xs tracking-widest">
                 Oke, Mantap!
             </button>
-            
-            <!-- Visual Timer Bar -->
             <div class="absolute bottom-0 left-0 h-1.5 bg-emerald-500 timer-bar"></div>
         </div>
     </div>
     @endif
 
-    <!-- POP-UP KONFIRMASI HAPUS (CUSTOM CONFIRM) -->
+    <div id="errorValidationPopup" class="fixed inset-0 z-[200] hidden flex items-center justify-center p-6 bg-slate-900/40 backdrop-blur-md">
+        <div class="absolute inset-0" onclick="closeErrorPopup()"></div>
+        <div class="relative bg-white rounded-[4rem] p-10 md:p-14 max-w-sm w-full shadow-[0_30px_100px_-15px_rgba(0,0,0,0.3)] text-center animate-gemay border border-white overflow-hidden">
+            <div class="w-24 h-24 bg-rose-50 text-rose-500 rounded-full flex items-center justify-center mx-auto mb-8 relative border-4 border-rose-100">
+                <i class="fas fa-exclamation-circle text-4xl"></i>
+            </div>
+            <h3 class="text-2xl font-extrabold text-slate-800 mb-3 tracking-tight uppercase">Gagal Mengirim</h3>
+            <p id="errorValidationMessage" class="text-slate-500 text-sm mb-10 leading-relaxed font-medium px-2">Keterangan error akan muncul di sini.</p>
+            <button onclick="closeErrorPopup()" class="w-full bg-rose-600 text-white font-extrabold py-5 rounded-[2rem] hover:bg-rose-700 transition-all shadow-xl active:scale-95 uppercase text-xs tracking-widest">
+                Perbaiki Data
+            </button>
+        </div>
+    </div>
+
     <div id="deleteConfirmPopup" class="fixed inset-0 z-[200] hidden flex items-center justify-center p-6 bg-slate-900/40 backdrop-blur-md">
         <div class="absolute inset-0" onclick="closeDeletePopup()"></div>
         <div class="relative bg-white rounded-[4rem] p-10 md:p-14 max-w-sm w-full shadow-[0_30px_100px_-15px_rgba(0,0,0,0.3)] text-center animate-gemay border border-white">
@@ -298,7 +302,7 @@
             if (successPopup) {
                 setTimeout(() => {
                     closePopup();
-                }, 5000); // Tutup otomatis setelah 5 detik
+                }, 5000);
             }
         };
 
@@ -309,6 +313,16 @@
                 popup.style.transition = 'all 0.4s ease';
                 setTimeout(() => popup.remove(), 400);
             }
+        }
+
+        // LOGIKA ERROR POPUP VALIDASI
+        function showErrorPopup(message) {
+            document.getElementById('errorValidationMessage').innerText = message;
+            document.getElementById('errorValidationPopup').classList.remove('hidden');
+        }
+
+        function closeErrorPopup() {
+            document.getElementById('errorValidationPopup').classList.add('hidden');
         }
 
         // LOGIKA KONFIRMASI HAPUS CUSTOM
@@ -328,7 +342,7 @@
             currentDeleteId = null;
         }
 
-        // LOGIKA DROPDOWN CUSTOM (Sama seperti sebelumnya)
+        // LOGIKA DROPDOWN CUSTOM
         function toggleDropdown() {
             const content = document.getElementById('dropdownContent');
             const isActive = content.classList.contains('active');
@@ -365,10 +379,24 @@
             }
         });
 
+        // LOGIKA VALIDASI UKURAN FILE & INTERSEPTOR SUBMIT
         function handleFileSelect(input, labelId) {
             const label = document.getElementById(labelId);
             if (input.files && input.files.length > 0) {
-                label.innerText = input.files[0].name;
+                const file = input.files[0];
+                const fileSizeInMB = file.size / (1024 * 1024);
+
+                // Validasi ukuran file maksimal 2MB
+                if (fileSizeInMB > 2) {
+                    showErrorPopup(`File "${file.name}" terlalu besar (${fileSizeInMB.toFixed(2)} MB). Maksimal ukuran file adalah 2 MB.`);
+                    input.value = ''; 
+                    label.innerText = "Klik untuk upload file...";
+                    label.classList.remove('text-blue-600', 'font-extrabold');
+                    label.classList.add('text-slate-400');
+                    return;
+                }
+
+                label.innerText = file.name;
                 label.classList.replace('text-slate-400', 'text-blue-600');
                 label.classList.add('font-extrabold');
             } else {
@@ -377,6 +405,32 @@
                 label.classList.add('text-slate-400');
             }
         }
+
+        document.getElementById('mainForm').addEventListener('submit', function(e) {
+            // Cek validasi dropdown laboratorium
+            const userId = document.getElementById('selectedUserId').value;
+            if (!userId) {
+                e.preventDefault(); 
+                showErrorPopup('Silakan pilih Laboratorium / Instansi Penerima terlebih dahulu!');
+                return;
+            }
+
+            // Cek data file kosong
+            const fileInputs = this.querySelectorAll('input[type="file"]');
+            let fileMissing = false;
+            
+            fileInputs.forEach(input => {
+                if (!input.files || input.files.length === 0) {
+                    fileMissing = true;
+                }
+            });
+
+            if (fileMissing) {
+                e.preventDefault();
+                showErrorPopup('Semua dokumen wajib diisi sebelum mengirim paket data!');
+                return;
+            }
+        });
     </script>
 </body>
 </html>

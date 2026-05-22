@@ -120,19 +120,6 @@
                                 <h3 class="text-xl font-black text-slate-800">{{ $totalLembaga }} <span class="text-[10px] text-slate-300 ml-1">UNIT</span></h3>
                             </div>
                         </div>
-
-                        <div class="bg-white p-5 rounded-[2.2rem] shadow-sm flex items-center gap-4 stat-card h-[88px]">
-                            <div class="w-12 h-12 bg-emerald-50 text-emerald-600 rounded-2xl flex items-center justify-center shrink-0">
-                                <i class="fas fa-check-double text-lg"></i>
-                            </div>
-                            <div>
-                                <p class="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-0.5">Koneksi Sistem</p>
-                                <div class="flex items-center gap-1.5">
-                                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
-                                    <span class="text-[11px] font-bold text-emerald-600">Terhubung</span>
-                                </div>
-                            </div>
-                        </div>
                     </div>
 
                     <!-- Search Bar Fixed Alignment -->

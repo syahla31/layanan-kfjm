@@ -35,12 +35,10 @@
 
     <div class="flex h-screen overflow-hidden">
         
-        <!-- SIDEBAR DESKTOP -->
         <div class="hidden md:block shrink-0">
             @include('components.uji-sidebar')
         </div>
 
-        <!-- MOBILE SIDEBAR DRAWER -->
         <div id="mobileSidebar" class="fixed inset-0 z-[60] hidden">
             <div class="absolute inset-0 bg-slate-900/60 backdrop-blur-sm" onclick="toggleSidebar()"></div>
             <div class="absolute left-0 top-0 bottom-0 w-64 bg-teal-900 shadow-2xl transform transition-transform duration-300">
@@ -50,7 +48,6 @@
 
         <div class="flex-1 flex flex-col h-screen overflow-hidden relative w-full">
             
-            <!-- HEADER MOBILE (Sticky with Hamburger) -->
             <div class="md:hidden bg-white border-b border-slate-100 px-5 py-3.5 flex items-center justify-between z-30 sticky top-0 shadow-sm">
                 <div class="flex items-center gap-3">
                     <button onclick="toggleSidebar()" class="w-10 h-10 flex items-center justify-center text-slate-500 hover:text-teal-600 hover:bg-teal-50 rounded-2xl transition-all active:scale-90">
@@ -68,7 +65,6 @@
                 </div>
             </div>
 
-            <!-- HEADER DESKTOP -->
             <div class="hidden md:block">
                 @include('components.uji-header', [
                     'title' => 'Penetapan Dokumen',
@@ -80,7 +76,6 @@
                 
                 <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start max-w-[1600px] mx-auto">
                     
-                    <!-- KARTU INPUT (KIRI - 5/12) -->
                     <div class="lg:col-span-5 space-y-6">
                         <div class="bg-white p-6 md:p-10 rounded-[3rem] shadow-[0_20px_60px_-20px_rgba(0,0,0,0.05)] border border-slate-100 relative overflow-hidden">
                             <div class="absolute -right-6 -top-6 w-32 h-32 bg-teal-50 rounded-full blur-3xl opacity-60"></div>
@@ -99,12 +94,10 @@
                                 <form action="{{ route('ktun.store') }}" method="POST" enctype="multipart/form-data" class="space-y-6" id="mainForm">
                                     @csrf
                                     
-                                    <!-- Pilih Lab (BENAR-BENAR CUSTOM DROPDOWN) -->
                                     <div class="space-y-2">
                                         <label class="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest ml-3 italic">Pilih Laboratorium</label>
                                         
                                         <div class="relative" id="customDropdown">
-                                            <!-- Field Tampilan -->
                                             <button type="button" onclick="toggleDropdown()" id="dropdownBtn" class="w-full flex items-center justify-between bg-slate-50 border-2 border-dashed border-slate-100 rounded-[1.5rem] p-3 pl-4 text-sm font-bold focus:ring-2 focus:ring-teal-100 transition-all shadow-inner hover:border-teal-300">
                                                 <span id="selectedLabText" class="text-slate-400">
                                                 -- Pilih Instansi Penerima --
@@ -112,12 +105,9 @@
                                                 <i class="fas fa-chevron-down text-lg text-slate-300"></i>
                                             </button>
                                             
-                                            <!-- Input Tersembunyi untuk Form -->
                                             <input type="hidden" name="user_id" id="selectedUserId" required>
 
-                                            <!-- List Pilihan -->
                                             <div id="dropdownContent" class="dropdown-list absolute z-50 left-0 right-0 mt-2 bg-white border border-slate-100 rounded-3xl shadow-2xl transition-all duration-300 pointer-events-none opacity-0 scale-95 origin-top">
-                                                <!-- Search inside dropdown -->
                                                 <div class="p-4 border-b border-slate-50">
                                                     <div class="relative">
                                                         <i class="fas fa-search absolute left-4 top-1/2 -translate-y-1/2 text-slate-300 text-xs"></i>
@@ -126,7 +116,7 @@
                                                 </div>
                                                 <div class="max-h-[220px] overflow-y-auto p-2 no-scrollbar" id="labList">
                                                     @foreach($labs as $lab)
-                                                    <div onclick="selectLab('{{ $lab->id }}', '{{ $lab->name }}')" class="lab-item px-4 py-3 rounded-2xl text-sm font-bold text-slate-600 hover:bg-teal-50 hover:text-teal-600 cursor-pointer transition-colors" data-name="{{ strtolower($lab->name) }}">
+                                                    <div onclick="selectLab('{{ $lab->id }}', '{{ $lab->name }}')" class="lab-item px-4 py-3 rounded-2xl text-sm font-bold text-slate-600 hover:bg-teal-50 hover:text-teal-700 cursor-pointer transition-colors" data-name="{{ strtolower($lab->name) }}">
                                                         {{ $lab->name }}
                                                     </div>
                                                     @endforeach
@@ -135,7 +125,6 @@
                                         </div>
                                     </div>
 
-                                    <!-- 3 Upload Box (Style image_352757.png) -->
                                     <div class="space-y-4">
                                         @foreach([
                                             ['name' => 'file_pengantar', 'label' => '1. Surat Pengantar (PDF)'],
@@ -169,7 +158,6 @@
                         </div>
                     </div>
 
-                    <!-- TABEL RIWAYAT (KANAN - 7/12) -->
                     <div class="lg:col-span-7">
                         <div class="bg-white rounded-[3rem] shadow-[0_20px_60px_-20px_rgba(0,0,0,0.05)] border border-slate-100 overflow-hidden">
                             <div class="px-8 py-8 border-b border-slate-50 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-white">
@@ -252,9 +240,8 @@
         </div>
     </div>
 
-    <!-- POP-UP BERHASIL (SUCCESS MODAL) - BENAR-BENAR DI TENGAH & GEMAY -->
     @if (session('success'))
-    <div id="successPopup" class="fixed inset-0 z-[200] flex items-center justify-center p-6 bg-slate-900/40 backdrop-blur-md animate-fade">
+    <div id="successPopup" class="fixed inset-0 z-[200] flex items-center justify-center p-6 bg-slate-900/40 backdrop-blur-md">
         <div class="absolute inset-0" onclick="closePopup()"></div>
         <div class="relative bg-white rounded-[4rem] p-10 md:p-14 max-w-sm w-full shadow-[0_30px_100px_-15px_rgba(0,0,0,0.3)] text-center animate-gemay border border-white">
             <div class="w-24 h-24 bg-emerald-50 text-emerald-500 rounded-full flex items-center justify-center mx-auto mb-8 relative border-4 border-emerald-100">
@@ -270,15 +257,29 @@
     </div>
     @endif
 
+    <div id="errorValidationPopup" class="fixed inset-0 z-[200] hidden flex items-center justify-center p-6 bg-slate-900/40 backdrop-blur-md">
+        <div class="absolute inset-0" onclick="closeErrorPopup()"></div>
+        <div class="relative bg-white rounded-[4rem] p-10 md:p-14 max-w-sm w-full shadow-[0_30px_100px_-15px_rgba(0,0,0,0.3)] text-center animate-gemay border border-white overflow-hidden">
+            <div class="w-24 h-24 bg-rose-50 text-rose-500 rounded-full flex items-center justify-center mx-auto mb-8 relative border-4 border-rose-100">
+                <i class="fas fa-exclamation-circle text-4xl"></i>
+            </div>
+            <h3 class="text-2xl font-extrabold text-slate-800 mb-3 tracking-tight uppercase">Gagal Mengirim</h3>
+            <p id="errorValidationMessage" class="text-slate-500 text-sm mb-10 leading-relaxed font-medium px-2">Keterangan error akan muncul di sini.</p>
+            <button onclick="closeErrorPopup()" class="w-full bg-rose-600 text-white font-extrabold py-5 rounded-[2rem] hover:bg-rose-700 transition-all shadow-xl active:scale-95 uppercase text-xs tracking-widest">
+                Perbaiki Data
+            </button>
+        </div>
+    </div>
+
     <script>
         function toggleSidebar() {
             const sidebar = document.getElementById('mobileSidebar');
             sidebar.classList.toggle('hidden');
         }
+
         // LOGIKA DROPDOWN CUSTOM
         function toggleDropdown() {
             const content = document.getElementById('dropdownContent');
-            const btn = document.getElementById('dropdownBtn');
             const isActive = content.classList.contains('active');
             
             if (isActive) {
@@ -299,7 +300,6 @@
             toggleDropdown();
         }
 
-        // Search Filter inside Dropdown
         document.getElementById('labSearch').addEventListener('input', function(e) {
             const term = e.target.value.toLowerCase();
             const items = document.querySelectorAll('.lab-item');
@@ -313,7 +313,6 @@
             });
         });
 
-        // Close dropdown when clicking outside
         window.addEventListener('click', function(e) {
             if (!document.getElementById('customDropdown').contains(e.target)) {
                 const content = document.getElementById('dropdownContent');
@@ -322,7 +321,7 @@
             }
         });
 
-        // POP-UP CONTROL
+        // POP-UP CONTROL BERSALIN
         function closePopup() {
             const popup = document.getElementById('successPopup');
             if (popup) {
@@ -332,11 +331,33 @@
             }
         }
 
-        // FILE SELECT PREVIEW
+        function showErrorPopup(message) {
+            document.getElementById('errorValidationMessage').innerText = message;
+            document.getElementById('errorValidationPopup').classList.remove('hidden');
+        }
+
+        function closeErrorPopup() {
+            document.getElementById('errorValidationPopup').classList.add('hidden');
+        }
+
+        // VALIDASI UKURAN FILE & LOGIKA LIVE PREVIEW
         function handleFileSelect(input, labelId) {
             const label = document.getElementById(labelId);
             if (input.files && input.files.length > 0) {
-                label.innerText = input.files[0].name;
+                const file = input.files[0];
+                const fileSizeInMB = file.size / (1024 * 1024);
+
+                // Cek jika ukuran file lebih dari 2 MB
+                if (fileSizeInMB > 2) {
+                    showErrorPopup(`Berkas "${file.name}" terlalu besar (${fileSizeInMB.toFixed(2)} MB). Batas maksimum ukuran dokumen adalah 2 MB.`);
+                    input.value = ''; 
+                    label.innerText = "Klik untuk upload file...";
+                    label.classList.remove('text-teal-600', 'font-extrabold');
+                    label.classList.add('text-slate-400');
+                    return;
+                }
+
+                label.innerText = file.name;
                 label.classList.remove('text-slate-400');
                 label.classList.add('text-teal-600', 'font-extrabold');
             } else {
@@ -345,6 +366,34 @@
                 label.classList.add('text-slate-400');
             }
         }
+
+        // INTERSEPTOR FORM SUBMIT (CEK DATA BELUM DIISI)
+        document.getElementById('mainForm').addEventListener('submit', function(e) {
+            const userId = document.getElementById('selectedUserId').value;
+            
+            // 1. Validasi dropdown institusi
+            if (!userId) {
+                e.preventDefault(); 
+                showErrorPopup('Silakan pilih Laboratorium / Instansi Penerima terlebih dahulu!');
+                return;
+            }
+
+            // 2. Validasi file kosong
+            const fileInputs = this.querySelectorAll('input[type="file"]');
+            let fileMissing = false;
+            
+            fileInputs.forEach(input => {
+                if (!input.files || input.files.length === 0) {
+                    fileMissing = true;
+                }
+            });
+
+            if (fileMissing) {
+                e.preventDefault();
+                showErrorPopup('Seluruh file paket dokumen penetapan (Surat Pengantar, KTUN, & Kwitansi) wajib diunggah!');
+                return;
+            }
+        });
     </script>
 </body>
 </html>

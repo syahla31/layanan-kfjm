@@ -6,17 +6,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard Lembaga Uji | SI-MUTU Pro</title>
 
-    <!-- Scripts & Styles -->
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap"
         rel="stylesheet">
-    <!-- Chart JS -->
     <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
-    <!-- SweetAlert2 -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
-    <!-- Custom Config Tailwind -->
     <script>
         tailwind.config = {
             theme: {
@@ -31,8 +27,8 @@
                         background: '#f8fafc', // Slate-50
                     },
                     boxShadow: {
-                        'soft': '0 4px 20px -2px rgba(0, 0, 0, 0.05)',
-                        'card': '0 0 0 1px rgba(0,0,0,0.03), 0 2px 8px rgba(0,0,0,0.04)',
+                        soft: '0 4px 20px -2px rgba(0, 0, 0, 0.05)',
+                        card: '0 0 0 1px rgba(0,0,0,0.03), 0 2px 8px rgba(0,0,0,0.04)',
                     },
                     animation: {
                         'fade-in-up': 'fadeInUp 0.5s cubic-bezier(0.16, 1, 0.3, 1)',
@@ -121,7 +117,6 @@
 
 <body class="bg-background text-slate-800 font-sans antialiased selection:bg-primary/20 selection:text-primary">
 
-    <!-- BACKEND LOGIC -->
     @php
         use App\Models\Submission;
         use Illuminate\Support\Facades\Auth;
@@ -130,7 +125,6 @@
         $scopeFilter = Request::get('scope');
 
         if (!isset($mySubmissions)) {
-            // FILTER UTAMA: Hanya mengambil tipe yang mengandung 'Laporan Tahunan'
             $query = Submission::where('user_id', Auth::id())
                 ->where('type', 'like', '%Laporan Tahunan%')
                 ->orderBy('created_at', 'desc');
@@ -154,7 +148,6 @@
         $total = $mySubmissions->count();
     @endphp
 
-    <!-- === POP-UP NOTIFIKASI MODAL (Berhasil) === -->
     @if (session('success'))
         <div id="successModal"
             class="fixed inset-0 z-[100] flex items-center justify-center bg-slate-900/40 backdrop-blur-[3px] transition-all duration-300">
@@ -172,7 +165,6 @@
                     {{ session('success') }}
                 </p>
 
-                <!-- Progress Bar -->
                 <div class="w-full bg-slate-100 h-1.5 rounded-full mb-5 overflow-hidden">
                     <div id="progressBar" class="h-full bg-teal-500 rounded-full" style="width: 100%"></div>
                 </div>
@@ -187,20 +179,16 @@
 
     <div class="flex h-screen overflow-hidden bg-slate-50">
 
-        <!-- === MOBILE OVERLAY === -->
         <div id="sidebarOverlay" onclick="toggleSidebar()"
             class="fixed inset-0 z-40 hidden lg:hidden glass-overlay transition-opacity duration-300"></div>
 
-        <!-- === SIDEBAR WRAPPER (Responsive) === -->
         <aside id="sidebar"
             class="fixed inset-y-0 left-0 z-50 w-64 bg-white shadow-2xl lg:shadow-none transform -translate-x-full transition-transform duration-300 ease-in-out lg:translate-x-0 lg:static lg:inset-auto flex flex-col h-full border-r border-slate-200">
             @include('components.uji-sidebar')
         </aside>
 
-        <!-- MAIN CONTENT -->
         <div class="flex-1 flex flex-col h-screen overflow-hidden relative bg-[#f8fafc]">
 
-            <!-- === HEADER MOBILE === -->
             <div
                 class="lg:hidden bg-white border-b border-slate-200 px-4 py-3 flex items-center justify-between z-20 sticky top-0 shadow-sm">
                 <div class="flex items-center gap-3">
@@ -222,7 +210,6 @@
                 </div>
             </div>
 
-            <!-- === HEADER DESKTOP === -->
             <div class="hidden lg:block sticky top-0 z-10 bg-white/80 backdrop-blur-md border-b border-slate-200">
                 @include('components.uji-header', [
                     'title' => 'Dashboard Laboratorium',
@@ -230,11 +217,9 @@
                 ])
             </div>
 
-            <!-- SCROLLABLE CONTENT -->
             <main class="flex-1 overflow-x-hidden overflow-y-auto p-4 md:p-8 scroll-smooth">
                 <div class="max-w-7xl mx-auto space-y-8">
 
-                    <!-- SECTION 1: OVERVIEW & CHARTS -->
                     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 animate-fade-in-up">
                         <div class="lg:col-span-2 space-y-6">
                             <div
@@ -244,9 +229,7 @@
                                 </div>
                                 <div class="relative z-10">
                                     <h2 class="text-2xl font-bold mb-2">Selamat Datang, Laboratorium!</h2>
-                                    <p class="text-teal-100/90 text-sm leading-relaxed mb-6 max-w-lg">Kelola dokumen
-                                        pengajuan uji mutu Anda dengan mudah. Pantau revisi dan persetujuan secara
-                                        real-time.</p>
+                                    <p class="text-teal-100/90 text-sm leading-relaxed mb-6 max-w-lg">Kelola dokumen pengajuan uji mutu Anda dengan mudah. Pantau revisi dan persetujuan secara real-time.</p>
                                     <button onclick="openModal('add')"
                                         class="bg-white text-teal-700 px-5 py-2.5 rounded-lg font-bold text-sm shadow hover:bg-teal-50 transition-all flex items-center gap-2">
                                         <i class="fas fa-plus-circle"></i> Buat Pengajuan Baru
@@ -261,8 +244,7 @@
                                             class="w-8 h-8 rounded-lg bg-amber-50 text-amber-600 flex items-center justify-center text-sm border border-amber-100">
                                             <i class="fas fa-hourglass-half"></i>
                                         </div>
-                                        <span
-                                            class="text-xs font-bold text-slate-400 uppercase tracking-wide">Menunggu</span>
+                                        <span class="text-xs font-bold text-slate-400 uppercase tracking-wide">Menunggu</span>
                                     </div>
                                     <div class="text-2xl font-bold text-slate-800 ml-1">{{ $myPending }}</div>
                                 </div>
@@ -272,8 +254,7 @@
                                             class="w-8 h-8 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center text-sm border border-emerald-100">
                                             <i class="fas fa-check-circle"></i>
                                         </div>
-                                        <span
-                                            class="text-xs font-bold text-slate-400 uppercase tracking-wide">Disetujui</span>
+                                        <span class="text-xs font-bold text-slate-400 uppercase tracking-wide">Disetujui</span>
                                     </div>
                                     <div class="text-2xl font-bold text-slate-800 ml-1">{{ $myApproved }}</div>
                                 </div>
@@ -283,8 +264,7 @@
                                             class="w-8 h-8 rounded-lg bg-rose-50 text-rose-600 flex items-center justify-center text-sm border border-rose-100">
                                             <i class="fas fa-exclamation-triangle"></i>
                                         </div>
-                                        <span
-                                            class="text-xs font-bold text-slate-400 uppercase tracking-wide">Revisi</span>
+                                        <span class="text-xs font-bold text-slate-400 uppercase tracking-wide">Revisi</span>
                                     </div>
                                     <div class="text-2xl font-bold text-slate-800 ml-1">{{ $myRejected }}</div>
                                 </div>
@@ -307,24 +287,18 @@
                         </div>
                     </div>
 
-                    <!-- SECTION 2: DATA TABLE -->
                     <div class="bg-white rounded-2xl shadow-card border border-slate-200 overflow-hidden animate-fade-in-up"
                         style="animation-delay: 200ms;">
-                        <div
-                            class="p-4 border-b border-slate-100 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                            <div
-                                class="bg-slate-100 p-1 rounded-xl inline-flex gap-1 overflow-x-auto hide-scrollbar max-w-full">
+                        <div class="p-4 border-b border-slate-100 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                            <div class="bg-slate-100 p-1 rounded-xl inline-flex gap-1 overflow-x-auto hide-scrollbar max-w-full">
                                 <a href="?scope="
                                     class="px-4 py-2 rounded-lg text-xs font-bold transition-all {{ !$scopeFilter ? 'bg-white text-slate-800 shadow-sm' : 'text-slate-500 hover:bg-slate-200/50' }}">Semua</a>
                                 <a href="?scope=LUK"
-                                    class="px-4 py-2 rounded-lg text-xs font-bold transition-all {{ $scopeFilter == 'LUK' ? 'bg-white text-indigo-600 shadow-sm' : 'text-slate-500 hover:bg-slate-200/50' }}">Uji
-                                    Kesesuaian</a>
+                                    class="px-4 py-2 rounded-lg text-xs font-bold transition-all {{ $scopeFilter == 'LUK' ? 'bg-white text-indigo-600 shadow-sm' : 'text-slate-500 hover:bg-slate-200/50' }}">Uji Kesesuaian</a>
                                 <a href="?scope=Eksterna"
-                                    class="px-4 py-2 rounded-lg text-xs font-bold transition-all {{ $scopeFilter == 'Eksterna' ? 'bg-white text-orange-600 shadow-sm' : 'text-slate-500 hover:bg-slate-200/50' }}">Dosis
-                                    Eksterna</a>
+                                    class="px-4 py-2 rounded-lg text-xs font-bold transition-all {{ $scopeFilter == 'Eksterna' ? 'bg-white text-orange-600 shadow-sm' : 'text-slate-500 hover:bg-slate-200/50' }}">Dosis Eksterna</a>
                                 <a href="?scope=Nuklida"
-                                    class="px-4 py-2 rounded-lg text-xs font-bold transition-all {{ $scopeFilter == 'Nuklida' ? 'bg-white text-rose-600 shadow-sm' : 'text-slate-500 hover:bg-slate-200/50' }}">Uji
-                                    Nuklida</a>
+                                    class="px-4 py-2 rounded-lg text-xs font-bold transition-all {{ $scopeFilter == 'Nuklida' ? 'bg-white text-rose-600 shadow-sm' : 'text-slate-500 hover:bg-slate-200/50' }}">Uji Nuklida</a>
                                 <a href="?scope=Radioterapi"
                                     class="px-4 py-2 rounded-lg text-xs font-bold transition-all {{ $scopeFilter == 'Radioterapi' ? 'bg-white text-purple-600 shadow-sm' : 'text-slate-500 hover:bg-slate-200/50' }}">Radioterapi</a>
                                 <a href="?scope=Radioaktivitas Lingkungan"
@@ -353,13 +327,11 @@
                                         <tr class="group hover:bg-slate-50/50 transition-colors">
                                             <td class="px-6 py-4">
                                                 <div class="flex items-center gap-4">
-                                                    <div
-                                                        class="w-10 h-10 rounded-lg bg-teal-50 flex items-center justify-center text-teal-600 border border-teal-100">
+                                                    <div class="w-10 h-10 rounded-lg bg-teal-50 flex items-center justify-center text-teal-600 border border-teal-100">
                                                         <i class="far fa-file-pdf text-lg"></i>
                                                     </div>
                                                     <div>
-                                                        <div class="font-bold text-slate-800 text-sm">
-                                                            {{ $item->title }}</div>
+                                                        <div class="font-bold text-slate-800 text-sm">{{ $item->title }}</div>
                                                         <div class="text-xs text-slate-400 mt-0.5">
                                                             {{ $item->created_at->format('d M Y') }} •
                                                             {{ $item->created_at->format('H:i') }}</div>
@@ -372,16 +344,15 @@
                                                     $scope = $parts[0] ?? $item->type;
                                                     $type = $parts[1] ?? '';
 
-                                                    // Logika pemetaan warna berdasarkan scope
+                                                    // Pembersihan karakter penyeimbang tabulasi ilegal yang memicu ParseError
                                                     $badgeColors = [
-                                                        'LUK'                       => 'bg-indigo-50 text-indigo-600 border-indigo-100',
-                                                        'Eksterna'                  => 'bg-orange-50 text-orange-600 border-orange-100',
-                                                        'Nuklida'                   => 'bg-rose-50 text-rose-600 border-rose-100',
-                                                        'Radioterapi'               => 'bg-purple-50 text-purple-600 border-purple-100',
-                                                        'Radioaktivitas Lingkungan' => 'bg-teal-50 text-teal-600 border-teal-100',
+                                                        'LUK' => 'bg-indigo-50 text-indigo-600 border-indigo-100',
+                                                        'Eksterna' => 'bg-orange-50 text-orange-600 border-orange-100',
+                                                        'Nuklida' => 'bg-rose-50 text-rose-600 border-rose-100',
+                                                        'Radioterapi' => 'bg-purple-50 text-purple-600 border-purple-100',
+                                                        'Radioaktivitas Lingkungan' => 'bg-teal-50 text-teal-600 border-teal-100'
                                                     ];
 
-                                                    // Ambil warna, kalau tidak ketemu default ke slate abu-abu
                                                     $currentColor = $badgeColors[$scope] ?? 'bg-slate-50 text-slate-600 border-slate-200';
                                                 @endphp
 
@@ -389,7 +360,6 @@
                                                     <span class="px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wide border {{ $currentColor }}">
                                                         {{ $scope }}
                                                     </span>
-                                                    
                                                     @if ($type)
                                                         <span class="text-xs text-slate-500">{{ $type }}</span>
                                                     @endif
@@ -397,60 +367,49 @@
                                             </td>
                                             <td class="px-6 py-4 text-center">
                                                 @if ($item->status == 'pending')
-                                                    <span
-                                                        class="inline-flex items-center px-2.5 py-1 rounded-full bg-amber-50 border border-amber-200 text-xs font-bold text-amber-700 gap-1.5">
-                                                        <span
-                                                            class="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse"></span>
+                                                    <span class="inline-flex items-center px-2.5 py-1 rounded-full bg-amber-50 border border-amber-200 text-xs font-bold text-amber-700 gap-1.5">
+                                                        <span class="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse"></span>
                                                         Menunggu
                                                     </span>
                                                 @elseif($item->status == 'approved')
-                                                    <span
-                                                        class="inline-flex items-center px-2.5 py-1 rounded-full bg-emerald-50 border border-emerald-200 text-xs font-bold text-emerald-700 gap-1.5">
+                                                    <span class="inline-flex items-center px-2.5 py-1 rounded-full bg-emerald-50 border border-emerald-200 text-xs font-bold text-emerald-700 gap-1.5">
                                                         <i class="fas fa-check text-[10px]"></i> Disetujui
                                                     </span>
                                                 @elseif($item->status == 'rejected')
-                                                    <span
-                                                        class="inline-flex items-center px-2.5 py-1 rounded-full bg-rose-50 border border-rose-200 text-xs font-bold text-rose-700 gap-1.5">
+                                                    <span class="inline-flex items-center px-2.5 py-1 rounded-full bg-rose-50 border border-rose-200 text-xs font-bold text-rose-700 gap-1.5">
                                                         <i class="fas fa-exclamation text-[10px]"></i> Revisi
                                                     </span>
                                                 @endif
                                             </td>
                                             <td class="px-6 py-4 text-center">
-                                                <button
-                                                    onclick='openHistoryModal(@json($item->files), "{{ $item->status }}", "{{ $item->updated_at }}")'
+                                                <button onclick='openHistoryModal(@json($item->files), "{{ $item->status }}", "{{ $item->updated_at }}")'
                                                     class="px-2.5 py-1 rounded-lg bg-slate-50 border border-slate-200 text-slate-600 text-xs font-bold hover:border-primary transition-all">
                                                     v{{ $item->files ? $item->files->count() : 0 }}
                                                 </button>
                                             </td>
                                             <td class="px-6 py-4 text-center">
                                                 <div class="flex items-center justify-center gap-2">
-                                                    <a href="{{ asset('storage/' . $item->file_path) }}"
-                                                        target="_blank"
+                                                    <a href="{{ asset('storage/' . $item->file_path) }}" target="_blank"
                                                         class="w-8 h-8 flex items-center justify-center rounded-lg bg-white border border-slate-200 text-slate-500 hover:text-primary transition-all"
                                                         title="Lihat File"><i class="far fa-eye"></i></a>
                                                     @if ($item->status == 'rejected')
-                                                        <button
-                                                            onclick="openModal('edit', {{ $item->id }}, '{{ $item->type }}', '{{ $item->title }}')"
+                                                        <button onclick="openModal('edit', {{ $item->id }}, '{{ $item->type }}', '{{ $item->title }}')"
                                                             class="w-8 h-8 flex items-center justify-center rounded-lg bg-amber-50 border border-amber-200 text-amber-600 transition-all"
-                                                            title="Upload Revisi"><i
-                                                                class="fas fa-upload"></i></button>
+                                                            title="Upload Revisi"><i class="fas fa-upload"></i></button>
                                                     @endif
                                                     @if ($item->status == 'pending')
                                                         <button onclick="deleteSubmission({{ $item->id }})"
                                                             class="w-8 h-8 flex items-center justify-center rounded-lg bg-white border border-slate-200 text-slate-400 hover:text-rose-500 transition-all"
                                                             title="Batalkan"><i class="fas fa-trash-alt"></i></button>
-                                                        <form id="delete-form-{{ $item->id }}"
-                                                            action="{{ route('submission.destroy', $item->id) }}"
-                                                            method="POST" style="display: none;">@csrf
-                                                            @method('DELETE')</form>
+                                                        <form id="delete-form-{{ $item->id }}" action="{{ route('submission.destroy', $item->id) }}"
+                                                            method="POST" style="display: none;">@csrf @method('DELETE')</form>
                                                     @endif
                                                 </div>
                                             </td>
                                         </tr>
                                     @empty
                                         <tr>
-                                            <td colspan="5" class="px-6 py-24 text-center text-slate-400">Belum ada
-                                                dokumen.</td>
+                                            <td colspan="5" class="px-6 py-24 text-center text-slate-400">Belum ada dokumen.</td>
                                         </tr>
                                     @endforelse
                                 </tbody>
@@ -466,88 +425,66 @@
         </div>
     </div>
 
-    <!-- MODAL FORM -->
     <div id="submissionModal" class="fixed inset-0 z-50 hidden" role="dialog" aria-modal="true">
-        <div class="fixed inset-0 bg-slate-900/50 transition-opacity opacity-0" id="modalBackdrop"
-            onclick="closeModal()"></div>
+        <div class="fixed inset-0 bg-slate-900/50 transition-opacity opacity-0" id="modalBackdrop" onclick="closeModal()"></div>
         <div class="fixed inset-0 z-10 overflow-y-auto">
             <div class="flex min-h-full items-center justify-center p-4 text-center sm:p-0">
                 <div class="relative transform overflow-hidden rounded-xl bg-white text-left shadow-xl transition-all w-full max-w-lg opacity-0 scale-95"
                     id="modalPanel">
                     <div class="px-6 py-4 border-b border-slate-100 flex justify-between items-center bg-white">
                         <h3 class="text-lg font-bold text-slate-800" id="modalTitle"><span>Upload Laporan</span></h3>
-                        <button onclick="closeModal()"
-                            class="text-slate-400 hover:text-slate-600 transition-colors"><i
-                                class="fas fa-times text-lg"></i></button>
+                        <button onclick="closeModal()" class="text-slate-400 hover:text-slate-600 transition-colors">
+                            <i class="fas fa-times text-lg"></i>
+                        </button>
                     </div>
-                    <form id="submissionForm" method="POST" enctype="multipart/form-data"
-                        action="{{ route('submission.store') }}" class="px-6 pb-6 pt-2 space-y-4 text-left max-h-[75vh] overflow-y-auto modal-scroll">
+                    <form id="submissionForm" method="POST" enctype="multipart/form-data" action="{{ route('submission.store') }}"
+                        class="px-6 pb-6 pt-2 space-y-4 text-left max-h-[75vh] overflow-y-auto modal-scroll">
                         @csrf
                         <div id="methodField"></div>
                         <input type="hidden" name="type" id="finalType">
                         <input type="hidden" id="scopeValue" value="LUK">
 
                         <div class="space-y-1.5 !mt-2">
-                            <label class="text-xs font-bold text-slate-500 uppercase tracking-wider">Lingkup
-                                Layanan</label>
+                            <label class="text-xs font-bold text-slate-500 uppercase tracking-wider">Lingkup Layanan</label>
                             <div class="relative" id="customScopeDropdown">
                                 <button type="button" onclick="toggleDropdown('dropdownMenuScope', 'arrowScope')"
                                     class="w-full text-left bg-slate-50 border border-slate-200 text-slate-700 font-bold rounded-lg py-2.5 px-4 flex justify-between items-center transition-all">
                                     <span id="selectedScopeText" class="text-sm">Lembaga Uji Kesesuaian</span>
-                                    <i class="fas fa-chevron-down text-slate-400 text-xs transition-transform"
-                                        id="arrowScope"></i>
+                                    <i class="fas fa-chevron-down text-slate-400 text-xs transition-transform" id="arrowScope"></i>
                                 </button>
-                                <div id="dropdownMenuScope"
-                                    class="hidden absolute z-50 mt-1 w-full bg-white border border-slate-100 rounded-lg shadow-xl max-h-60 overflow-y-auto p-1">
-                                    <button type="button" onclick="selectScope('LUK', 'Lembaga Uji Kesesuaian')"
-                                        class="w-full text-left px-4 py-2 hover:bg-slate-50 hover:text-primary rounded-md text-sm font-medium transition-all">Lembaga
-                                        Uji Kesesuaian</button>
-                                    <button type="button"
-                                        onclick="selectScope('Eksterna', 'Evaluasi Dosis Eksterna')"
-                                        class="w-full text-left px-4 py-2 hover:bg-slate-50 hover:text-primary rounded-md text-sm font-medium transition-all">Evaluasi
-                                        Dosis Eksterna</button>
-                                    <button type="button"
-                                        onclick="selectScope('Nuklida', 'Standardisasi Radionuklida')"
-                                        class="w-full text-left px-4 py-2 hover:bg-slate-50 hover:text-primary rounded-md text-sm font-medium transition-all">Standardisasi
-                                        Radionuklida</button>
-                                    <button type="button"
-                                        onclick="selectScope('Radioterapi', 'Kalibrasi Radioterapi')"
-                                        class="w-full text-left px-4 py-2 hover:bg-slate-50 hover:text-primary rounded-md text-sm font-medium transition-all">Kalibrasi
-                                        Radioterapi</button>
-                                    <button type="button"
-                                        onclick="selectScope('Radioaktivitas Lingkungan', 'Lab Radioaktivitas')"
-                                        class="w-full text-left px-4 py-2 hover:bg-slate-50 hover:text-primary rounded-md text-sm font-medium transition-all">Lab
-                                        Radioaktivitas</button>
+                                <div id="dropdownMenuScope" class="hidden absolute z-50 mt-1 w-full bg-white border border-slate-100 rounded-lg shadow-xl max-h-60 overflow-y-auto p-1">
+                                    <button type="button" onclick="selectScope('LUK', 'Lembaga Uji Kesesuaian')" class="w-full text-left px-4 py-2 hover:bg-slate-50 hover:text-primary rounded-md text-sm font-medium transition-all">Lembaga Uji Kesesuaian</button>
+                                    <button type="button" onclick="selectScope('Eksterna', 'Evaluasi Dosis Eksterna')" class="w-full text-left px-4 py-2 hover:bg-slate-50 hover:text-primary rounded-md text-sm font-medium transition-all">Evaluasi Dosis Eksterna</button>
+                                    <button type="button" onclick="selectScope('Nuklida', 'Standardisasi Radionuklida')" class="w-full text-left px-4 py-2 hover:bg-slate-50 hover:text-primary rounded-md text-sm font-medium transition-all">Standardisasi Radionuklida</button>
+                                    <button type="button" onclick="selectScope('Radioterapi', 'Kalibrasi Radioterapi')" class="w-full text-left px-4 py-2 hover:bg-slate-50 hover:text-primary rounded-md text-sm font-medium transition-all">Kalibrasi Radioterapi</button>
+                                    <button type="button" onclick="selectScope('Radioaktivitas Lingkungan', 'Lab Radioaktivitas')" class="w-full text-left px-4 py-2 hover:bg-slate-50 hover:text-primary rounded-md text-sm font-medium transition-all">Lab Radioaktivitas</button>
                                 </div>
                             </div>
                         </div>
 
                         <div class="space-y-1.5">
-                            <label class="text-xs font-bold text-slate-500 uppercase tracking-wider">Judul
-                                Dokumen</label>
+                            <label class="text-xs font-bold text-slate-500 uppercase tracking-wider">Judul Dokumen</label>
                             <input type="text" name="title" id="inputTitle"
                                 class="w-full bg-white border border-slate-200 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all"
-                                placeholder="Contoh: Laporan Januari 2026" required>
+                                placeholder="Contoh: Laporan LUK 2026" required>
                             <input type="hidden" id="reportSelect" value="Laporan Tahunan">
                         </div>
 
                         <div class="space-y-1.5">
-                            <label class="text-xs font-bold text-slate-500 uppercase tracking-wider">File
-                                Dokumen</label>
-                            <div
-                                class="relative border-2 border-dashed border-slate-300 rounded-xl p-6 bg-slate-50 hover:bg-white hover:border-primary transition-all text-center">
-                                <input type="file" name="file_upload" id="inputFile"
-                                    class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-20"
+                            <label class="text-xs font-bold text-slate-500 uppercase tracking-wider">File Dokumen</label>
+                            <div class="relative border-2 border-dashed border-slate-300 rounded-xl p-6 bg-slate-50 hover:bg-white hover:border-primary transition-all text-center">
+                                <input type="file" name="file_upload" id="inputFile" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-20"
                                     accept=".pdf" onchange="updateFileName(this)">
                                 <div id="dropzoneContent">
                                     <i class="fas fa-cloud-upload-alt text-2xl text-slate-400 mb-2"></i>
                                     <p class="text-sm font-medium text-slate-600">Klik untuk upload file PDF</p>
-                                    <p class="text-[10px] text-slate-400 mt-0.5">Maksimal 10MB</p>
+                                    <p class="text-[10px] text-slate-400 mt-0.5">Maksimal 2MB</p>
                                 </div>
                                 <div id="fileNameDisplay" class="hidden relative z-10">
                                     <div class="flex items-center justify-center gap-2 text-primary font-bold text-sm">
-                                        <i class="fas fa-file-pdf"></i> <span
-                                            id="selectedFileName">filename.pdf</span></div>
+                                        <i class="fas fa-file-pdf"></i> 
+                                        <span id="selectedFileName">filename.pdf</span>
+                                    </div>
                                     <span class="text-[10px] text-slate-400 block mt-1">Klik untuk ganti file</span>
                                 </div>
                             </div>
@@ -563,7 +500,6 @@
                                     Harap lampirkan <b>Link Google Drive</b> yang berisi <b>Hasil Uji LHU</b> dan <b>Sertifikat</b> terkait. Pastikan akses file sudah dibuka (public/anyone with the link).
                                 </div>
                             </div>
-                            
                             <div class="space-y-1.5">
                                 <label class="text-xs font-bold text-slate-500 uppercase tracking-wider">Link GDrive (LHU & Sertifikat)</label>
                                 <input type="url" name="gdrive_link" id="gdriveLink"
@@ -573,11 +509,8 @@
                         </div>
 
                         <div class="flex items-center gap-3 pt-2">
-                            <button type="button" onclick="closeModal()"
-                                class="px-5 py-2.5 rounded-lg border border-slate-200 text-slate-600 font-bold text-sm hover:bg-slate-50 transition-colors">Batal</button>
-                            <button type="button" onclick="submitForm()"
-                                class="flex-1 py-2.5 rounded-lg bg-primary text-white font-bold text-sm shadow-md shadow-primary/20 hover:bg-teal-800 transition-all">Simpan
-                                Laporan</button>
+                            <button type="button" onclick="closeModal()" class="px-5 py-2.5 rounded-lg border border-slate-200 text-slate-600 font-bold text-sm hover:bg-slate-50 transition-colors">Batal</button>
+                            <button type="button" onclick="submitForm()" class="flex-1 py-2.5 rounded-lg bg-primary text-white font-bold text-sm shadow-md shadow-primary/20 hover:bg-teal-800 transition-all">Simpan Laporan</button>
                         </div>
                     </form>
                 </div>
@@ -585,32 +518,25 @@
         </div>
     </div>
 
-    <!-- HISTORY MODAL -->
     <div id="historyModal" class="fixed inset-0 z-50 hidden" role="dialog" aria-modal="true">
-        <div class="fixed inset-0 bg-slate-900/50 transition-opacity opacity-0" id="historyBackdrop"
-            onclick="closeHistoryModal()"></div>
+        <div class="fixed inset-0 bg-slate-900/50 transition-opacity opacity-0" id="historyBackdrop" onclick="closeHistoryModal()"></div>
         <div class="flex min-h-full items-center justify-center p-4">
-            <div class="relative transform overflow-hidden rounded-xl bg-white shadow-xl transition-all w-full max-w-4xl opacity-0 scale-95 flex flex-col max-h-[85vh]"
-                id="historyPanel">
-                <div
-                    class="px-6 py-4 border-b border-slate-100 flex justify-between items-center bg-white flex-shrink-0">
-                    <h3 class="font-bold text-lg text-slate-800 flex items-center gap-2"><i
-                            class="fas fa-history text-primary"></i> Riwayat Revisi</h3>
-                    <button onclick="closeHistoryModal()"
-                        class="text-slate-400 hover:text-slate-600 transition-all"><i
-                            class="fas fa-times text-lg"></i></button>
+            <div class="relative transform overflow-hidden rounded-xl bg-white shadow-xl transition-all w-full max-w-4xl opacity-0 scale-95 flex flex-col max-h-[85vh]" id="historyPanel">
+                <div class="px-6 py-4 border-b border-slate-100 flex justify-between items-center bg-white flex-shrink-0">
+                    <h3 class="font-bold text-lg text-slate-800 flex items-center gap-2">
+                        <i class="fas fa-history text-primary"></i> Riwayat Revisi
+                    </h3>
+                    <button onclick="closeHistoryModal()" class="text-slate-400 hover:text-slate-600 transition-all">
+                        <i class="fas fa-times text-lg"></i>
+                    </button>
                 </div>
                 <div class="overflow-y-auto p-0 bg-white flex-1 modal-scroll">
                     <table class="w-full text-left">
                         <thead class="bg-slate-50 sticky top-0 z-10 border-b border-slate-100">
                             <tr>
-                                <th
-                                    class="px-6 py-4 text-xs font-bold text-slate-400 uppercase tracking-widest w-20 text-center">
-                                    Ver</th>
-                                <th class="px-6 py-4 text-xs font-bold text-slate-400 uppercase tracking-widest w-1/3">
-                                    User Upload</th>
-                                <th class="px-6 py-4 text-xs font-bold text-slate-400 uppercase tracking-widest">Respon
-                                    Admin</th>
+                                <th class="px-6 py-4 text-xs font-bold text-slate-400 uppercase tracking-widest w-20 text-center">Ver</th>
+                                <th class="px-6 py-4 text-xs font-bold text-slate-400 uppercase tracking-widest w-1/3">User Upload</th>
+                                <th class="px-6 py-4 text-xs font-bold text-slate-400 uppercase tracking-widest">Respon Admin</th>
                             </tr>
                         </thead>
                         <tbody id="historyTableBody" class="divide-y divide-slate-100 bg-white"></tbody>
@@ -620,22 +546,17 @@
         </div>
     </div>
 
-    <!-- JAVASCRIPT -->
     <script>
-        // === POP-UP LOGIC ===
         function closeNotification(modalId) {
             const modal = document.getElementById(modalId);
             if (modal) {
                 modal.classList.add('opacity-0');
                 modal.querySelector('div').classList.add('scale-95');
-                setTimeout(() => {
-                    modal.style.display = 'none';
-                }, 300);
+                setTimeout(() => { modal.style.display = 'none'; }, 300);
             }
         }
 
         document.addEventListener('DOMContentLoaded', function() {
-            // Auto close success modal & Progress bar
             const successModal = document.getElementById('successModal');
             if (successModal) {
                 const pb = document.getElementById('progressBar');
@@ -643,12 +564,9 @@
                     pb.style.transition = 'width 3.5s linear';
                     pb.style.width = '0%';
                 }, 100);
-                setTimeout(() => {
-                    closeNotification('successModal');
-                }, 4000);
+                setTimeout(() => { closeNotification('successModal'); }, 4000);
             }
 
-            // Stats Logic
             const dataPending = parseInt('{{ $myPending }}') || 0;
             const dataApproved = parseInt('{{ $myApproved }}') || 0;
             const dataRejected = parseInt('{{ $myRejected }}') || 0;
@@ -657,47 +575,29 @@
             if (totalData > 0) {
                 const options = {
                     series: [dataPending, dataApproved, dataRejected],
-                    chart: {
-                        type: 'donut',
-                        height: 180,
-                        fontFamily: 'inherit'
-                    },
+                    chart: { type: 'donut', height: 180, fontFamily: 'inherit' },
                     labels: ['Menunggu', 'Disetujui', 'Revisi'],
                     colors: ['#f59e0b', '#10b981', '#f43f5e'],
-                    plotOptions: {
-                        pie: {
-                            donut: {
-                                size: '70%'
-                            }
-                        }
-                    },
-                    dataLabels: {
-                        enabled: false
-                    },
-                    legend: {
-                        show: false
-                    }
+                    plotOptions: { pie: { donut: { size: '70%' } } },
+                    dataLabels: { enabled: false },
+                    legend: { show: false }
                 };
                 new ApexCharts(document.querySelector("#statusChart"), options).render();
             }
+
             const searchInput = document.getElementById('tableSearch');
             const tableRows = document.querySelectorAll('#mainTable tbody tr');
 
             searchInput.addEventListener('input', function() {
                 const searchTerm = this.value.toLowerCase();
-
                 tableRows.forEach(row => {
-                    // Kita ambil teks dari kolom pertama (Dokumen) dan kedua (Kategori)
                     const docTitle = row.querySelector('td:first-child')?.innerText.toLowerCase() || "";
-                    
                     if (docTitle.includes(searchTerm)) {
-                        row.style.display = ""; // Tampilkan jika cocok
+                        row.style.display = ""; 
                     } else {
-                        row.style.display = "none"; // Sembunyikan jika tidak cocok
+                        row.style.display = "none"; 
                     }
                 });
-                
-                // Opsional: Tampilkan pesan "Data tidak ditemukan" jika semua baris tersembunyi
                 checkEmptyTable();
             });
         });
@@ -705,8 +605,6 @@
         function checkEmptyTable() {
             const tbody = document.querySelector('#mainTable tbody');
             const visibleRows = Array.from(tbody.querySelectorAll('tr')).filter(row => row.style.display !== 'none');
-            
-            // Hapus pesan "tidak ditemukan" yang lama jika ada
             const oldMsg = document.getElementById('no-results-msg');
             if (oldMsg) oldMsg.remove();
 
@@ -716,23 +614,20 @@
             }
         }
 
-        // === FILE SIZE VALIDATION ===
         function updateFileName(input) {
             const display = document.getElementById('fileNameDisplay');
             const content = document.getElementById('dropzoneContent');
             const nameSpan = document.getElementById('selectedFileName');
 
             if (input.files && input.files[0]) {
-                const fileSize = input.files[0].size / 1024 / 1024; // MB
-                if (fileSize > 10) {
+                const fileSize = input.files[0].size / 1024 / 1024;
+                if (fileSize > 2) {
                     Swal.fire({
                         icon: 'error',
                         title: 'File Terlalu Besar',
-                        text: 'Maksimal ukuran file laporan adalah 2 MB.',
+                        text: 'Maksimal ukuran file laporan adalah 2 MB. Silakan kompres berkas Anda.',
                         confirmButtonColor: '#0f766e',
-                        customClass: {
-                            popup: 'rounded-2xl'
-                        }
+                        customClass: { popup: 'rounded-2xl' }
                     });
                     resetFileInput();
                     return;
@@ -745,7 +640,6 @@
             }
         }
 
-        // Sidebar & UI Helpers
         function toggleSidebar() {
             const sidebar = document.getElementById('sidebar');
             const overlay = document.getElementById('sidebarOverlay');
@@ -782,18 +676,14 @@
         function selectScope(value, text, shouldToggle = true) {
             document.getElementById('scopeValue').value = value;
             document.getElementById('selectedScopeText').innerText = text;
-            
-            // Logika untuk menampilkan note Radioterapi
             const radioNote = document.getElementById('radiotherapyNote');
 
             if (value === 'Radioterapi') {
                 radioNote.classList.remove('hidden');
             } else {
                 radioNote.classList.add('hidden');
-                // Kosongkan input jika user pindah kategori
                 document.getElementById('gdriveLink').value = '';
             }
-
             if (shouldToggle) toggleDropdown('dropdownMenuScope', 'arrowScope');
         }
 
@@ -810,8 +700,8 @@
                 methodField.innerHTML = '';
                 inputTitle.value = '';
                 fileNote.classList.add('hidden');
-                document.getElementById('radiotherapyNote').classList.add('hidden'); // Reset note
-                selectScope('LUK', 'Lembaga Uji Kesesuaian', false); // Reset scope     
+                document.getElementById('radiotherapyNote').classList.add('hidden'); 
+                selectScope('LUK', 'Lembaga Uji Kesesuaian', false);     
             } else {
                 modalTitleSpan.innerText = 'Revisi Laporan';
                 form.action = "{{ url('/submission/update') }}/" + id;
@@ -823,26 +713,46 @@
             toggleModalAnimation('submissionModal', true);
         }
 
-        function closeModal() {
-            toggleModalAnimation('submissionModal', false);
-        }
-
-        function closeHistoryModal() {
-            toggleModalAnimation('historyModal', false);
-        }
+        function closeModal() { toggleModalAnimation('submissionModal', false); }
+        function closeHistoryModal() { toggleModalAnimation('historyModal', false); }
 
         function submitForm() {
             const scope = document.getElementById('scopeValue').value;
             const report = document.getElementById('reportSelect').value;
             const fileInput = document.getElementById('inputFile');
+            const inputTitle = document.getElementById('inputTitle').value.trim();
+            const gdriveLink = document.getElementById('gdriveLink').value.trim();
+            const isEditMode = document.getElementById('methodField').innerHTML !== '';
 
-            // Validasi file wajib untuk upload baru
-            if (!document.getElementById('methodField').innerHTML && !fileInput.files[0]) {
+            if (!inputTitle) {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Judul Kosong',
+                    text: 'Silakan isi judul dokumen laporan terlebih dahulu.',
+                    confirmButtonColor: '#0f766e',
+                    customClass: { popup: 'rounded-2xl' }
+                });
+                return;
+            }
+
+            if (!isEditMode && !fileInput.files[0]) {
                 Swal.fire({
                     icon: 'warning',
                     title: 'File Kosong',
-                    text: 'Silakan pilih file laporan PDF terlebih dahulu.',
-                    confirmButtonColor: '#0f766e'
+                    text: 'Silakan pilih file laporan berformat PDF terlebih dahulu.',
+                    confirmButtonColor: '#0f766e',
+                    customClass: { popup: 'rounded-2xl' }
+                });
+                return;
+            }
+
+            if (scope === 'Radioterapi' && !gdriveLink) {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Link GDrive Kosong',
+                    text: 'Khusus lingkup Radioterapi, harap sertakan Link Google Drive berkas LHU & Sertifikat.',
+                    confirmButtonColor: '#0f766e',
+                    customClass: { popup: 'rounded-2xl' }
                 });
                 return;
             }
@@ -861,14 +771,11 @@
             const tbody = document.getElementById('historyTableBody');
             tbody.innerHTML = '';
             if (!files || files.length === 0) {
-                tbody.innerHTML =
-                    '<tr><td colspan="3" class="px-6 py-12 text-center text-slate-300">Belum ada riwayat revisi.</td></tr>';
+                tbody.innerHTML = '<tr><td colspan="3" class="px-6 py-12 text-center text-slate-300">Belum ada riwayat revisi.</td></tr>';
             } else {
                 files.sort((a, b) => b.version - a.version).forEach((file, index) => {
                     const createdDate = new Date(file.created_at).toLocaleDateString('id-ID', {
-                        day: 'numeric',
-                        month: 'short',
-                        year: 'numeric'
+                        day: 'numeric', month: 'short', year: 'numeric'
                     });
                     let adminResponse = `<span class="text-slate-300 italic text-xs">Menunggu respon...</span>`;
                     if (file.admin_note || file.admin_file) {
@@ -898,9 +805,7 @@
                 confirmButtonColor: '#f43f5e',
                 cancelButtonColor: '#e2e8f0',
                 confirmButtonText: 'Ya, Hapus',
-                customClass: {
-                    popup: 'rounded-2xl'
-                }
+                customClass: { popup: 'rounded-2xl' }
             }).then((result) => {
                 if (result.isConfirmed) document.getElementById(`delete-form-${id}`).submit();
             });

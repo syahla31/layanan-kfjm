@@ -322,6 +322,8 @@
 
                     <form action="{{ route('verifikasi.store') }}" method="POST" enctype="multipart/form-data">
                         @csrf
+
+                        <input type="hidden" name="category" value="pelatihan">
                         <div class="px-6 py-6 space-y-5">
                             <!-- KUSTOM DROPDOWN TUJUAN LEMBAGA -->
                             <div class="space-y-1.5 relative">
