@@ -52,21 +52,17 @@
 </head>
 <body class="bg-slate-50 dark:bg-slate-900 font-sans text-slate-800 dark:text-slate-100 min-h-screen flex items-center justify-center relative overflow-x-hidden transition-colors duration-300 py-6 md:py-10">
 
-    <!-- Tombol Dark Mode -->
     <button onclick="toggleTheme()" class="fixed top-4 right-4 z-50 p-3 rounded-full bg-white dark:bg-slate-800 shadow-lg border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-yellow-400 hover:scale-110 transition-transform focus:outline-none">
         <i id="theme-icon" class="fas fa-moon text-xl w-6 h-6 flex items-center justify-center"></i>
     </button>
 
-    <!-- Background Decoration -->
     <div class="absolute inset-0 pointer-events-none overflow-hidden">
         <div class="absolute top-[-10%] left-[-10%] w-[300px] md:w-[600px] h-[300px] md:h-[600px] rounded-full mix-blend-multiply dark:mix-blend-color-dodge filter blur-3xl opacity-20 bg-{{ $color_theme }}-400"></div>
         <div class="absolute bottom-[-10%] right-[-10%] w-[300px] md:w-[600px] h-[300px] md:h-[600px] rounded-full mix-blend-multiply dark:mix-blend-color-dodge filter blur-3xl opacity-20 bg-{{ $color_theme }}-400"></div>
     </div>
 
-    <!-- MAIN CARD -->
     <div class="w-full max-w-5xl bg-white dark:bg-slate-800 rounded-2xl shadow-2xl overflow-hidden flex flex-col md:flex-row m-4 z-10 animate-fade-in border border-slate-100 dark:border-slate-700 min-h-[600px] md:h-[auto] md:max-h-[90vh]">
         
-        <!-- BAGIAN KIRI: Info -->
         <div class="w-full md:w-5/12 p-8 md:p-10 flex flex-col justify-between text-white relative overflow-hidden bg-gradient-to-br from-{{ $color_theme }}-600 to-{{ $color_theme }}-800">
             <div class="absolute top-0 left-0 w-full h-full opacity-10 pointer-events-none">
                 <i class="fas fa-atom absolute -top-10 -left-10 text-[6rem] md:text-[10rem]"></i>
@@ -94,7 +90,6 @@
             </div>
         </div>
 
-        <!-- BAGIAN KANAN: Form Register -->
         <div class="w-full md:w-7/12 p-6 md:p-12 bg-white dark:bg-slate-800 overflow-y-auto custom-scrollbar">
             <div class="text-center mb-6 md:mb-8">
                 <div class="w-14 h-14 md:w-16 md:h-16 rounded-full mx-auto flex items-center justify-center mb-4 bg-{{ $color_theme }}-100 dark:bg-slate-700 text-{{ $color_theme }}-600 dark:text-{{ $color_theme }}-400">
@@ -103,7 +98,6 @@
                 <h3 class="text-xl font-bold text-slate-800 dark:text-white">Buat Akun Baru</h3>
             </div>
 
-            <!-- Tampilkan Error -->
             @if ($errors->any())
                 <div class="mb-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded-lg text-sm">
                     <ul class="list-disc pl-4">
@@ -118,25 +112,21 @@
                 @csrf
                 <input type="hidden" name="register_type" value="{{ $type }}">
 
-                <!-- Nama Instansi -->
                 <div>
                     <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Nama Instansi / Perusahaan</label>
                     <input type="text" name="name" value="{{ old('name') }}" class="w-full px-4 py-2.5 rounded-lg border border-slate-300 dark:border-slate-600 bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-white focus:ring-2 focus:ring-{{ $color_theme }}-500 focus:border-{{ $color_theme }}-500 outline-none transition-all text-sm" placeholder="Contoh: PT. Sumber Waras" required autofocus>
                 </div>
 
-                <!-- Kode Instansi -->
                 <div>
                     <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Kode Instansi (Jika Ada)</label>
                     <input type="text" name="kode_instansi" value="{{ old('kode_instansi') }}" class="w-full px-4 py-2.5 rounded-lg border border-slate-300 dark:border-slate-600 bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-white focus:ring-2 focus:ring-{{ $color_theme }}-500 focus:border-{{ $color_theme }}-500 outline-none transition-all text-sm" placeholder="Contoh: LUK-001">
                 </div>
 
-                <!-- Email -->
                 <div>
                     <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Email Resmi</label>
                     <input type="email" name="email" value="{{ old('email') }}" class="w-full px-4 py-2.5 rounded-lg border border-slate-300 dark:border-slate-600 bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-white focus:ring-2 focus:ring-{{ $color_theme }}-500 focus:border-{{ $color_theme }}-500 outline-none transition-all text-sm" placeholder="email@instansi.com" required>
                 </div>
 
-                <!-- Password Row -->
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
                         <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Password</label>
@@ -152,7 +142,6 @@
                     Daftar Sekarang
                 </button>
 
-                <!-- Link Login khusus Mobile -->
                 <div class="md:hidden text-center mt-6 pt-6 border-t border-slate-100 dark:border-slate-700">
                     <p class="text-sm text-slate-500 dark:text-slate-400">
                         Sudah punya akun? 
@@ -163,12 +152,9 @@
         </div>
     </div>
 
-    <!-- POPUP NOTIFIKASI (MODAL) -->
     <div id="success-modal" class="fixed inset-0 z-[100] flex items-center justify-center p-4 hidden">
-        <!-- Backdrop -->
         <div class="absolute inset-0 bg-slate-900/60 backdrop-blur-sm transition-opacity"></div>
         
-        <!-- Modal Content -->
         <div class="relative bg-white dark:bg-slate-800 rounded-2xl shadow-2xl max-w-sm w-full p-8 text-center animate-scale-up border border-slate-200 dark:border-slate-700">
             <div class="w-20 h-20 bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-400 rounded-full flex items-center justify-center mx-auto mb-6">
                 <i class="fas fa-check-circle text-4xl"></i>
@@ -176,7 +162,7 @@
             
             <h4 class="text-xl font-bold text-slate-900 dark:text-white mb-2">Registrasi Berhasil!</h4>
             <p id="success-message" class="text-slate-600 dark:text-slate-400 text-sm leading-relaxed mb-8">
-                {{ session('success') }}
+                Tolong tunggu maksimal 2 x 24 jam untuk verifikasi akun Anda.
             </p>
             
             <button onclick="closeModal()" class="w-full py-3 px-4 rounded-xl bg-slate-900 dark:bg-white text-white dark:text-slate-900 font-bold text-sm hover:opacity-90 transition-all active:scale-95 shadow-lg">

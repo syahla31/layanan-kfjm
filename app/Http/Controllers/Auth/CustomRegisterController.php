@@ -57,14 +57,13 @@ class CustomRegisterController extends Controller
         ]);
 
         // 2. Buat User Baru (PAKAI CARA MANUAL / NEW OBJECT)
-        // Cara ini membypass pengecekan $fillable, jadi pasti masuk datanya.
         $user = new User();
         $user->name = $request->name;
         $user->email = $request->email;
         $user->password = Hash::make($request->password);
         
         // Data Kunci
-        $user->category = $request->register_type; // Mengambil value dari input hidden 'register_type'
+        $user->category = $request->register_type; 
         $user->role = 'user';
         $user->status = 'pending';
         $user->kode_instansi = $request->kode_instansi;
@@ -72,8 +71,8 @@ class CustomRegisterController extends Controller
         // 3. Simpan ke Database
         $user->save(); 
 
-        // 4. Redirect
-        return redirect()->route('login.' . $request->register_type)
+        // 4. Redirect KEMBALI KE HALAMAN REGISTER (Agar popup muncul)
+        return redirect()->back()
             ->with('success', 'Registrasi berhasil! Akun Anda sedang menunggu verifikasi Admin.');
     }
 }
