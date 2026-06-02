@@ -115,10 +115,10 @@
                 'hint'  => 'Laporan Tahunan, Rekaman Teknis dan Rekaman Mutu.'
             ],
             'file_kinerja'   => [
-                'label' => 'Laporan Kinerja & KAK', 
+                'label' => 'Laporan Kinerja', 
                 'bobot' => '5%', 
                 'icon' => 'fa-chart-line',
-                'hint'  => 'Laporan Kinerja Tahunan & KAK program terbaru.'
+                'hint'  => 'Laporan Kinerja Tahunan.'
             ],
             'file_sdm'       => [
                 'label' => 'Sumber Daya Manusia (SDM)', 

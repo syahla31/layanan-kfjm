@@ -78,7 +78,7 @@
             'file_legalitas' => ['label' => 'Aspek Legalitas & Perizinan', 'bobot' => 10, 'icon' => 'fa-building', 'color' => 'emerald'],
             'file_mutu'      => ['label' => 'Sistem Manajemen Mutu (SMM)', 'bobot' => 20, 'icon' => 'fa-check-double', 'color' => 'indigo'],
             'file_rekaman'   => ['label' => 'Rekaman & Laporan Implementasi', 'bobot' => 20, 'icon' => 'fa-history', 'color' => 'purple'],
-            'file_kinerja'   => ['label' => 'Laporan Kinerja & KAK', 'bobot' => 5, 'icon' => 'fa-chart-line', 'color' => 'cyan'],
+            'file_kinerja'   => ['label' => 'Laporan Kinerja', 'bobot' => 5, 'icon' => 'fa-chart-line', 'color' => 'cyan'],
             'file_sdm'       => ['label' => 'Sumber Daya Manusia (SDM)', 'bobot' => 10, 'icon' => 'fa-users', 'color' => 'teal'],
             'file_sarpras'   => ['label' => 'Sarana & Prasarana Penunjang', 'bobot' => 15, 'icon' => 'fa-tools', 'color' => 'amber'],
             'file_kurikulum' => ['label' => 'Metode Uji', 'bobot' => 20, 'icon' => 'fa-book-open', 'color' => 'rose']

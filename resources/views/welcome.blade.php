@@ -181,7 +181,6 @@
         </div>
     </div>
 
-    <!-- Modal Kebijakan Privasi -->
     <div id="privacyModal" class="fixed inset-0 z-[60] hidden opacity-0 transition-opacity duration-300">
         <div class="absolute inset-0 bg-slate-950/80 backdrop-blur-md" onclick="togglePrivacyModal()"></div>
         <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[90%] max-w-2xl glass-card rounded-[2.5rem] p-6 md:p-8 shadow-2xl overflow-hidden max-h-[85vh] flex flex-col">
@@ -289,7 +288,7 @@
                     <i class="fas fa-chalkboard-teacher"></i>
                 </div>
                 <h3 class="text-xl font-bold mb-2 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors tracking-tight">Lembaga Pelatihan</h3>
-                <p class="text-sm text-slate-500 dark:text-slate-400 font-medium leading-relaxed">Survailen & Pelaporan Kegiatan Pelatihan</p>
+                <p class="text-sm text-slate-500 dark:text-slate-400 font-medium leading-relaxed">Survailen & Pelaporan Kegiatan Pelatihan Ketenaganukliran</p>
                 <div class="mt-8 flex items-center text-blue-600 font-bold text-xs gap-2 opacity-0 group-hover:opacity-100 transition-all translate-y-2 group-hover:translate-y-0 duration-300 uppercase tracking-widest">
                     Masuk Lembaga Pelatihan <i class="fas fa-arrow-right"></i>
                 </div>
@@ -300,7 +299,7 @@
                     <i class="fas fa-flask"></i>
                 </div>
                 <h3 class="text-xl font-bold mb-2 group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors tracking-tight">Lembaga Uji</h3>
-                <p class="text-sm text-slate-500 dark:text-slate-400 font-medium leading-relaxed">LUK & Monitoring Dosis Dosimetri</p>
+                <p class="text-sm text-slate-500 dark:text-slate-400 font-medium leading-relaxed">Surveilan dan Pelaporan Kegiatan Lembaga Uji Ketenaganukliran</p>
                 <div class="mt-8 flex items-center text-emerald-600 font-bold text-xs gap-2 opacity-0 group-hover:opacity-100 transition-all translate-y-2 group-hover:translate-y-0 duration-300 uppercase tracking-widest">
                     Masuk Lembaga Uji <i class="fas fa-arrow-right"></i>
                 </div>
@@ -330,29 +329,59 @@
 
         </section>
 
+        <section class="w-full max-w-6xl mb-20 animate-slide-up" style="animation-delay: 300ms">
+            <div class="glass-card rounded-[2.5rem] p-6 md:p-8 shadow-xl border border-white/50 dark:border-white/5 overflow-hidden">
+                
+                <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6 text-left">
+                    <div class="flex items-center gap-3 flex-wrap">
+                        <h2 class="text-2xl font-black text-slate-900 dark:text-white tracking-tight italic flex items-center gap-3">
+                            <i class="fas fa-map-marked-alt text-blue-600 dark:text-blue-400"></i>
+                            Peta Sebaran Lembaga LU & LP
+                        </h2>
+                        <a href="https://peta-lu-lp.netlify.app/" target="_blank" 
+                           class="inline-flex items-center justify-center w-8 h-8 rounded-xl bg-blue-50 dark:bg-slate-800 text-blue-600 dark:text-blue-400 border border-blue-200 dark:border-slate-700 hover:scale-110 hover:bg-blue-600 hover:text-white dark:hover:bg-blue-600 dark:hover:text-white transition-all shadow-sm" 
+                           title="Buka di Tab Baru">
+                            <i class="fas fa-external-link-alt text-xs"></i>
+                        </a>
+                    </div>
+                </div>
+
+                <div class="w-full rounded-3xl overflow-hidden shadow-inner border border-slate-200 dark:border-slate-800 aspect-[4/3] sm:aspect-[16/10] md:h-[600px] bg-slate-100 dark:bg-slate-900">
+                    <iframe 
+                        src="https://peta-lu-lp.netlify.app/" 
+                        title="Peta Sebaran SI-MUTU BAPETEN"
+                        class="w-full h-full border-0"
+                        allowfullscreen="" 
+                        loading="lazy" 
+                        referrerpolicy="no-referrer-when-downgrade">
+                    </iframe>
+                </div>
+
+            </div>
+        </section>
         <footer class="w-full max-w-4xl flex flex-col items-center text-center space-y-8 animate-fade-in delay-500">
-        <div class="text-xs md:text-sm text-slate-500 dark:text-slate-400 font-medium space-y-4">
-            <div class="flex flex-wrap justify-center items-center gap-4 text-[11px] md:text-xs">
-                
-                <button type="button" onclick="togglePrivacyModal()" class="px-4 py-2 bg-slate-500/5 hover:bg-blue-600/10 text-slate-400 hover:text-blue-400 rounded-xl border border-slate-700/40 hover:border-blue-500/30 transition-all font-bold flex items-center gap-1.5 uppercase tracking-tighter">
-                    <i class="fas fa-shield-alt text-[10px]"></i> Kebijakan Privasi
-                </button>
-                
-                <a href="https://wa.me/6281288463770?text=Halo%2C%20saya%20ingin%20menanyakan%20mengenai%20sistem%20informasi%20jaminan%20mutu" target="_blank" class="px-4 py-2 bg-slate-500/5 hover:bg-emerald-600/10 text-slate-400 hover:text-emerald-400 rounded-xl border border-slate-700/40 hover:border-emerald-500/30 transition-all font-bold flex items-center gap-1.5 uppercase tracking-tighter">
-                    <i class="fab fa-whatsapp text-[12px]"></i> Bantuan Layanan
-                </a>
-                
-                <a href="{{ asset('manual-book.pdf') }}" target="_blank" class="px-4 py-2 bg-slate-500/5 hover:bg-amber-500/10 text-slate-400 hover:text-[#c9a050] rounded-xl border border-slate-700/40 hover:border-amber-500/40 transition-all font-bold flex items-center gap-1.5 uppercase tracking-tighter hover:shadow-[0_0_15px_rgba(201,160,80,0.3)]">
-                    <i class="fas fa-book-open text-[10px]"></i> Buku Panduan
-                </a>
-                                
-                <a href="{{ route('login.internal') }}" class="px-4 py-2 bg-slate-500/5 hover:bg-blue-600/15 text-slate-400 hover:text-blue-400 rounded-xl border border-slate-700/40 hover:border-blue-500/50 transition-all font-bold flex items-center gap-1.5 uppercase tracking-tighter hover:shadow-[0_0_15px_rgba(37,99,235,0.4)]">
-                    <i class="fas fa-user-lock text-[10px]"></i> Login Internal
-                </a>
+            <div class="text-xs md:text-sm text-slate-500 dark:text-slate-400 font-medium space-y-4">
+                <div class="flex flex-wrap justify-center items-center gap-4 text-[11px] md:text-xs">
+                    
+                    <button type="button" onclick="togglePrivacyModal()" class="px-4 py-2 bg-slate-500/5 hover:bg-blue-600/10 text-slate-400 hover:text-blue-400 rounded-xl border border-slate-700/40 hover:border-blue-500/30 transition-all font-bold flex items-center gap-1.5 uppercase tracking-tighter">
+                        <i class="fas fa-shield-alt text-[10px]"></i> Kebijakan Privasi
+                    </button>
+                    
+                    <a href="https://wa.me/6281288463770?text=Halo%2C%20saya%20ingin%20menanyakan%20mengenai%20sistem%20informasi%20jaminan%20mutu" target="_blank" class="px-4 py-2 bg-slate-500/5 hover:bg-emerald-600/10 text-slate-400 hover:text-emerald-400 rounded-xl border border-slate-700/40 hover:border-emerald-500/30 transition-all font-bold flex items-center gap-1.5 uppercase tracking-tighter">
+                        <i class="fab fa-whatsapp text-[12px]"></i> Bantuan Layanan
+                    </a>
+                    
+                    <a href="{{ asset('manual-book.pdf') }}" target="_blank" class="px-4 py-2 bg-slate-500/5 hover:bg-amber-500/10 text-slate-400 hover:text-[#c9a050] rounded-xl border border-slate-700/40 hover:border-amber-500/40 transition-all font-bold flex items-center gap-1.5 uppercase tracking-tighter hover:shadow-[0_0_15px_rgba(201,160,80,0.3)]">
+                        <i class="fas fa-book-open text-[10px]"></i> Buku Panduan
+                    </a>
+                                                    
+                    <a href="{{ route('login.internal') }}" class="px-4 py-2 bg-slate-500/5 hover:bg-blue-600/15 text-slate-400 hover:text-blue-400 rounded-xl border border-slate-700/40 hover:border-blue-500/50 transition-all font-bold flex items-center gap-1.5 uppercase tracking-tighter hover:shadow-[0_0_15px_rgba(37,99,235,0.4)]">
+                        <i class="fas fa-user-lock text-[10px]"></i> Login Internal
+                    </a>
+                </div>
                 <p>&copy; 2026 <strong>BAPETEN</strong> - Direktorat Keteknikan dan Kesiapsiagaan Nuklir - Kelompok Fungsi Jaminan Mutu</p>
             </div>
-        </div>
-    </footer>
+        </footer>
     </main>
 
     <script>

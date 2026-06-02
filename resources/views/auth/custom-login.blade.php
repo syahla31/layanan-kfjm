@@ -126,8 +126,8 @@
                         @elseif($type == 'pelatihan')
                             <div class="swiper-slide flex flex-col items-center text-center">
                                 <i class="fas fa-chalkboard-user text-4xl mb-3 text-teal-200"></i>
-                                <h4 class="font-bold text-sm mb-1 uppercase">Pelatihan PPR</h4>
-                                <p class="text-[11px] opacity-90 px-4">Penyelenggaraan kursus dan pelatihan proteksi radiasi yang terstandar.</p>
+                                <h4 class="font-bold text-sm mb-1 uppercase">PPR, Keahlian & PKZR</h4>
+                                <p class="text-[11px] opacity-90 px-4">Penyelenggaraan kursus dan pelatihan standar untuk proteksi radiasi serta pemenuhan kompetensi petugas.</p>
                             </div>
                         @endif
                         <div class="swiper-slide flex flex-col items-center text-center">

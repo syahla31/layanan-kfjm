@@ -290,7 +290,7 @@
                     <i class="fas fa-info-circle text-sm"></i>
                 </div>
                 <p class="text-xs text-slate-600 leading-relaxed font-medium">
-                    Pastikan Anda telah menindaklanjuti instruksi Admin di aplikasi <strong class="text-slate-800">BALISPEKERJA</strong> sebelum mengirim konfirmasi ini.
+                    Pastikan Anda telah menindaklanjuti instruksi Admin di aplikasi <strong class="text-slate-800">Balis 2.5 Modul Penunjukan</strong> sebelum mengirim konfirmasi ini.
                 </p>
             </div>
 
@@ -299,7 +299,7 @@
                 @method('PUT')
                 
                 <input type="hidden" name="title" id="hiddenDocTitle">
-                <input type="hidden" name="user_note" value="Lembaga telah menindaklanjuti dokumen via Balispekerja.">
+                <input type="hidden" name="user_note" value="Lembaga telah menindaklanjuti dokumen via Balis 2.5 Modul Penunjukan.">
                 <input type="hidden" name="force_status" value="pending">
                 
                 <div class="space-y-3">

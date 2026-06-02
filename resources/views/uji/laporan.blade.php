@@ -453,11 +453,11 @@
                                     <i class="fas fa-chevron-down text-slate-400 text-xs transition-transform" id="arrowScope"></i>
                                 </button>
                                 <div id="dropdownMenuScope" class="hidden absolute z-50 mt-1 w-full bg-white border border-slate-100 rounded-lg shadow-xl max-h-60 overflow-y-auto p-1">
-                                    <button type="button" onclick="selectScope('LUK', 'Lembaga Uji Kesesuaian')" class="w-full text-left px-4 py-2 hover:bg-slate-50 hover:text-primary rounded-md text-sm font-medium transition-all">Lembaga Uji Kesesuaian</button>
-                                    <button type="button" onclick="selectScope('Eksterna', 'Evaluasi Dosis Eksterna')" class="w-full text-left px-4 py-2 hover:bg-slate-50 hover:text-primary rounded-md text-sm font-medium transition-all">Evaluasi Dosis Eksterna</button>
-                                    <button type="button" onclick="selectScope('Nuklida', 'Standardisasi Radionuklida')" class="w-full text-left px-4 py-2 hover:bg-slate-50 hover:text-primary rounded-md text-sm font-medium transition-all">Standardisasi Radionuklida</button>
-                                    <button type="button" onclick="selectScope('Radioterapi', 'Kalibrasi Radioterapi')" class="w-full text-left px-4 py-2 hover:bg-slate-50 hover:text-primary rounded-md text-sm font-medium transition-all">Kalibrasi Radioterapi</button>
-                                    <button type="button" onclick="selectScope('Radioaktivitas Lingkungan', 'Lab Radioaktivitas')" class="w-full text-left px-4 py-2 hover:bg-slate-50 hover:text-primary rounded-md text-sm font-medium transition-all">Lab Radioaktivitas</button>
+                                    <button type="button" onclick="selectScope('LUK', 'Lembaga Uji Kesesuaian')" class="w-full text-left px-4 py-2 hover:bg-slate-50 hover:text-primary rounded-md text-sm font-medium transition-all">Lembaga Uji Kesesuaian (LUK)</button>
+                                    <button type="button" onclick="selectScope('Eksterna', '[LabDos] Evaluasi Peralatan Pemantau Dosis Ekstern')" class="w-full text-left px-4 py-2 hover:bg-slate-50 hover:text-primary rounded-md text-sm font-medium transition-all">[LabDos] Evaluasi Peralatan Pemantau Dosis Ekstern</button>
+                                    <button type="button" onclick="selectScope('Radioterapi', '[LabDos] Kalibrasi Keluaran Sumber Radioterapi')" class="w-full text-left px-4 py-2 hover:bg-slate-50 hover:text-primary rounded-md text-sm font-medium transition-all">[LabDos] Kalibrasi Keluaran Sumber Radioterapi</button>
+                                    <button type="button" onclick="selectScope('Nuklida', '[LabDos] Standardisasi Radionuklida')" class="w-full text-left px-4 py-2 hover:bg-slate-50 hover:text-primary rounded-md text-sm font-medium transition-all">[LabDos] Standardisasi Radionuklida</button>
+                                    <button type="button" onclick="selectScope('Radioaktivitas Lingkungan', 'Lab Uji Radioaktivitas Lingkungan')" class="w-full text-left px-4 py-2 hover:bg-slate-50 hover:text-primary rounded-md text-sm font-medium transition-all">Lab Uji Radioaktivitas Lingkungan</button>
                                 </div>
                             </div>
                         </div>
