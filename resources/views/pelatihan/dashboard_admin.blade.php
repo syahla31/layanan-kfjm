@@ -46,7 +46,6 @@
 
 <body class="bg-slate-50 text-slate-800 antialiased">
 
-    <!-- DATA FETCHING -->
     @php
         use App\Models\Submission;
         use Carbon\Carbon;
@@ -82,12 +81,10 @@
 
     <div class="flex h-screen overflow-hidden">
 
-        <!-- SIDEBAR DESKTOP -->
         <div class="hidden md:flex h-full bg-blue-900">
             @include('components.pelatihan-sidebar')
         </div>
 
-        <!-- MOBILE SIDEBAR OVERLAY -->
         <div id="mobileSidebar" class="fixed inset-0 z-50 hidden">
             <div class="absolute inset-0 bg-slate-900/60 backdrop-blur-sm transition-opacity" onclick="toggleSidebar()">
             </div>
@@ -120,7 +117,6 @@
                 </div>
             </div>
 
-            <!-- HEADER DESKTOP -->
             <div class="hidden md:block">
                 @include('components.pelatihan-header', [
                     'title' => 'Panel Verifikasi',
@@ -128,10 +124,8 @@
                 ])
             </div>
 
-            <!-- MAIN CONTENT -->
             <main class="flex-1 overflow-x-hidden overflow-y-auto p-4 md:p-6 lg:p-8 space-y-6 md:space-y-8">
 
-                <!-- SECTION 1: STATISTIK WIDGETS -->
                 <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4 md:gap-6">
                     <div
                         class="relative bg-white rounded-2xl p-5 md:p-6 border border-slate-100 shadow-[0_4px_20px_-4px_rgba(0,0,0,0.05)] hover:-translate-y-1 transition-transform duration-300 group overflow-hidden">
@@ -204,7 +198,6 @@
                     </div>
                 </div>
 
-                <!-- SECTION 2: TABEL ANTRIAN -->
                 <div class="flex flex-col gap-4">
                     <div class="flex flex-col sm:flex-row justify-between items-start sm:items-end gap-4">
                         <div>
@@ -228,14 +221,12 @@
                         @endif
                     </div>
 
-                    <!-- ================= MOBILE CARD LIST ================= -->
                     <div class="md:hidden space-y-4">
 
                         @forelse($submissions as $index => $item)
                             <div
                                 class="bg-white border border-slate-200 rounded-2xl p-4 shadow-sm hover:shadow-md transition">
 
-                                <!-- HEADER -->
                                 <div class="flex justify-between items-start">
 
                                     <div class="flex items-center gap-3">
@@ -273,13 +264,11 @@
                                 </div>
 
 
-                                <!-- TITLE -->
                                 <p class="text-sm text-slate-700 mt-3 font-medium leading-snug">
                                     {{ $item->title }}
                                 </p>
 
 
-                                <!-- FILE LINK -->
                                 <a href="{{ asset('storage/' . $item->file_path) }}" target="_blank"
                                     class="flex items-center gap-2 text-xs font-semibold text-blue-600 mt-2">
 
@@ -289,7 +278,6 @@
                                 </a>
 
 
-                                <!-- ACTION BUTTON -->
                                 <div class="flex gap-2 mt-4">
 
                                     <button
@@ -466,7 +454,6 @@
         </div>
     </div>
 
-    <!-- MODAL POPUP VERIFIKASI -->
     <div id="verifyModal" class="fixed inset-0 z-50 hidden" aria-labelledby="modal-title" role="dialog"
         aria-modal="true">
         <div class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm transition-opacity opacity-0" id="modalBackdrop"
@@ -515,9 +502,9 @@
                             <div class="space-y-2">
                                 <label class="block text-xs font-bold text-slate-700 uppercase tracking-wide">Catatan
                                     Tambahan</label>
-                                <textarea name="admin_note" rows="3"
+                                <textarea name="admin_note" id="modalNote" rows="3"
                                     class="block w-full rounded-xl border-slate-300 bg-white p-3 text-sm focus:border-blue-500 focus:ring-blue-500 shadow-sm resize-none"
-                                    placeholder="Tuliskan catatan atau alasan revisi di sini..."></textarea>
+                                    placeholder="Tuliskan catatan di sini..."></textarea>
                             </div>
                         </div>
                         <div class="bg-slate-50 px-6 py-4 flex flex-row-reverse gap-3 border-t border-slate-100">
@@ -532,7 +519,6 @@
         </div>
     </div>
 
-    <!-- POP UP SUKSES SETELAH AKSI DENGAN AUTO-TIMER -->
     @if (session('success'))
         <div id="successPopUp"
             class="fixed inset-0 z-[60] flex items-center justify-center p-4 transition-all duration-500">
@@ -553,7 +539,6 @@
                     Mengerti
                 </button>
 
-                <!-- PROGRESS BAR TIMER (VISUAL) -->
                 <div class="absolute bottom-0 left-0 h-1.5 bg-emerald-500 rounded-b-3xl transition-all duration-[3000ms] ease-linear w-full"
                     id="timerProgress"></div>
             </div>
@@ -610,6 +595,9 @@
             const icon = document.getElementById('modalIcon');
             const fileLabel = document.getElementById('fileInputLabel');
             const fileHelp = document.getElementById('fileInputHelp');
+            
+            // Definisikan DOM input catatan tambahan
+            const noteInput = document.getElementById('modalNote');
 
             if (action === 'approve') {
                 form.action = "{{ url('/submission/approve') }}/" + id;
@@ -622,13 +610,16 @@
                 btn.className =
                     "inline-flex w-full justify-center rounded-xl bg-emerald-600 px-5 py-2.5 text-sm font-bold text-white shadow-lg shadow-emerald-200 hover:shadow-none hover:bg-emerald-700 sm:w-auto transition-all active:scale-95";
 
+                // MENGUBAH TEKS PLACEHOLDER KETIKA DI-SETUJUI
+                noteInput.placeholder = "Tuliskan catatan atau pesan persetujuan di sini (opsional)...";
+
                 if (type === 'Laporan Kinerja') {
                     fileLabel.innerHTML =
                         `<span>Upload Surat Balasan</span> <span class="text-[10px] bg-slate-200 px-1.5 py-0.5 rounded text-slate-500">Opsional</span>`;
                     fileHelp.innerText = "Tidak wajib upload file untuk Laporan Kinerja.";
                 } else {
                     fileLabel.innerHTML =
-                        `<span>Upload SK / Surat (PDF)</span> <span class="text-[10px] bg-red-100 text-red-600 px-1.5 py-0.5 rounded">Wajib</span>`;
+                        `<span>Hasil Evaluasi KAK (PDF)</span> <span class="text-[10px] bg-red-100 text-red-600 px-1.5 py-0.5 rounded">Wajib</span>`;
                     fileHelp.innerHTML =
                         '<i class="fas fa-exclamation-circle text-red-500"></i> Wajib upload bukti verifikasi.';
                 }
@@ -642,6 +633,9 @@
                 btn.innerText = "Kirim Revisi";
                 btn.className =
                     "inline-flex w-full justify-center rounded-xl bg-rose-600 px-5 py-2.5 text-sm font-bold text-white shadow-lg shadow-rose-200 hover:shadow-none hover:bg-rose-700 sm:w-auto transition-all active:scale-95";
+
+                // MENGUBAH TEKS PLACEHOLDER KETIKA REVISI
+                noteInput.placeholder = "Tuliskan alasan pengembalian atau poin-poin yang perlu direvisi di sini...";
 
                 // Bedakan KAK vs Laporan Kinerja
                 if (type === 'KAK') {
@@ -670,6 +664,10 @@
             const modal = document.getElementById('verifyModal');
             const backdrop = document.getElementById('modalBackdrop');
             const panel = document.getElementById('modalPanel');
+            
+            // Membersihkan sisa ketikan lama saat modal ditutup
+            document.getElementById('verifyForm').reset();
+
             backdrop.classList.add('opacity-0');
             panel.classList.remove('scale-100', 'opacity-100');
             panel.classList.add('scale-95', 'opacity-0');

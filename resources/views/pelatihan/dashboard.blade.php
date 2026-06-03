@@ -235,8 +235,8 @@
                                 ['title' => 'Perencanaan (KAK)', 'icon' => 'fa-map', 'color' => 'blue', 'count' => $countKAK, 'desc' => 'Upload kerangka acuan kerja tahunan.', 'route' => url('/pelatihan/kak')],
                                 ['title' => 'Laporan Kinerja', 'icon' => 'fa-chart-pie', 'color' => 'emerald', 'count' => $countLapkin, 'desc' => 'Lapor realisasi kegiatan berkala.', 'route' => route('lapkin.index')],
                                 ['title' => 'Survailen', 'icon' => 'fa-binoculars', 'color' => 'amber', 'count' => $alertSurvailen, 'desc' => 'Tindak lanjut temuan audit.', 'route' => route('survailen.index')],
-                                ['title' => 'Verifikasi', 'icon' => 'fa-certificate', 'color' => 'purple', 'count' => $alertVerifikasi, 'desc' => 'Dokumen sertifikasi dan SK.', 'route' => route('verifikasi.index')],
-                                ['title' => 'Dokumen KTUN', 'icon' => 'fa-file-signature', 'color' => 'rose', 'count' => $alertKtun, 'desc' => 'Unduh SK dan dokumen penetapan.', 'route' => route('pelatihan.ktun')],
+                                ['title' => 'Verifikasi', 'icon' => 'fa-certificate', 'color' => 'purple', 'count' => $alertVerifikasi, 'desc' => 'Unduh dokumen hasil verifikasi dan konfirmasi tindaklanjut.', 'route' => route('verifikasi.index')],
+                                ['title' => 'Dokumen KTUN', 'icon' => 'fa-file-signature', 'color' => 'rose', 'count' => $alertKtun, 'desc' => 'Unduh Dokumen penetapan.', 'route' => route('pelatihan.ktun')],
                             ];
                         @endphp
 

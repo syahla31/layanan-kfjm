@@ -122,7 +122,7 @@
                                 <span class="bg-teal-100 text-teal-600 px-2 py-1 rounded-md text-xs font-bold uppercase tracking-wider">Lapkin</span>
                             </div>
                             <h2 class="text-4xl font-bold text-slate-800">{{ $totalLapkin }}</h2>
-                            <p class="text-xs text-slate-400 mt-2">Laporan Kinerja Bulanan</p>
+                            <p class="text-xs text-slate-400 mt-2">Laporan Kinerja Tahunan</p>
                         </div>
                     </div>
                 </div>
@@ -219,7 +219,7 @@
                                                 <a href="{{ asset('storage/' . $item->admin_file) }}" target="_blank"
                                                     class="inline-flex items-center gap-1 text-[11px] font-semibold text-emerald-600 hover:text-emerald-800 bg-emerald-50 hover:bg-emerald-100 border border-emerald-100 px-2.5 py-1.5 rounded-lg transition-all"
                                                     title="Unduh SK">
-                                                    <i class="fas fa-certificate text-xs"></i> SK
+                                                    <i class="fas fa-certificate text-xs"></i> Hasil Evaluasi KAK
                                                 </a>
                                             @else
                                                 <span class="text-[10px] text-emerald-500 font-semibold bg-emerald-50 px-2 py-1 rounded-lg border border-emerald-100">

@@ -59,6 +59,7 @@
                 <th>Email</th>
                 <th>Kategori</th>
                 <th>Status</th>
+                <th>Surat Kuasa</th>
                 <th>Tgl Daftar</th>
             </tr>
         </thead>
@@ -74,6 +75,7 @@
                             {{ strtoupper($user->status) }}
                         </span>
                     </td>
+                    <td>{{ $user->surat_kuasa_path ? 'Ada' : 'Tidak Ada' }}</td>
                     <td>{{ $user->created_at->format('d/m/Y') }}</td>
                 </tr>
             @endforeach

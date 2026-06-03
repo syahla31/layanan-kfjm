@@ -137,7 +137,7 @@
                         </div>
                         <h3 class="text-2xl md:text-3xl font-extrabold text-slate-900 dark:text-white mb-4">Registrasi Akun Baru</h3>
                         <p class="text-sm md:text-base text-slate-500 dark:text-slate-400 mb-10 leading-relaxed">
-                            Belum memiliki akun BALIS? Lakukan pendaftaran akun baru untuk Ujian Sertifikasi Penguji Berkualifikasi (PB).
+                            Belum memiliki akun BALIS? Lakukan pendaftaran akun baru untuk Ujian Sertifikasi Penguji Berkualifikasi (PB) dan Sertifikasi Tenaga Ahli (TA).
                         </p>
                         <div class="flex items-center text-blue-600 dark:text-blue-400 font-extrabold text-sm md:text-base uppercase tracking-wider group-hover:gap-4 transition-all gap-2">
                             Daftar Sekarang <i class="fas fa-external-link-alt"></i>

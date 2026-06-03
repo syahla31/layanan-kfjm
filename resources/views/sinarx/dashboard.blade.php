@@ -188,7 +188,6 @@
                             <i class="fas fa-bell" id="mobileBellIcon"></i>
                             <span id="mobileNotifBadge" class="hidden notif-ping"></span>
                         </button>
-                        <!-- Mobile Notif Dropdown -->
                         <div id="mobileNotifDropdown"
                             class="hidden absolute right-0 mt-3 w-[88vw] max-w-sm bg-white rounded-2xl dropdown-shadow overflow-hidden z-[100] border border-slate-100 animate-modal"
                             style="right: -2.5rem;">
@@ -199,8 +198,7 @@
                                         class="fas fa-times"></i></button>
                             </div>
                             <div class="max-h-[60vh] overflow-y-auto no-scrollbar bg-white" id="mobileNotifContent">
-                                <!-- diisi JS dari desktop dropdown -->
-                            </div>
+                                </div>
                         </div>
                     </div>
                     <div
@@ -295,7 +293,6 @@
             <main
                 class="flex-1 overflow-x-hidden overflow-y-auto p-4 md:p-6 lg:p-8 space-y-6 md:space-y-8 no-scrollbar scroll-smooth text-left">
 
-                <!-- BANNER -->
                 <div
                     class="banner-gradient rounded-[2rem] p-6 md:p-10 text-white relative overflow-hidden shadow-xl animate-fade-in text-left">
                     <div class="absolute right-0 top-0 p-4 opacity-10 pointer-events-none hidden lg:block">
@@ -327,11 +324,9 @@
                     </div>
                 </div>
 
-                <!-- STATS (Interaktif & Diperbarui) -->
                 <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 md:gap-8 text-left">
                     <div class="lg:col-span-8 space-y-6 md:space-y-8 text-left">
                         <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 text-left">
-                            <!-- Card Total -->
                             <div
                                 class="stat-card bg-white p-5 rounded-[2rem] border border-slate-200 group cursor-default">
                                 <div
@@ -349,7 +344,6 @@
                                     </div>
                                 </div>
                             </div>
-                            <!-- Card Process -->
                             <div
                                 class="stat-card bg-white p-5 rounded-[2rem] border border-slate-200 group cursor-default">
                                 <div
@@ -372,7 +366,6 @@
                                     </div>
                                 </div>
                             </div>
-                            <!-- Card Selesai -->
                             <div
                                 class="stat-card bg-white p-5 rounded-[2rem] border border-slate-200 group cursor-default">
                                 <div
@@ -389,7 +382,6 @@
                                     </div>
                                 </div>
                             </div>
-                            <!-- Card Revisi -->
                             <div
                                 class="stat-card bg-white p-5 rounded-[2rem] border border-slate-200 group cursor-default">
                                 <div
@@ -404,7 +396,6 @@
                             </div>
                         </div>
 
-                        <!-- GRAFIK -->
                         <div class="bg-white p-8 rounded-[2.5rem] border border-slate-200 shadow-sm text-left">
                             <div
                                 class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8 text-left">
@@ -486,7 +477,6 @@
                     </div>
                 </div>
 
-                <!-- TABEL DATA -->
                 <div id="tabelRiwayat"
                     class="bg-white border border-slate-200 rounded-[2.5rem] shadow-sm overflow-hidden mt-2 mb-10 text-left">
                     <div
@@ -567,7 +557,7 @@
                                                             class="fas fa-cloud-upload-alt text-[7px] text-center"></i>
                                                         Updated BALIS</span>
                                                 </div>
-                                            @define
+                                            @else
                                                 <div
                                                     class="inline-flex items-center gap-1.5 bg-rose-50 text-rose-600 text-[10px] font-black px-4 py-1.5 rounded-full border border-rose-100 uppercase tracking-tighter text-center">
                                                     <i class="fas fa-times text-center"></i> REVISI</div>
@@ -617,7 +607,6 @@
         </div>
     </div>
 
-    <!-- MODAL PREVIEW -->
     <div id="previewModal" class="fixed inset-0 z-[250] hidden flex items-center justify-center p-4 text-left">
         <div class="absolute inset-0 bg-slate-900/80 backdrop-blur-md" onclick="closePreviewModal()"></div>
         <div
@@ -678,8 +667,8 @@
                 <div class="flex justify-between items-center px-2 text-left">
                     <p class="text-[9px] text-slate-400 font-bold uppercase tracking-widest text-left">Waktu Sinkron:
                         <span id="prevWaktu" class="text-slate-600 text-left"></span></p>
-                    <a href="https://balis.bapeten.go.id" target="_blank"
-                        class="text-[9px] font-black text-emerald-600 uppercase hover:underline text-left">BALIS Portal
+                    <a href="https://balis-sukses.bapeten.go.id/sukses15/index.php" target="_blank"
+                        class="text-[9px] font-black text-emerald-600 uppercase hover:underline text-left">BALIS SUKSES
                         <i class="fas fa-external-link-alt ml-1 text-left"></i></a>
                 </div>
             </div>
@@ -692,13 +681,12 @@
         </div>
     </div>
 
-    <!-- MODAL FORMULIR LENGKAP -->
     <div id="submissionModal" class="fixed inset-0 z-[200] hidden flex items-center justify-center p-4 text-left">
         <div class="absolute inset-0 bg-slate-900/70 backdrop-blur-md" onclick="closeModal()"></div>
         <div
             class="relative bg-white rounded-[2.8rem] max-w-2xl w-full shadow-2xl animate-modal overflow-hidden flex flex-col max-h-[92vh] border border-white/20 text-left">
             <div
-                class="bg-gradient-to-r from-[#7c2d12] to-[#ea580c] px-8 py-7 flex justify-between items-center text-white shrink-0 shadow-lg relative z-10 text-left">
+                class="bg-gradient-to-r from-gradient-to-r from-[#7c2d12] to-[#ea580c] px-8 py-7 flex justify-between items-center text-white shrink-0 shadow-lg relative z-10 text-left">
                 <div class="flex items-center gap-4 text-left">
                     <div
                         class="w-10 h-10 rounded-xl bg-white/10 flex items-center justify-center border border-white/10 shrink-0 text-left">
@@ -798,11 +786,9 @@
                         <label
                             class="text-[10px] font-black text-slate-400 uppercase tracking-widest pl-1 text-left">Bukti
                             Dokumen PDF (Max 2MB)</label>
-                        <!-- MENAMBAHKAN accept="application/pdf" -->
                         <input type="file" name="file_upload" id="fileInput" accept="application/pdf"
                             class="w-full text-xs text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-[10px] file:font-black file:bg-orange-600 file:text-white hover:file:bg-orange-700 text-left">
                         
-                        <!-- ELEMEN CONTAINER ERROR FILE UNTUK VALIDASI -->
                         <p id="errorFileInput" class="text-xs text-rose-500 font-bold mt-1 hidden animate-pulse">
                             <i class="fas fa-exclamation-circle mr-1"></i> <span id="errorFileText"></span>
                         </p>
@@ -821,7 +807,6 @@
         </div>
     </div>
 
-    <!-- MODAL BATALKAN -->
     <div id="cancelModal" class="fixed inset-0 z-[210] hidden flex items-center justify-center p-4 text-center">
         <div class="absolute inset-0 bg-slate-900/70 backdrop-blur-md text-center" onclick="closeCancelModal()"></div>
         <div
@@ -851,6 +836,10 @@
         const NOTIF_KEY = `sinarx_menu_read_${APP_USER_ID}`;
 
         // ─── Badge & Bell State ───────────────────────────────────────
+        if (!localStorage.getItem(NOTIF_KEY)) {
+            localStorage.setItem(NOTIF_KEY, "false");
+        }
+
         function isNotifRead() {
             return localStorage.getItem(NOTIF_KEY) === "true";
         }
@@ -902,7 +891,6 @@
             const d = document.getElementById('mobileNotifDropdown');
             const isHidden = d.classList.contains('hidden');
 
-            // Clone isi dari desktop dropdown supaya konten sama
             if (isHidden) {
                 const desktopContent = document.querySelector('#notifDropdown .max-h-\\[320px\\]');
                 const mobileContent = document.getElementById('mobileNotifContent');
@@ -1074,7 +1062,6 @@
             const form = document.getElementById('submissionForm');
             const methodField = document.getElementById('methodField');
             
-            // Sembunyikan notifikasi error sisa validasi sebelumnya jika ada
             document.getElementById('errorFileInput').classList.add('hidden');
 
             document.getElementById('inputNoSertif').value = no_sertif || '';
@@ -1098,12 +1085,10 @@
 
         function closeModal() {
             document.getElementById('submissionModal').classList.add('hidden');
-            // Reset form dan pastikan error tersembunyi
             document.getElementById('submissionForm').reset();
             document.getElementById('errorFileInput').classList.add('hidden');
         }
 
-        // Logika Integrasi Validasi File Sisi Frontend
         document.addEventListener('DOMContentLoaded', function() {
             const form = document.getElementById('submissionForm');
             const fileInput = document.getElementById('fileInput');
@@ -1118,23 +1103,19 @@
                     const file = fileInput.files[0];
                     const isEditMode = document.getElementById('methodField').innerHTML.includes('PUT');
 
-                    // 1. Jika mode ADD (tambah baru), wajib upload berkas bukti fisik
                     if (!isEditMode && !file) {
                         errorText.innerText = "Bukti dokumen PDF wajib diunggah!";
                         errorMsg.classList.remove('hidden');
                         hasError = true;
                     } 
                     
-                    // 2. Jika ada berkas dipilih, lakukan pengecekan tipe dan ukuran
                     if (file) {
-                        // Cek Ekstensi berkas
                         if (file.type !== 'application/pdf') {
                             errorText.innerText = "Format tidak valid! Berkas pendukung wajib berupa berkas PDF.";
                             errorMsg.classList.remove('hidden');
                             hasError = true;
                         }
                         
-                        // Cek Ukuran berkas (Maksimal 2MB)
                         const maxSize = 2 * 1024 * 1024; // Bytes
                         if (file.size > maxSize) {
                             errorText.innerText = "Ukuran file terlalu besar! Batas kapasitas unggahan maksimal 2MB.";
@@ -1143,7 +1124,6 @@
                         }
                     }
 
-                    // Gagalkan aksi submit form jika terdeteksi error data
                     if (hasError) {
                         e.preventDefault();
                         fileInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
@@ -1151,7 +1131,6 @@
                 });
             }
 
-            // Bersihkan indikator error saat input file dipilih ulang oleh user
             if (fileInput) {
                 fileInput.addEventListener('change', function() {
                     errorMsg.classList.add('hidden');

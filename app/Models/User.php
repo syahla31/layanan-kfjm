@@ -25,6 +25,7 @@ class User extends Authenticatable
         'role',
         'kode_instansi',
         'status',
+        'surat_kuasa_path',
     ];
 
     /**

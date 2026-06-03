@@ -508,9 +508,9 @@
             const label = document.getElementById(labelId);
             const count = document.getElementById(countId);
             if (input.files && input.files.length > 0) {
-                label.innerText = input.files.length === 1 ? input.files[0].name : input.files.length + " Berkas";
+                label.innerText = original;
                 label.classList.add('text-primary-600', 'font-black');
-                count.innerText = "SIAP UNGGAH (" + input.files.length + " PDF)";
+                count.innerText = input.files.length + " FILE TERPILIH (SIAP UNGGAH)";
                 count.classList.replace('text-slate-400', 'text-primary-600');
                 input.parentElement.classList.add('border-primary-400', 'bg-primary-50/50');
             } else {
