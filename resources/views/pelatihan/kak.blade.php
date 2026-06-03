@@ -393,7 +393,7 @@
                                             <!-- DOWNLOAD HASIL -->
                                             @if($item->admin_file)
                                                 <a href="{{ asset('storage/' . $item->admin_file) }}" target="_blank" class="w-full bg-white border border-emerald-200 text-emerald-600 px-3 py-1.5 rounded-lg text-xs font-bold hover:bg-emerald-50 hover:text-emerald-700 transition-all shadow-sm flex items-center justify-center gap-1.5">
-                                                    <i class="fas fa-file-signature"></i> Unduh SK
+                                                    <i class="fas fa-file-signature"></i>  Unduh Hasil Evaluasi KAK
                                                 </a>
                                             @elseif($item->status == 'approved')
                                                 <span class="text-xs text-emerald-600 font-medium bg-emerald-50 px-2 py-1 rounded">Selesai</span>
@@ -708,7 +708,7 @@
                         adminDate = d.toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' });
                         adminContent = `
                             <div class="flex flex-col items-start gap-2">
-                                ${file.admin_file ? `<a href="/storage/${file.admin_file}" target="_blank" class="inline-flex items-center gap-1.5 bg-white border border-emerald-200 text-emerald-700 px-3 py-1.5 rounded-lg hover:bg-emerald-50 hover:border-emerald-300 transition-colors font-bold shadow-sm text-[11px]"><i class="fas fa-file-signature text-emerald-500"></i> Unduh Evaluasi</a>` : ''}
+                                ${file.admin_file ? `<a href="/storage/${file.admin_file}" target="_blank" class="inline-flex items-center gap-1.5 bg-white border border-emerald-200 text-emerald-700 px-3 py-1.5 rounded-lg hover:bg-emerald-50 hover:border-emerald-300 transition-colors font-bold shadow-sm text-[11px]"><i class="fas fa-file-signature text-emerald-500"></i>  Unduh Hasil Evaluasi KAK</a>` : ''}
                                 ${file.admin_note ? `<div class="bg-amber-50 border border-amber-100 text-amber-800 px-2 py-1.5 rounded-md text-[10px] w-full"><i class="fas fa-comment-alt mr-1 text-amber-500"></i> "${file.admin_note}"</div>` : ''}
                             </div>`;
                     }

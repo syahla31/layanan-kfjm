@@ -54,6 +54,7 @@ class CustomRegisterController extends Controller
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
             'register_type' => ['required', 'string'],
             'kode_instansi' => ['nullable', 'string'],
+            'surat_kuasa' => ['required', 'file', 'mimes:pdf,jpg,jpeg,png', 'max:5120'],
         ]);
 
         // 2. Buat User Baru (PAKAI CARA MANUAL / NEW OBJECT)
@@ -61,15 +62,21 @@ class CustomRegisterController extends Controller
         $user->name = $request->name;
         $user->email = $request->email;
         $user->password = Hash::make($request->password);
-        
+
         // Data Kunci
-        $user->category = $request->register_type; 
+        $user->category = $request->register_type;
         $user->role = 'user';
         $user->status = 'pending';
         $user->kode_instansi = $request->kode_instansi;
 
+        // Handle Secure Upload Surat Kuasa
+        if ($request->hasFile('surat_kuasa')) {
+            $path = $request->file('surat_kuasa')->store('surat_kuasa', 'local');
+            $user->surat_kuasa_path = $path;
+        }
+
         // 3. Simpan ke Database
-        $user->save(); 
+        $user->save();
 
         // 4. Redirect KEMBALI KE HALAMAN REGISTER (Agar popup muncul)
         return redirect()->back()

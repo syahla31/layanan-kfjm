@@ -37,6 +37,7 @@ class UsersExport implements FromCollection, WithHeadings, WithMapping
             'Email',
             'Kategori',
             'Status',
+            'Surat Kuasa',
             'Tanggal Registrasi',
         ];
     }
@@ -52,6 +53,7 @@ class UsersExport implements FromCollection, WithHeadings, WithMapping
             $user->email,
             ucfirst($user->category),
             strtoupper($user->status),
+            $user->surat_kuasa_path ? 'Ada' : 'Tidak Ada',
             $user->created_at->format('d/m/Y'),
         ];
     }

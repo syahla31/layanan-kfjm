@@ -48,7 +48,7 @@ Route::get('/admin/login', [CustomLoginController::class, 'loginInternal'])->nam
 
 // --- Modul Pelatihan ---
 Route::get('/pelatihan/login', [CustomLoginController::class, 'loginPelatihan'])->name('login.pelatihan');
-Route::get('/pelatihan/register', [CustomRegisterController::class, 'showRegisterPelatihan'])->name('register.pelatihan');
+Route::get('/pelatihan/register', [CustomRegisterController::class, 'showRegisterPelatihan'])->name('register.pelatihan');   
 
 // --- Modul Lembaga Uji ---
 Route::get('/uji/login', [CustomLoginController::class, 'loginUji'])->name('login.uji');
@@ -91,6 +91,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/export-users', [DashboardController::class, 'exportUsers'])->name('internal.users.export');
         Route::post('/approve/{id}', [DashboardController::class, 'approveUser'])->name('internal.approve');
         Route::post('/reject/{id}', [DashboardController::class, 'rejectUser'])->name('internal.reject');
+        
+        // Secure Download Surat Kuasa
+        Route::get('/users/{id}/surat-kuasa', [DashboardController::class, 'downloadSuratKuasa'])->name('internal.surat_kuasa.download');
     });
 
     // ---------------------------------------------------------------------
@@ -117,10 +120,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
         // Survailen Pelatihan (Desk Evaluation)
         Route::get('/survailen', [SurvailenController::class, 'index'])->name('survailen.index');
         Route::get('/survailen/manage', [SurvailenController::class, 'adminIndex'])->name('survailen.admin');
-        Route::post('/survailen/evaluate/{id}', [SurvailenController::class, 'evaluate'])->name('survailen.evaluate');
+        Route::post('/survailen/evaluate/{id}', [SurvailenController::class, 'evaluate'])->name('survailen.evaluate');       
         Route::get('/survailen/sertifikat/{id}', [SurvailenController::class, 'generateSertifikat'])->name('survailen.generate-sertifikat');
         Route::post('/survailen/publish/{id}', [SurvailenController::class, 'publish'])->name('survailen.publish');
-        
+
         // Verifikasi Pelatihan
         Route::get('/verifikasi', [VerifikasiController::class, 'index'])->name('verifikasi.index');
         Route::get('/verifikasi/manage', [VerifikasiController::class, 'adminIndex'])->name('verifikasi.admin');
@@ -131,7 +134,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
             return view('pelatihan.lembaga_admin');
         })->name('lembaga.admin');
         Route::get('/history', function () {
-            return auth()->user()->role == 'admin' ? view('pelatihan.history') : redirect()->route('pelatihan.dashboard');
+            return auth()->user()->role == 'admin' ? view('pelatihan.history') : redirect()->route('pelatihan.dashboard');   
         })->name('pelatihan.history');
 
         // Pengiriman KTUN Pelatihan
@@ -161,9 +164,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
         // Verifikasi Penunjukan (User & Admin)
         Route::get('/verifikasi', [VerifikasiController::class, 'ujiIndex'])->name('uji.verifikasi');
-        Route::get('/verifikasi/respon/{id}', [VerifikasiController::class, 'ujiRespon'])->name('uji.verifikasi.respon');
-        Route::get('/verifikasiAdmin', [VerifikasiController::class, 'adminUjiIndex'])->name('uji.verifikasi_admin');
-        Route::post('/verifikasiAdmin/store', [VerifikasiController::class, 'store'])->name('uji.verifikasi_admin.store');
+        Route::get('/verifikasi/respon/{id}', [VerifikasiController::class, 'ujiRespon'])->name('uji.verifikasi.respon');    
+        Route::get('/verifikasiAdmin', [VerifikasiController::class, 'adminUjiIndex'])->name('uji.verifikasi_admin');        
+        Route::post('/verifikasiAdmin/store', [VerifikasiController::class, 'store'])->name('uji.verifikasi_admin.store');   
 
         // Master Data Uji
         Route::get('/lembaga', function () {
@@ -191,7 +194,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         // Fitur Amandemen Sinar-X (User Actions)
         Route::get('/submission', [SinarxSubmissionController::class, 'index'])->name('sinarx.submission.index');
         Route::post('/submission', [SinarxSubmissionController::class, 'store'])->name('sinarx.submission.store');
-        Route::put('/submission/{id}', [SinarxSubmissionController::class, 'update'])->name('sinarx.submission.update');
+        Route::put('/submission/{id}', [SinarxSubmissionController::class, 'update'])->name('sinarx.submission.update');     
         Route::delete('/submission/{id}', [SinarxSubmissionController::class, 'destroy'])->name('sinarx.submission.destroy');
 
         // Validasi Amandemen (Admin Actions)
@@ -213,16 +216,16 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::delete('/ktun/delete/{id}', [KtunDeliveryController::class, 'destroy'])->name('ktun.destroy');
 
     // Tahap 1: Simpan Self Assessment (User)
-    Route::post('/survailen/store-self', [SurvailenController::class, 'storeSelfAssessment'])->name('survailen.store.self');
+    Route::post('/survailen/store-self', [SurvailenController::class, 'storeSelfAssessment'])->name('survailen.store.self'); 
 
     // Tahap 2: Unggah 8 Dokumen (User)
     Route::post('/survailen/store-docs/{id}', [SurvailenController::class, 'storeDocuments'])->name('survailen.store.docs');
 
     // Tahap 3: Evaluasi/Verifikasi Asesor (Admin)
-    Route::post('/survailen/evaluate-process/{id}', [SurvailenController::class, 'evaluate'])->name('survailen.evaluate');
+    Route::post('/survailen/evaluate-process/{id}', [SurvailenController::class, 'evaluate'])->name('survailen.evaluate');   
 
     // Hapus Pengajuan
-    Route::delete('/survailen/remove-data/{id}', [SurvailenController::class, 'destroy'])->name('survailen.destroy');
+    Route::delete('/survailen/remove-data/{id}', [SurvailenController::class, 'destroy'])->name('survailen.destroy');        
 
     // ---------------------------------------------------------------------
     // F. AKSI GLOBAL: SUBMISSION CRUD (UNTUK LAPKIN, VERIFIKASI, DLL)

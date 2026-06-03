@@ -53,6 +53,7 @@
                 'category' => strtolower($user->category ?? 'umum'),
                 'status' => strtolower($user->status),
                 'date' => $user->created_at->format('d M Y'),
+                'surat_kuasa' => $user->surat_kuasa_path,
             ];
         });
 @endphp
@@ -90,6 +91,15 @@
         this.exportType = type;
         this.exporting = true;
         this.exportMenuOpen = false;
+        
+        // Trigger actual Laravel export
+        if (type === 'PDF') {
+            window.location.href = '{{ route('internal.users.export') }}?format=pdf' +
+                (this.searchQuery ? '&search=' + this.searchQuery : '') +
+                (this.filterCategory !== 'Semua' ? '&category=' + this.filterCategory : '') +
+                (this.filterStatus !== 'Semua' ? '&status=' + this.filterStatus : '');
+        }
+
         setTimeout(() => {
             this.exporting = false;
             this.showExportToast = true;
@@ -153,9 +163,6 @@
                                 <i class="fas fa-chevron-down text-[10px] ml-1 opacity-50"></i>
                             </button>
                             <div x-show="exportMenuOpen" x-cloak x-transition class="absolute right-0 mt-2 w-48 bg-white border border-slate-200 rounded-2xl shadow-xl z-50 overflow-hidden">
-                                <button @click="runExport('Excel')" class="w-full px-5 py-3 text-left text-xs font-bold text-slate-600 hover:bg-emerald-50 hover:text-emerald-700 flex items-center gap-3 transition-colors">
-                                    <i class="fas fa-file-excel text-emerald-500"></i> Export Excel (.xlsx)
-                                </button>
                                 <button @click="runExport('PDF')" class="w-full px-5 py-3 text-left text-xs font-bold text-slate-600 hover:bg-red-50 hover:text-red-700 flex items-center gap-3 transition-colors">
                                     <i class="fas fa-file-pdf text-red-500"></i> Export PDF (.pdf)
                                 </button>
@@ -309,10 +316,6 @@
                                                 <button @click="selectedUser = user" class="w-8 h-8 rounded-lg bg-slate-50 text-slate-400 hover:bg-slate-900 hover:text-white flex items-center justify-center transition-all active:scale-90" title="Detail">
                                                     <i class="fas fa-info-circle text-xs"></i>
                                                 </button>
-                                                <button @click="editingUser = JSON.parse(JSON.stringify(user))" 
-                                                    class="w-8 h-8 rounded-lg bg-slate-50 text-slate-400 hover:bg-red-600 hover:text-white flex items-center justify-center transition-all active:scale-90" title="Edit">
-                                                    <i class="fas fa-pen text-xs"></i>
-                                                </button>
                                             </div>
                                         </td>
                                     </tr>
@@ -372,14 +375,28 @@
                                 <span x-text="selectedUser.status === 'active' ? 'AKTIF' : 'PENDING'"></span>
                             </span>
                         </div>
+                        <div class="p-5 bg-slate-50 rounded-[2rem] border border-slate-100 col-span-2">
+                            <template x-if="!selectedUser.surat_kuasa">
+                                <span class="text-xs font-bold text-slate-400 italic">Dokumen belum diunggah</span>
+                            </template>
+                        </div>
                     </div>
 
                     <div class="pt-6 flex gap-3">
                         <button @click="selectedUser = null" class="flex-1 px-6 py-4 bg-slate-100 hover:bg-slate-200 rounded-2xl text-xs font-bold text-slate-600 transition-all active:scale-95">Tutup</button>
-                        <button @click="selectedUser = null; editingUser = JSON.parse(JSON.stringify(selectedUser))"
-                            class="flex-[2] px-6 py-4 bg-red-600 hover:bg-red-700 text-white rounded-2xl text-xs font-bold shadow-lg shadow-red-900/20 transition-all flex items-center justify-center gap-2 active:scale-95">
-                            <i class="fas fa-pen text-xs"></i> Kelola Data
-                        </button>
+                        
+                        <template x-if="selectedUser.surat_kuasa">
+                            <a :href="'/internal/users/' + selectedUser.id + '/surat-kuasa'"
+                                class="flex-[2] px-6 py-4 bg-red-600 hover:bg-red-700 text-white rounded-2xl text-xs font-bold shadow-lg shadow-red-900/20 transition-all flex items-center justify-center gap-2 active:scale-95">
+                                <i class="fas fa-file-pdf text-xs"></i> Review Surat Kuasa
+                            </a>
+                        </template>
+                        <template x-if="!selectedUser.surat_kuasa">
+                            <button disabled
+                                class="flex-[2] px-6 py-4 bg-slate-300 text-white rounded-2xl text-xs font-bold transition-all flex items-center justify-center gap-2 cursor-not-allowed opacity-50">
+                                <i class="fas fa-exclamation-circle text-xs"></i> Kelola Data
+                            </button>
+                        </template>
                     </div>
                 </div>
             </div>

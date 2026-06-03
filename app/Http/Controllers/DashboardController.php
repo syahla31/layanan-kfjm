@@ -8,6 +8,7 @@ use App\Models\User;
 use App\Models\Submission;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 use Maatwebsite\Excel\Facades\Excel; // Pastikan sudah instal maatwebsite/excel
 use Barryvdh\DomPDF\Facade\Pdf;     // Pastikan sudah instal barryvdh/laravel-dompdf
 
@@ -21,7 +22,7 @@ class DashboardController extends Controller
         $pendingUsers = User::where('status', 'pending')
                             ->orderBy('created_at', 'desc')
                             ->get();
-                            
+
         return view('internal.dashboard', [
             'pendingUsers' => $pendingUsers
         ]);
@@ -101,8 +102,8 @@ class DashboardController extends Controller
         if ($format === 'excel') {
             // Memerlukan class UsersExport (php artisan make:export UsersExport)
             return Excel::download(new UsersExport($users), 'data_pengguna_simutu.xlsx');
-        } 
-        
+        }
+
         if ($format === 'pdf') {
             $pdf = Pdf::loadView('exports.users_pdf', compact('users'));
             return $pdf->download('data_pengguna_simutu.pdf');
@@ -132,6 +133,20 @@ class DashboardController extends Controller
         $user->delete();
 
         return back()->with('success', 'Pendaftaran ' . $user->name . ' telah dihapus.');
+    }
+
+    /**
+     * Secure Download Surat Kuasa (Hanya Admin)
+     */
+    public function downloadSuratKuasa($id)
+    {
+        $user = User::findOrFail($id);
+
+        if (!$user->surat_kuasa_path || !Storage::disk('local')->exists($user->surat_kuasa_path)) {
+            return back()->with('error', 'Dokumen Surat Kuasa tidak ditemukan.');
+        }
+
+        return Storage::disk('local')->download($user->surat_kuasa_path);
     }
 
     /**

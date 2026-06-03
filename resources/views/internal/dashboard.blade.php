@@ -8,12 +8,12 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">  
 
     <style>
         body { font-family: 'Inter', sans-serif; }
         [x-cloak] { display: none !important; }
-        
+
         /* Smooth scroll untuk main area */
         main::-webkit-scrollbar { width: 4px; }
         main::-webkit-scrollbar-track { background: transparent; }
@@ -23,7 +23,7 @@
 
 @php
     use App\Models\User;
-    
+
     // Logika Database
     if(!isset($pendingUsers)) {
         $pendingUsers = User::where('status', 'pending')->orderBy('created_at', 'desc')->get();
@@ -34,20 +34,20 @@
     }
 @endphp
 
-<body class="bg-slate-50 text-slate-800 overflow-hidden" 
-    x-data="{ 
-        sidebarOpen: false, 
-        showSuccessModal: {{ session('success') ? 'true' : 'false' }} 
+<body class="bg-slate-50 text-slate-800 overflow-hidden"
+    x-data="{
+        sidebarOpen: false,
+        showSuccessModal: {{ session('success') ? 'true' : 'false' }}
     }">
 
     <div class="flex h-screen w-full overflow-hidden">
-        
+
         <!-- SIDEBAR -->
         @include('components.internal-sidebar')
 
         <!-- KONTEN UTAMA -->
         <div class="flex-1 flex flex-col min-w-0 bg-slate-50">
-            
+
             <!-- HEADER -->
             <header class="bg-white border-b border-slate-200 h-20 flex items-center justify-between px-6 lg:px-10 shrink-0 relative z-30">
                 <div class="flex items-center gap-5">
@@ -64,11 +64,11 @@
                         </div>
                     </div>
                 </div>
-                
+
                 <div class="flex items-center gap-4">
                     <div class="hidden sm:block text-right mr-2">
                         <p class="text-xs font-bold text-slate-800 leading-none">Admin Internal</p>
-                        <p class="text-[9px] text-slate-400 font-bold uppercase tracking-wider mt-1">Bapeten DKKN</p>
+                        <p class="text-[9px] text-slate-400 font-bold uppercase tracking-wider mt-1">Bapeten DKKN</p>        
                     </div>
                     <button class="w-11 h-11 rounded-2xl bg-slate-50 flex items-center justify-center text-slate-400 border border-slate-200 hover:text-red-600 hover:border-red-100 hover:bg-red-50 transition-all">
                         <i class="far fa-bell text-lg"></i>
@@ -77,20 +77,20 @@
             </header>
 
             <main class="flex-1 overflow-y-auto p-6 lg:p-10">
-                
+
                 <!-- POP-UP NOTIFIKASI SUKSES (UPGRADED) -->
                 <template x-if="showSuccessModal">
-                    <div class="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-md"
+                    <div class="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-md" 
                         x-transition:enter="transition ease-out duration-300"
                         x-transition:enter-start="opacity-0"
                         x-transition:enter-end="opacity-100">
-                        
+
                         <div class="bg-white rounded-[3rem] shadow-2xl w-full max-w-md overflow-hidden border border-white/20 relative"
                             @click.away="showSuccessModal = false"
                             x-transition:enter="transition ease-out duration-500"
                             x-transition:enter-start="opacity-0 scale-90 translate-y-8"
                             x-transition:enter-end="opacity-100 scale-100 translate-y-0">
-                            
+
                             <!-- Ikon Dekorasi Belakang -->
                             <div class="absolute top-0 right-0 p-8 opacity-[0.03] -mr-12 -mt-12 text-emerald-600">
                                 <i class="fas fa-check-circle text-[12rem]"></i>
@@ -102,12 +102,12 @@
                                     <i class="fas fa-check"></i>
                                 </div>
 
-                                <h3 class="text-2xl font-black text-slate-900 tracking-tight mb-3">Persetujuan Berhasil</h3>
+                                <h3 class="text-2xl font-black text-slate-900 tracking-tight mb-3">Persetujuan Berhasil</h3> 
                                 <p class="text-slate-500 text-sm leading-relaxed mb-8">
                                     {{ session('success') }}
                                 </p>
 
-                                <button @click="showSuccessModal = false" 
+                                <button @click="showSuccessModal = false"
                                     class="w-full py-4 bg-slate-900 hover:bg-slate-800 text-white rounded-2xl text-xs font-black uppercase tracking-widest transition-all active:scale-95 shadow-xl shadow-slate-900/20">
                                     Tutup Notifikasi
                                 </button>
@@ -121,7 +121,7 @@
                     <div class="absolute top-0 right-0 p-12 opacity-[0.03] -mr-16 -mt-8 transition-transform group-hover:scale-110 duration-700">
                         <i class="fas fa-info-circle text-[15rem]"></i>
                     </div>
-                    
+
                     <div class="relative z-10 flex flex-col md:flex-row items-start md:items-center gap-8">
                         <div class="w-20 h-20 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-3xl flex items-center justify-center text-3xl text-white shadow-xl shadow-blue-500/20">
                             <i class="fas fa-id-card-clip"></i>
@@ -129,11 +129,11 @@
                         <div class="flex-1">
                             <h3 class="font-black text-slate-900 text-lg uppercase tracking-wider leading-tight">Petunjuk Verifikasi</h3>
                             <p class="text-slate-500 text-sm mt-2 leading-relaxed max-w-2xl">
-                                Pastikan melakukan validasi menyeluruh terhadap <span class="text-blue-600 font-bold">Dokumen Instansi</span> sebelum memberikan persetujuan. Setiap akun yang diaktifkan akan menerima notifikasi otomatis via email.
+                                Pastikan melakukan validasi menyeluruh terhadap <span class="text-blue-600 font-bold">Surat Kuasa</span> sebelum memberikan persetujuan.
                             </p>
                             <div class="flex gap-4 mt-4">
                                 <span class="inline-flex items-center gap-1.5 text-[10px] font-bold text-blue-600 px-3 py-1 bg-blue-50 rounded-full">
-                                    <i class="fas fa-check-circle"></i> Validasi NIB
+                                    <i class="fas fa-check-circle"></i> Validasi Surat Kuasa
                                 </span>
                                 <span class="inline-flex items-center gap-1.5 text-[10px] font-bold text-indigo-600 px-3 py-1 bg-indigo-50 rounded-full">
                                     <i class="fas fa-check-circle"></i> Cek Kategori
@@ -161,6 +161,7 @@
                                 <thead class="text-[10px] text-slate-400 uppercase bg-slate-50/50 font-black tracking-widest border-b border-slate-100">
                                     <tr>
                                         <th class="px-8 py-5">Identitas Instansi</th>
+                                        <th class="px-8 py-5">Surat Kuasa</th>
                                         <th class="px-8 py-5">Modul Layanan</th>
                                         <th class="px-8 py-5 text-right">Opsi Verifikasi</th>
                                     </tr>
@@ -180,13 +181,22 @@
                                             </div>
                                         </td>
                                         <td class="px-8 py-6">
-                                            <span class="px-4 py-1.5 bg-slate-50 text-slate-600 text-[10px] font-black rounded-xl border border-slate-200 uppercase tracking-widest group-hover:bg-white group-hover:border-slate-300 transition-colors">
+                                            @if($user->surat_kuasa_path)
+                                                <a href="{{ route('internal.surat_kuasa.download', $user->id) }}" class="inline-flex items-center gap-2 px-3 py-2 bg-slate-900 text-white text-[10px] font-black rounded-xl hover:bg-slate-800 transition-all active:scale-95 shadow-lg shadow-slate-900/10">
+                                                    <i class="fas fa-file-download text-xs"></i> Download Dokumen
+                                                </a>
+                                            @else
+                                                <span class="text-[10px] text-slate-400 font-bold italic">Tidak ada dokumen</span>
+                                            @endif
+                                        </td>
+                                        <td class="px-8 py-6">
+                                            <span class="px-4 py-1.5 bg-slate-50 text-slate-600 text-[10px] font-black rounded-xl border border-slate-200 uppercase tracking-widest group-hover:bg-white group-hover:border-slate-300 transition-colors"> 
                                                 {{ $user->category }}
                                             </span>
                                         </td>
                                         <td class="px-8 py-6 text-right">
                                             <form action="{{ url('/internal/approve/' . $user->id) }}" method="POST" class="inline-block">
-                                                @csrf 
+                                                @csrf
                                                 <button class="bg-red-600 hover:bg-red-700 text-white px-6 py-3 rounded-2xl text-[10px] font-black uppercase tracking-widest shadow-lg shadow-red-900/10 active:scale-95 transition-all flex items-center gap-2 ml-auto group/btn">
                                                     <i class="fas fa-check-circle group-hover/btn:scale-125 transition-transform"></i> Aktifkan Akun
                                                 </button>
@@ -203,8 +213,8 @@
                                 <div class="w-20 h-20 bg-slate-100 rounded-full flex items-center justify-center text-slate-300 mb-6 border-4 border-white shadow-inner">
                                     <i class="fas fa-check-double text-3xl"></i>
                                 </div>
-                                <h4 class="text-sm font-black uppercase tracking-widest text-slate-800">Antrian Bersih</h4>
-                                <p class="text-xs text-slate-400 mt-2 font-medium">Semua pendaftaran telah diproses.</p>
+                                <h4 class="text-sm font-black uppercase tracking-widest text-slate-800">Antrian Bersih</h4>  
+                                <p class="text-xs text-slate-400 mt-2 font-medium">Semua pendaftaran telah diproses.</p>     
                             </div>
                         </div>
                     @endif
@@ -214,7 +224,7 @@
                 @if($historyUsers->count() > 0)
                 <div class="flex items-center gap-3 mb-6 ml-2">
                     <div class="w-1.5 h-1.5 rounded-full bg-emerald-500"></div>
-                    <h4 class="text-[11px] font-black text-slate-400 uppercase tracking-[0.25em]">Aktivitas Terkini</h4>
+                    <h4 class="text-[11px] font-black text-slate-400 uppercase tracking-[0.25em]">Aktivitas Terkini</h4>     
                 </div>
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 mb-16">
                     @foreach($historyUsers as $user)

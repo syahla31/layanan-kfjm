@@ -29,7 +29,6 @@
 </head>
 <body class="bg-slate-50 text-slate-800 antialiased">
 
-    <!-- DATA FETCHING -->
     @php
         $query = \App\Models\Submission::with('user')
             ->whereHas('user', function($q) {
@@ -53,12 +52,10 @@
 
     <div class="flex h-screen overflow-hidden">
         
-        <!-- SIDEBAR DESKTOP -->
         <div class="hidden md:block flex-shrink-0 w-64 h-full bg-slate-900 z-20">
             @include('components.uji-sidebar')
         </div>
 
-        <!-- MOBILE SIDEBAR OVERLAY -->
         <div id="mobileSidebar" class="fixed inset-0 z-50 hidden">
             <div class="absolute inset-0 bg-slate-900/60 backdrop-blur-sm transition-opacity" onclick="toggleSidebar()"></div>
             <div class="absolute left-0 top-0 bottom-0 w-64 bg-slate-900 shadow-xl transform transition-transform duration-300">
@@ -68,7 +65,6 @@
 
         <div class="flex-1 flex flex-col h-screen overflow-hidden bg-slate-50 relative w-full">
             
-            <!-- MOBILE HEADER -->
             <div class="md:hidden bg-white border-b border-slate-200 px-4 py-3 flex items-center justify-between z-20 sticky top-0 shadow-sm">
                 <div class="flex items-center gap-3">
                     <button onclick="toggleSidebar()" class="p-2 text-slate-500 hover:text-teal-600 hover:bg-slate-100 rounded-lg transition-colors">
@@ -88,7 +84,6 @@
                 </div>
             </div>
 
-            <!-- HEADER DESKTOP -->
             <div class="hidden md:flex h-16 bg-white border-b border-slate-200 px-8 items-center justify-between">
                 <div>
                     <h1 class="text-lg font-bold text-slate-800">Panel Verifikasi</h1>
@@ -100,7 +95,6 @@
                 </div>
             </div>
 
-            <!-- MAIN CONTENT -->
             <main class="flex-1 overflow-x-hidden overflow-y-auto p-4 md:p-6 lg:p-8 space-y-6 md:space-y-8">
                 
                 @if (session('success'))
@@ -120,7 +114,6 @@
                     </div>
                 @endif
 
-                <!-- STATISTIK WIDGETS -->
                 <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4 md:gap-6">
                     <div class="relative bg-white rounded-2xl p-5 md:p-6 border border-slate-100 shadow-[0_4px_20px_-4px_rgba(0,0,0,0.05)] hover:-translate-y-1 transition-transform duration-300 group overflow-hidden">
                         <div class="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
@@ -183,7 +176,6 @@
                     </div>
                 </div>
 
-                <!-- TABEL ANTRIAN -->
                 <div class="flex flex-col gap-4">
                     <div class="flex flex-col sm:flex-row justify-between items-start sm:items-end gap-4">
                         <div>
@@ -272,7 +264,6 @@
 
                                         <td class="px-4 py-4 md:px-6 md:py-5">
                                             <div class="flex flex-row items-center justify-center gap-2">
-                                                <!-- PERBAIKAN: Menambahkan link gdrive dan file path ke dalam attribute data button -->
                                                 <button 
                                                     onclick="openModal('approve', '{{ $item->id }}', this.getAttribute('data-title'), '{{ $item->type }}', '{{ asset('storage/' . $item->file_path) }}', '{{ $item->gdrive_link ?? '' }}')" 
                                                     data-title="{{ $item->title }}"
@@ -324,7 +315,6 @@
         </div>
     </div>
 
-    <!-- MODAL POPUP VERIFIKASI -->
     <div id="verifyModal" class="fixed inset-0 z-50 hidden" aria-labelledby="modal-title" role="dialog" aria-modal="true">
         <div class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm transition-opacity opacity-0" id="modalBackdrop" onclick="closeModal()"></div>
 
@@ -349,11 +339,10 @@
                             </button>
                         </div>
 
-                        <!-- BARU: SECTION PRATINJAU DATA SEBELUM DI-APPROVE / REJECT -->
                         <div class="px-6 pt-5 pb-2">
                             <div class="bg-slate-50 rounded-xl p-4 border border-slate-200/80 space-y-3">
                                 <div class="flex items-center gap-2 pb-2 border-b border-slate-200">
-                                    <i class="text-teal-600 fas fa-search-text text-sm"></i>
+                                    <i class="text-teal-600 fas fa-search text-sm"></i>
                                     <span class="text-xs font-bold text-slate-700 uppercase tracking-wider">Pratinjau Data Dokumen</span>
                                 </div>
                                 <div class="grid grid-cols-3 gap-y-2 text-xs">
@@ -371,7 +360,6 @@
                                         </a>
                                     </div>
 
-                                    <!-- DGDrive Container (Hanya muncul jika lingkup Radioterapi) -->
                                     <div class="text-slate-400 font-medium flex items-center hidden" id="previewGDriveRowLabel">Tautan GDrive</div>
                                     <div class="col-span-2 hidden" id="previewGDriveRowValue">
                                         <a id="previewGDriveLink" href="#" target="_blank" class="inline-flex items-center gap-1.5 text-blue-600 hover:text-blue-800 font-bold bg-white px-2.5 py-1 rounded border border-slate-200 hover:border-blue-200 transition-colors shadow-sm">
@@ -399,7 +387,7 @@
                                 <label class="block text-xs font-bold text-slate-700 uppercase tracking-wide">
                                     Catatan Tambahan
                                 </label>
-                                <textarea name="admin_note" rows="3" class="block w-full rounded-xl border-slate-300 bg-white p-3 text-sm focus:border-teal-500 focus:ring-teal-500 shadow-sm resize-none" placeholder="Tuliskan catatan atau alasan revisi di sini..."></textarea>
+                                <textarea name="admin_note" id="modalNote" rows="3" class="block w-full rounded-xl border-slate-300 bg-white p-3 text-sm focus:border-teal-500 focus:ring-teal-500 shadow-sm resize-none" placeholder="Tuliskan catatan atau alasan revisi di sini..."></textarea>
                             </div>
                         </div>
 
@@ -417,7 +405,6 @@
         </div>
     </div>
 
-    <!-- JAVASCRIPT -->
     <script>
         function toggleSidebar() {
             const sidebar = document.getElementById('mobileSidebar');
@@ -439,6 +426,9 @@
 
             const fileLabel = document.getElementById('fileInputLabel');
             const fileHelp = document.getElementById('fileInputHelp');
+            
+            // Definisikan DOM input catatan tambahan
+            const noteInput = document.getElementById('modalNote');
 
             // BARU: Elemen pratinjau data
             document.getElementById('previewTitle').innerText = title;
@@ -473,6 +463,9 @@
                 fileLabel.innerHTML = `<span>Upload Surat Balasan (PDF)</span> <span class="text-[10px] bg-slate-200 px-1.5 py-0.5 rounded text-slate-500">Opsional</span>`;
                 fileHelp.innerHTML = '<i class="fas fa-info-circle"></i> <span>Dokumen SK atau surat balasan resmi.</span>';
 
+                // MENGUBAH TEKS PLACEHOLDER KETIKA DI-SETUJUI
+                noteInput.placeholder = "Tuliskan catatan atau pesan persetujuan di sini (opsional)...";
+
             } else {
                 form.action = "{{ url('/submission/reject') }}/" + id;
                 titleEl.innerText = "Kembalikan Revisi";
@@ -485,6 +478,9 @@
 
                 fileLabel.innerHTML = `<span>Upload File Penjelas</span> <span class="text-[10px] bg-slate-200 px-1.5 py-0.5 rounded text-slate-500">Opsional</span>`;
                 fileHelp.innerText = "Upload dokumen coretan revisi jika ada.";
+
+                // MENGUBAH TEKS PLACEHOLDER KETIKA REVISI
+                noteInput.placeholder = "Tuliskan alasan pengembalian atau poin-poin yang perlu direvisi di sini...";
             }
 
             modal.classList.remove('hidden');

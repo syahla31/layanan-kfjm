@@ -11,7 +11,7 @@
             darkMode: 'class',
             theme: {
                 extend: {
-                    animation: { 
+                    animation: {
                         'fade-in': 'fadeIn 0.5s ease-out',
                         'scale-up': 'scaleUp 0.3s ease-out'
                     },
@@ -62,7 +62,7 @@
     </div>
 
     <div class="w-full max-w-5xl bg-white dark:bg-slate-800 rounded-2xl shadow-2xl overflow-hidden flex flex-col md:flex-row m-4 z-10 animate-fade-in border border-slate-100 dark:border-slate-700 min-h-[600px] md:h-[auto] md:max-h-[90vh]">
-        
+
         <div class="w-full md:w-5/12 p-8 md:p-10 flex flex-col justify-between text-white relative overflow-hidden bg-gradient-to-br from-{{ $color_theme }}-600 to-{{ $color_theme }}-800">
             <div class="absolute top-0 left-0 w-full h-full opacity-10 pointer-events-none">
                 <i class="fas fa-atom absolute -top-10 -left-10 text-[6rem] md:text-[10rem]"></i>
@@ -74,7 +74,7 @@
                     <div class="w-8 h-8 bg-white/20 backdrop-blur rounded-lg flex items-center justify-center">
                         <i class="fas fa-shield-alt text-white"></i>
                     </div>
-                    <span class="font-bold tracking-widest text-xs md:text-sm uppercase opacity-90">SI-MUTU DKKN</span>
+                    <span class="font-bold tracking-widest text-xs md:text-sm uppercase opacity-90">SI-MUTU DKKN</span>      
                 </div>
                 <h2 class="text-2xl md:text-3xl font-extrabold mb-4 leading-tight">{{ $title }}</h2>
                 <p class="text-white text-opacity-90 text-sm leading-relaxed max-w-md">
@@ -108,7 +108,7 @@
                 </div>
             @endif
 
-            <form method="POST" action="{{ route('register') }}" class="space-y-4">
+            <form method="POST" action="{{ route('register') }}" enctype="multipart/form-data" class="space-y-4">
                 @csrf
                 <input type="hidden" name="register_type" value="{{ $type }}">
 
@@ -123,18 +123,29 @@
                 </div>
 
                 <div>
-                    <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Email Resmi</label>
+                    <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Email Resmi</label>     
                     <input type="email" name="email" value="{{ old('email') }}" class="w-full px-4 py-2.5 rounded-lg border border-slate-300 dark:border-slate-600 bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-white focus:ring-2 focus:ring-{{ $color_theme }}-500 focus:border-{{ $color_theme }}-500 outline-none transition-all text-sm" placeholder="email@instansi.com" required>
+                </div>
+
+                <div class="p-4 rounded-lg border border-{{ $color_theme }}-200 bg-{{ $color_theme }}-50 dark:bg-{{ $color_theme }}-900/10 dark:border-{{ $color_theme }}-900/20 mb-4">
+                    <div class="flex items-center justify-between mb-3">
+                        <label class="block text-sm font-bold text-{{ $color_theme }}-700 dark:text-{{ $color_theme }}-400">Unggah Surat Kuasa</label>
+                        <a href="{{ asset('form_surat_kuasa.docx') }}" class="text-xs font-bold text-{{ $color_theme }}-600 hover:underline flex items-center gap-1">
+                            <i class="fas fa-download"></i> Download Template
+                        </a>
+                    </div>
+                    <input type="file" name="surat_kuasa" class="w-full text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-semibold file:bg-{{ $color_theme }}-600 file:text-white hover:file:bg-{{ $color_theme }}-700 transition-all cursor-pointer" accept=".pdf,.jpg,.jpeg,.png" required>
+                    <p class="text-[10px] text-slate-500 mt-2 italic">*Wajib diunggah (Format: PDF, JPG, PNG | Max: 5MB)</p>
                 </div>
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
-                        <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Password</label>
+                        <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Password</label>    
                         <input type="password" name="password" class="w-full px-4 py-2.5 rounded-lg border border-slate-300 dark:border-slate-600 bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-white focus:ring-2 focus:ring-{{ $color_theme }}-500 focus:border-{{ $color_theme }}-500 outline-none transition-all text-sm" placeholder="******" required>
                     </div>
                     <div>
                         <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Konfirmasi Password</label>
-                        <input type="password" name="password_confirmation" class="w-full px-4 py-2.5 rounded-lg border border-slate-300 dark:border-slate-600 bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-white focus:ring-2 focus:ring-{{ $color_theme }}-500 focus:border-{{ $color_theme }}-500 outline-none transition-all text-sm" placeholder="******" required>
+                        <input type="password" name="password_confirmation" class="w-full px-4 py-2.5 rounded-lg border border-slate-300 dark:border-slate-600 bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-white focus:ring-2 focus:ring-{{ $color_theme }}-500 focus:border-{{ $color_theme }}-500 outline-none transition-all text-sm" placeholder="******" required>     
                     </div>
                 </div>
 
@@ -144,7 +155,7 @@
 
                 <div class="md:hidden text-center mt-6 pt-6 border-t border-slate-100 dark:border-slate-700">
                     <p class="text-sm text-slate-500 dark:text-slate-400">
-                        Sudah punya akun? 
+                        Sudah punya akun?
                         <a href="{{ route('login.' . $type) }}" class="text-{{ $color_theme }}-600 dark:text-{{ $color_theme }}-400 font-bold">Login</a>
                     </p>
                 </div>
@@ -154,17 +165,17 @@
 
     <div id="success-modal" class="fixed inset-0 z-[100] flex items-center justify-center p-4 hidden">
         <div class="absolute inset-0 bg-slate-900/60 backdrop-blur-sm transition-opacity"></div>
-        
+
         <div class="relative bg-white dark:bg-slate-800 rounded-2xl shadow-2xl max-w-sm w-full p-8 text-center animate-scale-up border border-slate-200 dark:border-slate-700">
             <div class="w-20 h-20 bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-400 rounded-full flex items-center justify-center mx-auto mb-6">
                 <i class="fas fa-check-circle text-4xl"></i>
             </div>
-            
+
             <h4 class="text-xl font-bold text-slate-900 dark:text-white mb-2">Registrasi Berhasil!</h4>
             <p id="success-message" class="text-slate-600 dark:text-slate-400 text-sm leading-relaxed mb-8">
                 Tolong tunggu maksimal 2 x 24 jam untuk verifikasi akun Anda.
             </p>
-            
+
             <button onclick="closeModal()" class="w-full py-3 px-4 rounded-xl bg-slate-900 dark:bg-white text-white dark:text-slate-900 font-bold text-sm hover:opacity-90 transition-all active:scale-95 shadow-lg">
                 Mengerti
             </button>
@@ -185,7 +196,7 @@
                 localStorage.setItem('theme', 'dark');
             }
         }
-        
+
         function closeModal() {
             const modal = document.getElementById('success-modal');
             modal.classList.add('hidden');

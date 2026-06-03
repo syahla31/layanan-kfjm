@@ -90,7 +90,7 @@
         <main class="flex-1 overflow-x-hidden overflow-y-auto p-4 md:p-8 space-y-6">
             
             <!-- STATS CARDS -->
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-4 md:gap-6">
                 <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-100 hover:shadow-md transition-all duration-300 group text-left relative overflow-hidden">
                     <div class="absolute -right-4 -top-4 w-24 h-24 bg-rose-50 rounded-full opacity-50 group-hover:scale-110 transition-transform"></div>
                     <div class="flex justify-between items-start relative z-10">
@@ -104,22 +104,6 @@
                     </div>
                     <div class="mt-4 flex items-center text-[10px] text-slate-400 font-bold relative z-10">
                         <span class="text-rose-600 font-black bg-rose-50 px-1.5 py-0.5 rounded mr-2 uppercase">Action</span> Instruksi Belum Dikonfirmasi
-                    </div>
-                </div>
-
-                <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-100 hover:shadow-md transition-all duration-300 group text-left relative overflow-hidden">
-                    <div class="absolute -right-4 -top-4 w-24 h-24 bg-blue-50 rounded-full opacity-50 group-hover:scale-110 transition-transform"></div>
-                    <div class="flex justify-between items-start relative z-10">
-                        <div>
-                            <p class="text-slate-500 text-[10px] font-bold uppercase tracking-widest group-hover:text-blue-600">Menunggu Admin</p>
-                            <h3 class="text-3xl font-extrabold text-slate-800 mt-2">{{ $waitingAdmin }}</h3>
-                        </div>
-                        <div class="p-3 bg-blue-50 rounded-xl text-blue-500">
-                            <i class="fas fa-clock text-xl"></i>
-                        </div>
-                    </div>
-                    <div class="mt-4 flex items-center text-[10px] text-slate-400 font-bold relative z-10">
-                        <span class="text-blue-600 font-black bg-blue-50 px-1.5 py-0.5 rounded mr-2 uppercase">Proses</span> Verifikasi Oleh Admin
                     </div>
                 </div>
 
@@ -151,7 +135,7 @@
                 <div class="flex-1 text-center md:text-left relative">
                     <h4 class="font-bold text-slate-800 text-lg mb-1">Instruksi Hasil Verifikasi</h4>
                     <p class="text-slate-500 text-sm leading-relaxed">
-                        Unduh dokumen surat hasil verifikasi pada kolom <span class="text-purple-600 font-semibold italic">File Admin</span>. Jika ada tindak lanjut, selesaikan proses di aplikasi <span class="bg-purple-50 text-purple-700 px-2 py-0.5 rounded font-bold text-xs border border-purple-100">BALISPEKERJA</span> lalu lakukan konfirmasi melalui tombol di tabel bawah.
+                        Unduh dokumen surat hasil verifikasi pada kolom <span class="text-purple-600 font-semibold italic">File Admin</span>. Jika ada tindak lanjut, selesaikan proses di aplikasi <span class="bg-purple-50 text-purple-700 px-2 py-0.5 rounded font-bold text-xs border border-purple-100">Balis 2.5 Modul Penunjukan</span> lalu lakukan konfirmasi melalui tombol di tabel bawah.
                     </p>
                 </div>
             </div>
