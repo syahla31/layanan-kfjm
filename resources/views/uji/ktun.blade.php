@@ -249,24 +249,7 @@
         </div>
     </div>
 
-    @if (session('success'))
-    <div id="successPopup" class="fixed inset-0 z-[300] flex items-center justify-center p-6 bg-slate-900/60 backdrop-blur-xl transition-all duration-300">
-        <div class="absolute inset-0" onclick="closeSuccessModal()"></div>
-        <div class="relative bg-white rounded-[3.5rem] md:rounded-[4rem] p-12 md:p-16 max-w-sm w-full shadow-[0_50px_100px_-20px_rgba(0,0,0,0.4)] text-center animate-gemay border-4 border-white">
-            <div class="w-24 h-24 bg-emerald-50 text-emerald-500 rounded-full flex items-center justify-center mx-auto mb-8 border-4 border-emerald-100 relative">
-                <div class="absolute inset-0 bg-emerald-400 rounded-full animate-ping opacity-10"></div>
-                <i class="fas fa-check-circle text-5xl relative z-10"></i>
-            </div>
-            <h3 class="text-2xl font-extrabold text-slate-800 mb-4 tracking-tight uppercase">Yuhuu, Terbuka!</h3>
-            <p class="text-slate-500 text-sm font-medium leading-relaxed px-2 mb-10">
-                Akses paket dokumen KTUN Anda sekarang telah terbuka sepenuhnya. Silakan unduh berkas aslinya.
-            </p>
-            <button onclick="closeSuccessModal()" class="w-full bg-slate-900 text-white font-extrabold py-5 rounded-[1.8rem] hover:bg-emerald-600 transition-all shadow-xl active:scale-95 text-[10px] tracking-[0.2em] uppercase">
-                OKE, MENGERTI
-            </button>
-        </div>
-    </div>
-    @endif
+    <x-success-popup />
 
     <div id="surveyModal" class="fixed inset-0 z-[250] hidden flex items-center justify-center p-6 bg-slate-900/60 backdrop-blur-xl">
         <div class="absolute inset-0" onclick="closeSurveyModal()"></div>

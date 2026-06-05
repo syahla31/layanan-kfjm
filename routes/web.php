@@ -136,6 +136,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/history', function () {
             return auth()->user()->role == 'admin' ? view('pelatihan.history') : redirect()->route('pelatihan.dashboard');   
         })->name('pelatihan.history');
+        Route::get('/rejected-history', function () {
+            return auth()->user()->role == 'admin' ? view('pelatihan.rejected_history') : redirect()->route('pelatihan.dashboard');
+        })->name('pelatihan.rejected_history');
 
         // Pengiriman KTUN Pelatihan
         Route::get('/ktun-admin', [KtunDeliveryController::class, 'indexAdmin'])->name('pelatihan.ktun_admin');
@@ -175,6 +178,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/history', function () {
             return auth()->user()->role == 'admin' ? view('uji.history') : redirect()->route('uji.dashboard');
         })->name('uji.history');
+        Route::get('/rejected-history', function () {
+            return auth()->user()->role == 'admin' ? view('uji.rejected_history') : redirect()->route('uji.dashboard');
+        })->name('uji.rejected_history');
 
         // Pengiriman KTUN Uji
         Route::get('/ktun-admin', [KtunDeliveryController::class, 'indexAdmin'])->name('uji.ktun_admin');

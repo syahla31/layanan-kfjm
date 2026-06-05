@@ -84,33 +84,7 @@
     <!-- === POP-UP NOTIFIKASI MODAL (Server Side) === -->
     
     <!-- 1. Success Modal (Auto Close) -->
-    @if (session('success'))
-    <div id="successModal" class="fixed inset-0 z-[100] flex items-center justify-center bg-slate-900/40 backdrop-blur-[3px] transition-all duration-300">
-        <div class="bg-white rounded-2xl shadow-2xl p-8 max-w-sm w-full mx-4 text-center animate-pop-in relative overflow-hidden border border-white/50">
-            <div class="absolute top-0 left-0 w-full h-1.5 bg-gradient-to-r from-blue-400 to-indigo-500"></div>
-            
-            <div class="w-20 h-20 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4 shadow-inner">
-                <i class="fas fa-check text-4xl text-blue-600 drop-shadow-sm"></i>
-            </div>
-            
-            <h3 class="text-2xl font-bold text-slate-800 mb-2">Berhasil!</h3>
-            <p class="text-slate-600 mb-6 text-sm leading-relaxed font-medium">
-                {{ session('success') }}
-            </p>
-            
-            <!-- Progress Bar -->
-            <div class="w-full bg-slate-100 h-1.5 rounded-full mb-5 overflow-hidden">
-                <div id="progressBar" class="h-full bg-blue-500 rounded-full" style="width: 100%"></div>
-            </div>
-
-            <button onclick="closeNotification('successModal')" class="w-full bg-white border-2 border-slate-100 hover:border-blue-400 hover:bg-blue-50 text-slate-500 hover:text-blue-700 font-bold py-3 rounded-xl transition-all duration-300 shadow-sm group">
-                <span class="flex items-center justify-center gap-2">
-                    Tutup Sekarang <i class="fas fa-times group-hover:rotate-90 transition-transform text-xs"></i>
-                </span>
-            </button>
-        </div>
-    </div>
-    @endif
+    <x-success-popup />
 
     <!-- 2. Error Modal -->
     @if ($errors->any() || session('error'))

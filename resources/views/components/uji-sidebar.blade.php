@@ -49,6 +49,11 @@
                 <i class="fas fa-check-circle w-5 text-center"></i>
                 <span class="text-sm font-medium">Riwayat Disetujui</span>
             </a>
+            <a href="{{ route('uji.rejected_history') }}" 
+               class="flex items-center gap-3 py-3.5 px-4 rounded-xl transition-all duration-200 group {{ request()->routeIs('uji.rejected_history') ? 'bg-teal-800 text-white border-l-4 border-teal-400' : 'text-teal-200 hover:bg-teal-800/50 hover:text-white' }}">
+                <i class="fas fa-undo w-5 text-center"></i>
+                <span class="text-sm font-medium">Riwayat Pengembalian</span>
+            </a>
 
             <!-- PENETAPAN -->
             <div class="px-3 mt-4 mb-2 text-xs font-bold text-teal-400 uppercase tracking-widest">

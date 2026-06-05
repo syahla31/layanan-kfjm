@@ -32,6 +32,10 @@
                 <i class="fas fa-check-circle w-5 text-center text-sm"></i>
                 <span class="text-sm font-semibold">Riwayat Disetujui</span>
             </a>
+            <a href="{{ route('pelatihan.rejected_history') }}" class="flex items-center gap-3 py-3 px-4 rounded-xl transition {{ request()->routeIs('pelatihan.rejected_history') ? 'bg-blue-800 text-white border-l-4 border-blue-400 shadow-lg' : 'text-blue-200 hover:bg-blue-800/50' }}">
+                <i class="fas fa-undo w-5 text-center text-sm"></i>
+                <span class="text-sm font-semibold">Riwayat Pengembalian</span>
+            </a>
 
             <div class="px-3 mt-5 mb-2 text-[10px] font-black text-blue-400 uppercase tracking-widest opacity-60">Audit & Penetapan</div>
             <a href="{{ route('survailen.admin') }}" class="flex items-center gap-3 py-3 px-4 rounded-xl transition {{ request()->routeIs('survailen.admin') ? 'bg-blue-800 text-white border-l-4 border-blue-400 shadow-lg' : 'text-blue-200 hover:bg-blue-800/50' }}">

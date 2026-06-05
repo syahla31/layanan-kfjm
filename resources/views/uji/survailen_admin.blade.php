@@ -204,7 +204,7 @@
                             <div class="flex items-center gap-6 w-full md:w-auto shrink-0 justify-between md:justify-end text-left">
                                 <div class="text-right pr-6 border-r border-slate-100 text-right">
                                     <span class="text-3xl font-black text-primary-600 leading-none text-right">{{ $item->predikat }}</span>
-                                    <p class="text-[9px] font-bold text-slate-400 mt-1 tracking-widest text-right">{{ number_format($item->final_score, 1) }}%</p>
+                                    <p class="text-[9px] font-bold text-slate-400 mt-1 tracking-widest text-right">{{ number_format($item->final_score, 0) }}%</p>
                                 </div>
                                 <button onclick='openEvaluateModal(@json($item))' class="bg-slate-50 text-slate-400 px-8 py-4 rounded-2xl font-black text-[10px] uppercase tracking-widest hover:bg-primary-900 hover:text-white transition-all shadow-sm flex items-center gap-3 text-left">
                                     <span>RINCIAN</span>
@@ -569,7 +569,7 @@
             const displayPct = document.getElementById('finalPercentageDisplay');
             const displayPred = document.getElementById('predikatDisplay');
             if (displayPct) displayPct.innerText = Math.round(pct) + "%";
-            document.getElementById('inputFinalScore').value = pct.toFixed(2);
+            document.getElementById('inputFinalScore').value = Math.round(pct);
             let p = pct >= 85 ? "A (UNGGUL)" : (pct >= 70 ? "B (BAIK SEKALI)" : (pct >= 55 ? "C (BAIK)" : "D (CUKUP)"));
             document.getElementById('inputPredikat').value = p;
             if (displayPred) {

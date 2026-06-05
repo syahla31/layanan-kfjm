@@ -240,22 +240,7 @@
         </div>
     </div>
 
-    @if (session('success'))
-    <div id="successPopup" class="fixed inset-0 z-[200] flex items-center justify-center p-6 bg-slate-900/40 backdrop-blur-md">
-        <div class="absolute inset-0" onclick="closePopup()"></div>
-        <div class="relative bg-white rounded-[4rem] p-10 md:p-14 max-w-sm w-full shadow-[0_30px_100px_-15px_rgba(0,0,0,0.3)] text-center animate-gemay border border-white">
-            <div class="w-24 h-24 bg-emerald-50 text-emerald-500 rounded-full flex items-center justify-center mx-auto mb-8 relative border-4 border-emerald-100">
-                <div class="absolute inset-0 bg-emerald-400 rounded-full animate-ping opacity-10"></div>
-                <i class="fas fa-check-circle text-5xl relative z-10"></i>
-            </div>
-            <h3 class="text-2xl font-extrabold text-slate-800 mb-3 tracking-tight uppercase">Yeay! Terkirim</h3>
-            <p class="text-slate-500 text-sm mb-10 leading-relaxed font-medium px-4">{{ session('success') }}</p>
-            <button onclick="closePopup()" class="w-full bg-slate-900 text-white font-extrabold py-5 rounded-[2rem] hover:bg-teal-600 transition-all shadow-xl active:scale-95 uppercase text-xs tracking-widest">
-                Oke, Mantap!
-            </button>
-        </div>
-    </div>
-    @endif
+    <x-success-popup />
 
     <div id="errorValidationPopup" class="fixed inset-0 z-[200] hidden flex items-center justify-center p-6 bg-slate-900/40 backdrop-blur-md">
         <div class="absolute inset-0" onclick="closeErrorPopup()"></div>

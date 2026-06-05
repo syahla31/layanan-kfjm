@@ -31,9 +31,8 @@
 
     @php
         $query = \App\Models\Submission::with('user')
-            ->whereHas('user', function($q) {
-                $q->where('category', 'uji '); 
-            });
+            ->where('category', 'uji')
+            ->where('type', 'like', '%Laporan Tahunan%');
 
         $submissions = (clone $query)->where('status', 'pending')
                                      ->orderBy('created_at', 'asc')
@@ -43,10 +42,12 @@
         
         $countApprovedMonth = (clone $query)->where('status', 'approved')
                                             ->whereMonth('updated_at', date('m'))
+                                            ->whereYear('updated_at', date('Y'))
                                             ->count();
 
         $countRejectedMonth = (clone $query)->where('status', 'rejected')
                                             ->whereMonth('updated_at', date('m'))
+                                            ->whereYear('updated_at', date('Y'))
                                             ->count();
     @endphp
 
@@ -97,22 +98,7 @@
 
             <main class="flex-1 overflow-x-hidden overflow-y-auto p-4 md:p-6 lg:p-8 space-y-6 md:space-y-8">
                 
-                @if (session('success'))
-                    <div id="alert" class="p-4 bg-emerald-50 border border-emerald-100 text-emerald-800 rounded-xl shadow-sm flex items-center justify-between animate-fade-in-up">
-                        <div class="flex items-center gap-3">
-                            <div class="bg-emerald-100 p-2 rounded-full text-emerald-600 flex-shrink-0">
-                                <i class="fas fa-check-circle text-lg"></i>
-                            </div>
-                            <div>
-                                <p class="font-bold text-sm">Aksi Berhasil</p>
-                                <p class="text-xs opacity-80">{{ session('success') }}</p>
-                            </div>
-                        </div>
-                        <button onclick="document.getElementById('alert').remove()" class="text-emerald-400 hover:text-emerald-600 transition-colors p-1">
-                            <i class="fas fa-times"></i>
-                        </button>
-                    </div>
-                @endif
+                <x-success-popup />
 
                 <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4 md:gap-6">
                     <div class="relative bg-white rounded-2xl p-5 md:p-6 border border-slate-100 shadow-[0_4px_20px_-4px_rgba(0,0,0,0.05)] hover:-translate-y-1 transition-transform duration-300 group overflow-hidden">
@@ -156,7 +142,7 @@
                         </div>
                     </div>
 
-                    <div class="relative bg-white rounded-2xl p-5 md:p-6 border border-slate-100 shadow-[0_4px_20px_-4px_rgba(0,0,0,0.05)] hover:-translate-y-1 transition-transform duration-300 group overflow-hidden sm:col-span-2 xl:col-span-1">
+                    <a href="{{ route('uji.rejected_history') }}" class="relative bg-white rounded-2xl p-5 md:p-6 border border-slate-100 shadow-[0_4px_20px_-4px_rgba(0,0,0,0.05)] hover:-translate-y-1 transition-transform duration-300 group overflow-hidden sm:col-span-2 xl:col-span-1">
                         <div class="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
                             <i class="fas fa-undo-alt text-5xl md:text-6xl text-rose-500"></i>
                         </div>
@@ -173,7 +159,7 @@
                             </div>
                             <p class="text-xs text-slate-400 mt-2 truncate">Memerlukan revisi lembaga</p>
                         </div>
-                    </div>
+                    </a>
                 </div>
 
                 <div class="flex flex-col gap-4">

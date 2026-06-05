@@ -226,24 +226,7 @@
     </div>
 </div>
 
-<!-- SUCCESS MODAL DENGAN TIMER -->
-@if (session('success'))
-<div id="successModal" class="fixed inset-0 z-[100] flex items-center justify-center modal-backdrop-blur transition-opacity duration-300">
-    <div class="absolute inset-0" onclick="closeSuccessModal()"></div>
-    <div class="bg-white rounded-2xl shadow-2xl p-8 max-w-sm w-full mx-4 text-center animate-pop-in relative border border-slate-100 overflow-hidden">
-        <div class="absolute top-0 left-0 w-full h-1.5 bg-gradient-to-r from-emerald-500 to-teal-600"></div>
-        <div class="w-20 h-20 bg-emerald-50 rounded-full flex items-center justify-center mx-auto mb-4 shadow-inner">
-            <i class="fas fa-check text-4xl text-emerald-600"></i>
-        </div>
-        <h3 class="text-xl font-bold text-slate-800 mb-2 tracking-tight">Berhasil!</h3>
-        <p class="text-slate-500 mb-6 text-sm font-medium leading-relaxed">{{ session('success') }}</p>
-        <button onclick="closeSuccessModal()" class="w-full bg-slate-900 text-white font-bold py-3 rounded-xl hover:bg-black transition-all active:scale-95 shadow-lg uppercase text-xs tracking-widest">Tutup</button>
-        
-        <!-- Timer Progress Bar -->
-        <div class="absolute bottom-0 left-0 h-1.5 bg-emerald-500 timer-bar"></div>
-    </div>
-</div>
-@endif
+<x-success-popup />
 
 <!-- CONFIRM MODAL -->
 <div id="confirmModal" class="fixed inset-0 z-50 hidden items-center justify-center p-4">

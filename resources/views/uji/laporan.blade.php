@@ -148,34 +148,7 @@
         $total = $mySubmissions->count();
     @endphp
 
-    @if (session('success'))
-        <div id="successModal"
-            class="fixed inset-0 z-[100] flex items-center justify-center bg-slate-900/40 backdrop-blur-[3px] transition-all duration-300">
-            <div
-                class="bg-white rounded-2xl shadow-2xl p-8 max-w-sm w-full mx-4 text-center animate-pop-in relative overflow-hidden border border-white/50">
-                <div class="absolute top-0 left-0 w-full h-1.5 bg-gradient-to-r from-teal-400 to-emerald-500"></div>
-
-                <div
-                    class="w-20 h-20 bg-teal-50 rounded-full flex items-center justify-center mx-auto mb-4 shadow-inner">
-                    <i class="fas fa-check text-4xl text-teal-600"></i>
-                </div>
-
-                <h3 class="text-2xl font-bold text-slate-800 mb-2">Berhasil!</h3>
-                <p class="text-slate-600 mb-6 text-sm leading-relaxed font-medium">
-                    {{ session('success') }}
-                </p>
-
-                <div class="w-full bg-slate-100 h-1.5 rounded-full mb-5 overflow-hidden">
-                    <div id="progressBar" class="h-full bg-teal-500 rounded-full" style="width: 100%"></div>
-                </div>
-
-                <button onclick="closeNotification('successModal')"
-                    class="w-full bg-slate-50 border border-slate-200 hover:bg-teal-50 hover:text-teal-700 text-slate-500 font-bold py-3 rounded-xl transition-all duration-300 shadow-sm group">
-                    Tutup Sekarang
-                </button>
-            </div>
-        </div>
-    @endif
+    <x-success-popup />
 
     <div class="flex h-screen overflow-hidden bg-slate-50">
 

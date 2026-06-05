@@ -163,24 +163,7 @@
         </div>
     </div>
 
-    <div id="success-modal" class="fixed inset-0 z-[100] flex items-center justify-center p-4 hidden">
-        <div class="absolute inset-0 bg-slate-900/60 backdrop-blur-sm transition-opacity"></div>
-
-        <div class="relative bg-white dark:bg-slate-800 rounded-2xl shadow-2xl max-w-sm w-full p-8 text-center animate-scale-up border border-slate-200 dark:border-slate-700">
-            <div class="w-20 h-20 bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-400 rounded-full flex items-center justify-center mx-auto mb-6">
-                <i class="fas fa-check-circle text-4xl"></i>
-            </div>
-
-            <h4 class="text-xl font-bold text-slate-900 dark:text-white mb-2">Registrasi Berhasil!</h4>
-            <p id="success-message" class="text-slate-600 dark:text-slate-400 text-sm leading-relaxed mb-8">
-                Tolong tunggu maksimal 2 x 24 jam untuk verifikasi akun Anda.
-            </p>
-
-            <button onclick="closeModal()" class="w-full py-3 px-4 rounded-xl bg-slate-900 dark:bg-white text-white dark:text-slate-900 font-bold text-sm hover:opacity-90 transition-all active:scale-95 shadow-lg">
-                Mengerti
-            </button>
-        </div>
-    </div>
+    <x-success-popup />
 
     <script>
         function toggleTheme() {
@@ -197,16 +180,6 @@
             }
         }
 
-        function closeModal() {
-            const modal = document.getElementById('success-modal');
-            modal.classList.add('hidden');
-        }
-
-        function showModal() {
-            const modal = document.getElementById('success-modal');
-            modal.classList.remove('hidden');
-        }
-
         // Cek preference tema saat load
         if (localStorage.getItem('theme') === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
             document.documentElement.classList.add('dark');
@@ -215,13 +188,6 @@
                 icon.classList.replace('fa-moon', 'fa-sun');
             }
         }
-
-        // MUNCULKAN MODAL JIKA ADA FLASH SESSION SUCCESS
-        document.addEventListener('DOMContentLoaded', function() {
-            @if(session('success'))
-                showModal();
-            @endif
-        });
     </script>
 </body>
 </html>
