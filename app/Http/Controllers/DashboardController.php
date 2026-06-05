@@ -161,8 +161,8 @@ class DashboardController extends Controller
         // Mengambil pengingat survailen & verifikasi untuk Lembaga Uji
         // Kita asumsikan deadline dihitung dari 1 tahun setelah 'updated_at' status terakhir
         $reminders = Submission::where('user_id', $user->id)
-            ->where('type', 'uji')
-            ->whereIn('category', ['survailen', 'verifikasi'])
+            ->where('category', 'uji')
+            ->whereIn('type', ['Survailen', 'Verifikasi'])
             ->get()
             ->filter(function($submission) use ($now, $deadline) {
                 // Contoh logika: masa berlaku adalah 1 tahun dari tanggal update terakhir
@@ -183,8 +183,8 @@ class DashboardController extends Controller
         $deadline = Carbon::now()->addDays(30);
 
         $reminders = Submission::where('user_id', $user->id)
-            ->where('type', 'pelatihan')
-            ->whereIn('category', ['survailen', 'verifikasi'])
+            ->where('category', 'pelatihan')
+            ->whereIn('type', ['Survailen', 'Verifikasi'])
             ->get()
             ->filter(function($submission) use ($now, $deadline) {
                 $expiryDate = Carbon::parse($submission->updated_at)->addYear();

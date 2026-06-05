@@ -157,7 +157,7 @@ class SurvailenController extends Controller
                 }
             }
 
-            $percentage = ($totalWeightedScore / 400) * 100;
+            $percentage = (int) round(($totalWeightedScore / 400) * 100);
             if ($percentage >= 85) $predikat = 'A';
             elseif ($percentage >= 70) $predikat = 'B';
             elseif ($percentage >= 55) $predikat = 'C';

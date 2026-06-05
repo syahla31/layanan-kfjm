@@ -36,8 +36,7 @@
 
 <body class="bg-slate-50 text-slate-800 overflow-hidden"
     x-data="{
-        sidebarOpen: false,
-        showSuccessModal: {{ session('success') ? 'true' : 'false' }}
+        sidebarOpen: false
     }">
 
     <div class="flex h-screen w-full overflow-hidden">
@@ -78,43 +77,7 @@
 
             <main class="flex-1 overflow-y-auto p-6 lg:p-10">
 
-                <!-- POP-UP NOTIFIKASI SUKSES (UPGRADED) -->
-                <template x-if="showSuccessModal">
-                    <div class="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-md" 
-                        x-transition:enter="transition ease-out duration-300"
-                        x-transition:enter-start="opacity-0"
-                        x-transition:enter-end="opacity-100">
-
-                        <div class="bg-white rounded-[3rem] shadow-2xl w-full max-w-md overflow-hidden border border-white/20 relative"
-                            @click.away="showSuccessModal = false"
-                            x-transition:enter="transition ease-out duration-500"
-                            x-transition:enter-start="opacity-0 scale-90 translate-y-8"
-                            x-transition:enter-end="opacity-100 scale-100 translate-y-0">
-
-                            <!-- Ikon Dekorasi Belakang -->
-                            <div class="absolute top-0 right-0 p-8 opacity-[0.03] -mr-12 -mt-12 text-emerald-600">
-                                <i class="fas fa-check-circle text-[12rem]"></i>
-                            </div>
-
-                            <div class="p-10 text-center relative z-10">
-                                <!-- Ikon Centang Besar -->
-                                <div class="w-24 h-24 bg-emerald-500 rounded-[2.5rem] flex items-center justify-center text-white text-4xl mx-auto mb-8 shadow-2xl shadow-emerald-500/40 animate-bounce">
-                                    <i class="fas fa-check"></i>
-                                </div>
-
-                                <h3 class="text-2xl font-black text-slate-900 tracking-tight mb-3">Persetujuan Berhasil</h3> 
-                                <p class="text-slate-500 text-sm leading-relaxed mb-8">
-                                    {{ session('success') }}
-                                </p>
-
-                                <button @click="showSuccessModal = false"
-                                    class="w-full py-4 bg-slate-900 hover:bg-slate-800 text-white rounded-2xl text-xs font-black uppercase tracking-widest transition-all active:scale-95 shadow-xl shadow-slate-900/20">
-                                    Tutup Notifikasi
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </template>
+                <x-success-popup />
 
                 <!-- Petunjuk Verifikasi Card -->
                 <div class="bg-white rounded-[2rem] border border-slate-200 p-8 mb-10 shadow-sm relative overflow-hidden group">

@@ -110,36 +110,7 @@
             <!-- MAIN CONTENT -->
             <main class="flex-1 overflow-x-hidden overflow-y-auto p-4 md:p-8 relative">
                 
-                <!-- SUCCESS POP-UP -->
-                @if (session('success'))
-                <div id="successModal" class="fixed inset-0 z-[100] flex items-center justify-center bg-slate-900/40 backdrop-blur-[3px] transition-all duration-300">
-                    <div class="bg-white rounded-2xl shadow-2xl p-8 max-w-sm w-full mx-4 text-center animate-pop-in relative overflow-hidden border border-white/50">
-                        <div class="absolute top-0 left-0 w-full h-1.5 bg-gradient-to-r from-teal-400 to-emerald-500"></div>
-                        <div class="absolute -top-10 -right-10 w-32 h-32 bg-teal-50 rounded-full blur-2xl opacity-60 pointer-events-none"></div>
-                        <div class="absolute -bottom-10 -left-10 w-32 h-32 bg-emerald-50 rounded-full blur-2xl opacity-60 pointer-events-none"></div>
-                        
-                        <div class="w-20 h-20 bg-teal-100 rounded-full flex items-center justify-center mx-auto mb-4 shadow-inner relative z-10">
-                            <i class="fas fa-check text-4xl text-teal-600 drop-shadow-sm"></i>
-                        </div>
-                        
-                        <h3 class="text-2xl font-bold text-slate-800 mb-2 relative z-10">Berhasil!</h3>
-                        <p class="text-slate-600 mb-6 text-sm leading-relaxed relative z-10 font-medium">
-                            {{ session('success') }}
-                        </p>
-                        
-                        <div class="relative z-10 w-full bg-slate-100 h-1.5 rounded-full mb-5 overflow-hidden">
-                            <div id="progressBar" class="h-full bg-teal-500 rounded-full" style="width: 100%"></div>
-                        </div>
-                        
-                        <button onclick="closeNotification('successModal')" class="relative z-10 w-full bg-white border-2 border-slate-100 hover:border-teal-400 hover:bg-teal-50 text-slate-500 hover:text-teal-700 font-bold py-3 rounded-xl transition-all duration-300 transform active:scale-95 shadow-sm hover:shadow-md group">
-                            <span class="flex items-center justify-center gap-2">
-                                Tutup Sekarang 
-                                <i class="fas fa-times group-hover:rotate-90 transition-transform duration-300 text-xs"></i>
-                            </span>
-                        </button>
-                    </div>
-                </div>
-                @endif
+                <x-success-popup />
 
                 <!-- ERROR POP-UP -->
                 @if ($errors->any() || session('error'))

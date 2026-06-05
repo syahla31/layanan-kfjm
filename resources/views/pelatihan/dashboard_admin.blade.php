@@ -69,13 +69,15 @@
         $countApprovedMonth = Submission::where('category', 'pelatihan')
             ->whereIn('type', $allowedTypes)
             ->where('status', 'approved')
-            ->whereMonth('created_at', date('m'))
+            ->whereMonth('updated_at', Carbon::now()->month)
+            ->whereYear('updated_at', Carbon::now()->year)
             ->count();
 
         $countRejectedMonth = Submission::where('category', 'pelatihan')
             ->whereIn('type', $allowedTypes)
             ->where('status', 'rejected')
-            ->whereMonth('created_at', date('m'))
+            ->whereMonth('updated_at', Carbon::now()->month)
+            ->whereYear('updated_at', Carbon::now()->year)
             ->count();
     @endphp
 
@@ -175,7 +177,7 @@
                         </div>
                     </div>
 
-                    <div
+                    <a href="{{ route('pelatihan.rejected_history') }}"
                         class="relative bg-white rounded-2xl p-5 md:p-6 border border-slate-100 shadow-[0_4px_20px_-4px_rgba(0,0,0,0.05)] hover:-translate-y-1 transition-transform duration-300 group overflow-hidden sm:col-span-2 xl:col-span-1">
                         <div class="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
                             <i class="fas fa-undo-alt text-5xl md:text-6xl text-rose-500"></i>
@@ -195,7 +197,7 @@
                             </div>
                             <p class="text-xs text-slate-400 mt-2 truncate">Memerlukan revisi lembaga</p>
                         </div>
-                    </div>
+                    </a>
                 </div>
 
                 <div class="flex flex-col gap-4">
@@ -519,63 +521,7 @@
         </div>
     </div>
 
-    @if (session('success'))
-        <div id="successPopUp"
-            class="fixed inset-0 z-[60] flex items-center justify-center p-4 transition-all duration-500">
-            <div class="fixed inset-0 bg-slate-900/40 backdrop-blur-md transition-opacity duration-500"
-                id="successBackdrop"></div>
-            <div class="relative bg-white rounded-3xl shadow-2xl p-8 max-w-sm w-full text-center animate-scale-in border border-slate-100 transition-all duration-500"
-                id="successPanel">
-                <div
-                    class="w-20 h-20 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mx-auto mb-6">
-                    <i class="fas fa-check-circle text-5xl"></i>
-                </div>
-                <h2 class="text-2xl font-bold text-slate-800 mb-2">Aksi Berhasil!</h2>
-                <p class="text-slate-500 text-sm mb-8 leading-relaxed">
-                    {{ session('success') }}
-                </p>
-                <button onclick="closeSuccessPopUp()"
-                    class="w-full py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-2xl transition-all shadow-lg shadow-emerald-200 active:scale-95">
-                    Mengerti
-                </button>
-
-                <div class="absolute bottom-0 left-0 h-1.5 bg-emerald-500 rounded-b-3xl transition-all duration-[3000ms] ease-linear w-full"
-                    id="timerProgress"></div>
-            </div>
-        </div>
-
-        <script>
-            // Jalankan timer otomatis saat halaman dimuat jika ada pop up sukses
-            window.addEventListener('DOMContentLoaded', () => {
-                const progress = document.getElementById('timerProgress');
-                if (progress) {
-                    // Mulai animasi progress bar ke nol
-                    setTimeout(() => {
-                        progress.style.width = '0%';
-                    }, 10);
-                }
-
-                // Hilangkan otomatis setelah 3 detik
-                setTimeout(() => {
-                    closeSuccessPopUp();
-                }, 3000);
-            });
-
-            function closeSuccessPopUp() {
-                const popup = document.getElementById('successPopUp');
-                const backdrop = document.getElementById('successBackdrop');
-                const panel = document.getElementById('successPanel');
-
-                if (popup) {
-                    backdrop.classList.add('opacity-0');
-                    panel.classList.add('scale-95', 'opacity-0');
-                    setTimeout(() => {
-                        popup.remove();
-                    }, 500);
-                }
-            }
-        </script>
-    @endif
+    <x-success-popup />
 
     <script>
         function toggleSidebar() {

@@ -141,23 +141,7 @@
         ];
     @endphp
 
-    {{-- Notifikasi Berhasil --}}
-    @if(session('success'))
-    <div id="successToast" class="fixed inset-0 z-[500] flex items-center justify-center p-4 animate-pop-in">
-        <div class="absolute inset-0 bg-primary-900/20 backdrop-blur-sm" onclick="document.getElementById('successToast').remove()"></div>
-        <div class="relative bg-white p-8 rounded-[2.5rem] shadow-2xl border border-emerald-100 flex flex-col items-center text-center max-w-sm w-full">
-            <div class="w-20 h-20 bg-primary-50 text-primary-600 rounded-full flex items-center justify-center mb-6 text-4xl shadow-inner border border-primary-100">
-                <i class="fas fa-check-circle"></i>
-            </div>
-            <h4 class="text-xl font-black text-primary-900 uppercase tracking-tight mb-2">Berhasil!</h4>
-            <p class="text-xs text-slate-500 font-medium leading-relaxed mb-8">{{ session('success') }}</p>
-            <button onclick="document.getElementById('successToast').remove()" class="w-full bg-primary-900 text-white px-8 py-4 rounded-2xl font-bold text-xs uppercase tracking-widest hover:bg-primary-600 transition-all shadow-lg active:scale-95">
-                Oke, Lanjutkan
-            </button>
-        </div>
-    </div>
-    <script>setTimeout(() => document.getElementById('successToast')?.remove(), 5000);</script>
-    @endif
+    <x-success-popup />
 
     <div class="flex h-screen overflow-hidden w-full">
         
@@ -374,7 +358,7 @@
                                 <div class="mt-10 flex flex-wrap justify-center gap-4">
                                     <div class="bg-white/10 backdrop-blur-md px-6 md:px-8 py-4 md:py-5 rounded-3xl border border-white/20 shadow-xl">
                                         <p class="text-[9px] md:text-[10px] font-bold uppercase opacity-60 tracking-wider">Skor Akhir</p>
-                                        <p class="text-2xl md:text-3xl font-black text-blue-100">{{ number_format($activeSubmission->final_score, 2) }}%</p>
+                                        <p class="text-2xl md:text-3xl font-black text-blue-100">{{ number_format($activeSubmission->final_score, 0) }}%</p>
                                     </div>
                                     <button type="button" data-submission='@json($activeSubmission)' onclick='showDetailModal(this)' 
                                             class="bg-white text-primary-900 px-8 md:px-10 py-4 md:py-5 rounded-3xl font-bold text-[10px] md:text-xs uppercase tracking-widest hover:bg-blue-50 transition-all shadow-xl flex items-center gap-3">
@@ -424,7 +408,7 @@
                                 </div>
                                 <div class="flex-1 text-left overflow-hidden">
                                     <h4 class="font-bold text-primary-900 uppercase tracking-tight text-xs md:text-sm leading-tight truncate text-left">{{ $hist->title }}</h4>
-                                    <p class="text-[9px] md:text-[10px] font-bold text-slate-400 uppercase mt-2 tracking-widest text-left">{{ $hist->updated_at->format('d M Y') }} • Skor: {{ number_format($hist->final_score, 1) }}%</p>
+                                    <p class="text-[9px] md:text-[10px] font-bold text-slate-400 uppercase mt-2 tracking-widest text-left">{{ $hist->updated_at->format('d M Y') }} • Skor: {{ number_format($hist->final_score, 0) }}%</p>
                                 </div>
                                 <button type="button" data-submission='@json($hist)' onclick='showDetailModal(this)' class="w-10 h-10 md:w-12 md:h-12 bg-slate-50 text-slate-400 rounded-xl md:rounded-2xl flex items-center justify-center hover:bg-primary-900 hover:text-white transition-all active:scale-90 shadow-sm shrink-0"><i class="fas fa-eye text-sm md:text-base"></i></button>
                             </div>
@@ -541,7 +525,7 @@
             const evalComments = data.evaluator_comments ? JSON.parse(data.evaluator_comments) : {};
 
             document.getElementById('modalTitleDisplay').innerText = data.title;
-            document.getElementById('modalScoreDisplay').innerText = parseFloat(data.final_score).toFixed(1) + "%";
+            document.getElementById('modalScoreDisplay').innerText = Math.round(parseFloat(data.final_score)) + "%";
             document.getElementById('modalPredikatDisplay').innerText = "Predikat " + (data.predikat || "D");
 
             const noteContainer = document.getElementById('modalAdminNoteContainer');
